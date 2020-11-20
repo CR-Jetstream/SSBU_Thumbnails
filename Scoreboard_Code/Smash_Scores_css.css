@@ -1,0 +1,45 @@
+.round
+{
+	position: absolute;
+	top: 116px;
+	left: 674px;
+	//left: 910px;
+	//text-align: Center;
+	text-align: right;
+
+}
+
+.event
+{
+	position: absolute;
+	top: 116px;
+	right: 1273px;
+	text-align: left;
+}
+
+.name
+{
+	position: absolute;
+	top: 116px;
+	text-align: left;
+}
+.name.n1 { 	left: 1295px;}
+.name.n2 { 	left: 1099px;}
+
+.players
+{
+    position: absolute;
+    top: 27px;
+}
+.players.p1 { left: 422px; text-align: left;}
+.players.p2 { right: 427px; text-align: right;}
+
+.scores
+{
+    position: absolute;
+    top: 10px;
+}
+.scores.s1 { left: 340px; text-align: left;}
+.scores.s2 { right: 345px; text-align: right;}
+
+.hidden { top: -100px !important; }

@@ -1,0 +1,38 @@
+body
+{
+    color: black;
+    font-family: Arial;
+    //text-shadow: 2px 2px black;
+    font-size: 24px;
+}
+
+score
+{
+	color: #101010;
+    font-family: Bungee Inline;
+	font-style: italic;
+    font-size: 60px;
+}
+
+player
+{
+	color: #f5f5f5;
+    font-family: Bungee Inline;
+	font-style: italic;
+    font-size: 48px;
+}
+
+counter
+{
+	color: #f5f5f5;
+    font-family: Arial Bold;
+    font-size: 48;
+}
+
+.colorB { background: var(--border-color); }
+.color1 { background: var(--main-color1); }
+.color2 { background: var(--main-color2); }
+.color3 { background: var(--main-color3); }
+
+.slow { transition: all 0.50s ease-out; }
+.fast { transition: all 0.25s ease-in; }

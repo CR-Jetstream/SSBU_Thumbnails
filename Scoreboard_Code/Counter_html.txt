@@ -1,0 +1,24 @@
+<counter class="wins w1 color3 hidden" id="win_1s">0</counter>
+<counter class="wins w2 color3 hidden" id="win_2s">0</counter>
+<counter class="wins w3 color3 hidden" id="win_3s">0</counter>
+<counter class="wins w4 color3 hidden" id="win_4s">0</counter> 
+
+<counter class="deaths d1 color3 hidden" id="death_1s">0</counter>
+<counter class="deaths d2 color3 hidden" id="death_2s">0</counter>
+<counter class="deaths d3 color3 hidden" id="death_3s">0</counter>
+<counter class="deaths d4 color3 hidden" id="death_4s">0</counter> 
+
+<player class="players p1 color3 hidden" id="win_1">one</player>
+<player class="players p2 color3 hidden" id="win_2">two</player>
+<player class="players p3 color3 hidden" id="win_3">three</player>
+<player class="players p4 color3 hidden" id="win_4">four</player>
+
+<div class="image v1 hidden" id="v1"><div class="link"></div></div>
+<div class="image v2 hidden" id="v2"><div class="link"></div></div>
+<div class="image v3 hidden" id="v3"><div class="link"></div></div>
+<div class="image v4 hidden" id="v4"><div class="link"></div></div>
+
+<div class="image d1 hidden" id="d1"><div class="link"></div></div>
+<div class="image d2 hidden" id="d2"><div class="link"></div></div>
+<div class="image d3 hidden" id="d3"><div class="link"></div></div>
+<div class="image d4 hidden" id="d4"><div class="link"></div></div>
