@@ -35,6 +35,14 @@ _character_mapping = {
 
 }
 
+_player_database = {
+    # Player : [character (alt), ...]
+    'Nalga': ['Donkey Kong (6)'],
+    'Krade': ['Sonic (5)', 'Cloud (2)'],
+    'Cpt Jiggly': ['Yoshi (6)']
+
+}
+
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -170,7 +178,7 @@ def createMatches(match_lines):
         # Check that an image exists for their character(s) here
         for a_list in [player1_chars, player2_chars]:
             for a_char in a_list:
-                if not os.path.exists(os.path.join('Renders', 'Character_Renders', a_char + ' (1).png')):
+                if not os.path.exists(os.path.join('Character_Renders', a_char + ' (1).png')):
                     raise NameError("Character not found in " + a_round+": " + a_char)
         # Have all the information, create a match
         a_match = Match(a_title, event, a_round, player1_name, player1_chars, player2_name, player2_chars)
@@ -251,18 +259,6 @@ def calculateOffsetFromCenter(xy_center, xy_image):
     x_off = int(x_center - (x_image / 2))
     y_off = int(y_center - (y_image / 2))
     return x_off, y_off
-
-
-def calculateTextOffset(match, background):
-    '''
-    Calculate the offset information for the text for the image based off background dimensions
-    Desire is to have the text fit nicely in the corners of the the background
-    :param match:
-    :param background:
-    :return:
-    '''
-
-    return
 
 
 def resizeCraracterList(char_list, num_resizes):
@@ -449,24 +445,46 @@ def createRoundImages(match_list, background, foreground):
         # TODO: rework this to make all characters present on the window. requires more settings
         # TODO: Insert case for Ike, Bayo, and others with different alts
         c1_renders = []
+        # Check player database to character list
+        player1 = a_match.p1
+        player1_chars = []
+        if player1 in _player_database.keys():
+            player1_chars = _player_database[player1]
+        # Open character images for the player
         for char1 in a_match.c1:
-            # TODO: Create a player database where the renders are stored for a player
-            # open character renders
-            if char1 == 'Cloud':
+            # Override case
+            if char1 == 'Blank':
                 char1_file = char1 + ' (2)'
             else:
                 char1_file = char1 + ' (1)'
-            c1_image = Image.open(os.path.join('Renders', 'Character_Renders', char1_file + '.png'))
+            # Check player database for character
+            for p1_char in player1_chars:
+                if char1 in p1_char:
+                    char1_file = p1_char
+                    break
+            # open character renders
+            c1_image = Image.open(os.path.join('Character_Renders', char1_file + '.png'))
             c1_renders.append(c1_image)
         c2_renders = []
+        # Check player database to character list
+        player2 = a_match.p2
+        player2_chars = []
+        if player2 in _player_database.keys():
+            player2_chars = _player_database[player2]
+        # Open character images for the player
         for char2 in a_match.c2:
-            # TODO: Create a player database where the renders are stored for a player
-            # open character renders
-            if char2 == 'Cloud':
+            # Override case
+            if char2 == 'Blank':
                 char2_file = char2 + ' (2)'
             else:
                 char2_file = char2 + ' (1)'
-            c2_image = Image.open(os.path.join('Renders', 'Character_Renders', char2_file + '.png'))
+            # Check player database for character
+            for p2_char in player2_chars:
+                if char2 in p2_char:
+                    char2_file = p2_char
+                    break
+            # open character renders
+            c2_image = Image.open(os.path.join('Character_Renders', char2_file + '.png'))
             c2_renders.append(c2_image)
         # # Background:
         # Create images with the characters and add them to the Match.match_Images list
@@ -541,13 +559,23 @@ def createRoundImages(match_list, background, foreground):
     return match_list
 
 
-def saveImages(match_list, folder_location):
+def saveImages(match_list, folder_location, event_bool=False):
     '''
-
-    :param image_list:
+    Saves images to folder location. If event name is true, then create a folder with the event name
+    :param match_list:
     :param folder_location:
     :return:
     '''
+    # Check if event is being used as folder name
+    if event_bool is True:
+        event_name = match_list[0].e
+        folder_location = os.path.join(folder_location, event_name)
+    # Create folder if it does not exist
+    if not os.path.exists(folder_location):
+        os.makedirs(folder_location)
+    # Save images with the following style #.## {match_name}
+    #  Matches are ordered, with # as that number
+    #  The second number ## is to distinguish different thumbnails with characters swapped around
     count_1 = 1
     for a_match in match_list:
         count_2 = 1
@@ -561,8 +589,8 @@ def saveImages(match_list, folder_location):
 
 if __name__ == "__main__":
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines('\\Users\\JetStream\\Documents\\Smash Ultimate\\Vod Names\\Quarantainment 38 names.txt')
-    #match_lines = readMatchLines('\\Users\\JetStream\\Documents\\Smash Ultimate\\Vod Names\\Students x Treehouse 5 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 38 names.txt')
+    #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 5 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
@@ -576,7 +604,7 @@ if __name__ == "__main__":
     # 3. Have the script read in the character and add them to the graphic
     match_list = createRoundImages(match_list, back_image, front_image)
     # 4. Save the images
-    saveImages(match_list, '\\Users\\JetStream\\Pictures\\Youtube\\Youtube_Thumbnails\\New folder')
+    saveImages(match_list, 'Youtube_Thumbnails', event_bool=True)
 
     print("Done")
 
