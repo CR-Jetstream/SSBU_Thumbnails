@@ -39,8 +39,39 @@ _player_database = {
     # Player : [character (alt), ...]
     'Nalga': ['Donkey Kong (6)'],
     'Krade': ['Sonic (5)', 'Cloud (2)'],
-    'Cpt Jiggly': ['Yoshi (6)']
-
+    'Cpt Jiggly': ['Yoshi (6)'],
+    'Zenteca': ['Zelda (7)'],
+    'Zammo': ['Diddy Kong (7)', 'Ness (8)'],
+    'Enanito': ['Isabelle (6)'],
+    'Jet': ['Dr. Mario (7)'],
+    'Yoy': ['Marth (5)'],
+    'Travisty': ['Samus (5)', 'Palutena (4)'],
+    'Bro-Shoe': ['King K. Rool (3)'],
+    'Lizahbe': ['Ike (1)'],
+    'RobotRed': ['Pikachu (7)'],
+    'New Gen': ['Duck Hunt (8)', 'Pikachu (2)'],
+    'Bloomy': ['Pokemon Trainer (1)'],
+    'TrueDingus': ['Bayonetta (2)'],
+    'KAKAKA': ['Snake (3)'],
+    'Ferun': ['Terry (7)'],
+    'Sihq': ['Fox (1)'],
+    'WOA': ['Kirby (8)'],
+    'Dannyboi': ['Ness (1)', 'Joker (1)'],
+    'Frank Alpha': ['Fox (4)'],
+    'Fafnir': ['Kirby (1)'],
+    'Telestrio': ['Pokemon Trainer (8)', 'Steve (8)'],
+    'Silver Jinx': ['Toon Link (7)'],
+    'DavidF08': ['Min Min (5)'],
+    'Fermata': ['Robin (6)'],
+    'Pflor64': ['Mii Gunner (1)'],
+    'Mike2936': ['Toon Link (5)'],
+    'Jrsmash': ['Palutena (1)'],
+    'Ang': ['Toon Link (3)'],
+    'JaZaR': ['Lucas (4)', 'Mewtwo (1)', 'Pokemon Trainer (5)', 'Hero (7)'],
+    'Laloba': ['Bayonetta (1)', 'Samus (1)', 'ROB (2)'],
+    'Ividal': ['Yoshi (8)'],
+    ' ': [''],
+    '': ['']
 }
 
 
@@ -447,6 +478,7 @@ def createRoundImages(match_list, background, foreground):
         c1_renders = []
         # Check player database to character list
         player1 = a_match.p1
+        player1 = player1.removesuffix(' [L]')
         player1_chars = []
         if player1 in _player_database.keys():
             player1_chars = _player_database[player1]
@@ -468,6 +500,7 @@ def createRoundImages(match_list, background, foreground):
         c2_renders = []
         # Check player database to character list
         player2 = a_match.p2
+        player2 = player2.removesuffix(' [L]')
         player2_chars = []
         if player2 in _player_database.keys():
             player2_chars = _player_database[player2]
@@ -589,8 +622,8 @@ def saveImages(match_list, folder_location, event_bool=False):
 
 if __name__ == "__main__":
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 38 names.txt')
-    #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 5 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 39 names.txt')
+    #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 6 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
@@ -604,7 +637,8 @@ if __name__ == "__main__":
     # 3. Have the script read in the character and add them to the graphic
     match_list = createRoundImages(match_list, back_image, front_image)
     # 4. Save the images
-    saveImages(match_list, 'Youtube_Thumbnails', event_bool=True)
+    save_location = os.path.join('..', 'Youtube_Thumbnails')
+    saveImages(match_list, save_location, event_bool=True)
 
     print("Done")
 
