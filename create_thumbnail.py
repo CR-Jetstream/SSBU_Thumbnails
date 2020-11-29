@@ -16,63 +16,26 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 
 '''Global Variables used in script'''
-_character_mapping = {
-    # Character : Image
-    'Banjo': 'Banjo and Kazooie',
-    'Cpt Falcon': 'Captain Falcon',
-    'Diddy': 'Diddy Kong',
-    'Game&Watch': 'Mr. Game and Watch',
-    'Game & Watch': 'Mr. Game and Watch',
-    'Ganon': 'Ganondorf',
-    'K. Rool': 'King K. Rool',
-    'King K Rool': 'King K. Rool',
-    'King DDD': 'King DeDeDe',
-    'MegaMan': 'Mega Man',
-    'Mii SwordFighter': 'Mii Swordman',
-    'Pac Man': 'Pac-Man',
-    'PKM Trainer': 'Pokemon Trainer',
-    'ZSS': 'Zero Suit Samus'
+_character_database = {}
+#     # Character : Image
+#     'Banjo': 'Banjo and Kazooie',
+#     'Cpt Falcon': 'Captain Falcon',
+#     'Diddy': 'Diddy Kong',
+#     'Game&Watch': 'Mr. Game and Watch',
+#     'Game & Watch': 'Mr. Game and Watch',
+#     'Ganon': 'Ganondorf',
+#     'K. Rool': 'King K. Rool',
+#     'King K Rool': 'King K. Rool',
+#     'King DDD': 'King DeDeDe',
+#     'MegaMan': 'Mega Man',
+#     'Mii SwordFighter': 'Mii Swordman',
+#     'Pac Man': 'Pac-Man',
+#     'PKM Trainer': 'Pokemon Trainer',
+#     'ZSS': 'Zero Suit Samus'
+#
+# }
 
-}
-
-_player_database = {
-    # Player : [character (alt), ...]
-    'Nalga': ['Donkey Kong (6)'],
-    'Krade': ['Sonic (5)', 'Cloud (2)'],
-    'Cpt Jiggly': ['Yoshi (6)'],
-    'Zenteca': ['Zelda (7)'],
-    'Zammo': ['Diddy Kong (7)', 'Ness (8)'],
-    'Enanito': ['Isabelle (6)'],
-    'Jet': ['Dr. Mario (7)'],
-    'Yoy': ['Marth (5)'],
-    'Travisty': ['Samus (5)', 'Palutena (4)'],
-    'Bro-Shoe': ['King K. Rool (3)'],
-    'Lizahbe': ['Ike (1)'],
-    'RobotRed': ['Pikachu (7)'],
-    'New Gen': ['Duck Hunt (8)', 'Pikachu (2)'],
-    'Bloomy': ['Pokemon Trainer (1)'],
-    'TrueDingus': ['Bayonetta (2)'],
-    'KAKAKA': ['Snake (3)'],
-    'Ferun': ['Terry (7)'],
-    'Sihq': ['Fox (1)'],
-    'WOA': ['Kirby (8)'],
-    'Dannyboi': ['Ness (1)', 'Joker (1)'],
-    'Frank Alpha': ['Fox (4)'],
-    'Fafnir': ['Kirby (1)'],
-    'Telestrio': ['Pokemon Trainer (8)', 'Steve (8)'],
-    'Silver Jinx': ['Toon Link (7)'],
-    'DavidF08': ['Min Min (5)'],
-    'Fermata': ['Robin (6)'],
-    'Pflor64': ['Mii Gunner (1)'],
-    'Mike2936': ['Toon Link (5)'],
-    'Jrsmash': ['Palutena (1)'],
-    'Ang': ['Toon Link (3)'],
-    'JaZaR': ['Lucas (4)', 'Mewtwo (1)', 'Pokemon Trainer (5)', 'Hero (7)'],
-    'Laloba': ['Bayonetta (1)', 'Samus (1)', 'ROB (2)'],
-    'Ividal': ['Yoshi (8)'],
-    ' ': [''],
-    '': ['']
-}
+_player_database = {}
 
 
 class Match:
@@ -134,6 +97,97 @@ def create_rotated_text(angle, text, font):
     return rotated_mask
 
 
+def readCharDatabase(filename, deliminator=','):
+    '''
+    Open and read player database from a file.
+    By default, it is expected to be a CSV format
+    Line: Player,character,alt,character,alt,character,alt,character,alt, ...
+    Populate the Player Database dictionary for use
+    :param filename:
+    :param deliminator:
+    :return:
+    '''
+    # Open File
+    file = io.open(filename, "r", encoding='utf8')
+    file_text = file.readlines()
+    # Filter through lines that matter:
+    global _character_database
+    for line in file_text:
+        # check for format
+        if line.startswith('#'):
+            continue  # comment line
+        # {Char from names},{Char in filename}
+        line = line.split(deliminator)
+        if len(line) < 2:
+            continue
+        # Confirm there are two columns
+        if len(line) > 2:
+            print("Warning: Bad format in player database", line)
+            continue
+        # grab character name
+        char_key = line.pop(0).strip()
+        char_value = line.pop(0).strip()
+        # Add to character database dictionary
+        _character_database[char_key] = char_value
+    # end loop
+    return
+
+
+def readPlayerDatabase(filename, deliminator=','):
+    '''
+    Open and read player database from a file.
+    By default, it is expected to be a CSV format
+    Line: Player,character,alt,character,alt,character,alt,character,alt, ...
+    Populate the Player Database dictionary for use
+    :param filename:
+    :param deliminator:
+    :return:
+    '''
+    # Open File
+    file = io.open(filename, "r", encoding='utf8')
+    file_text = file.readlines()
+    # Filter through lines that matter:
+    global _player_database
+    for line in file_text:
+        # check for format
+        if line.startswith('#'):
+            continue  # comment line
+        # {player},{Char_1},{Alt_1},{Char_2},{Alt_2},{Char_3},{Alt_3}, ...
+        line = line.split(deliminator)
+        # check if at least one char alt combination exists
+        if len(line) < 3:
+            continue
+        # check for odd count (requesting char & alt combinations)
+        if len(line) % 2 == 0:
+            print("Warning: Bad format in player database", line)
+            continue
+        # grab player name
+        player_name = line.pop(0)
+        # loop through character & alts
+        char_alt_list = []
+        for i in range(0, len(line), 2):
+            j = i+1
+            a_char = line[i].strip()
+            a_alt = line[j].strip()
+            # skip if blank
+            if a_char == '' and a_alt == '':
+                continue
+            # check character mapping
+            if a_char in _character_database.keys():
+                a_char = _character_database[a_char]
+            # format "{character} ({alt})"
+            a_char_alt = '{char} ({alt})'.format(char=a_char, alt=a_alt)
+            # Confirm character image exists
+            if not os.path.exists(os.path.join('Character_Renders', a_char_alt + '.png')):
+                raise NameError("Character and alt not found in player database: " + a_char_alt)
+            # add char alt combo to list
+            char_alt_list.append(a_char_alt)
+        # Add to player database dictionary
+        _player_database[player_name] = char_alt_list
+    # end loop
+    return
+
+
 def readMatchLines(filename):
     '''
     Open file and read in line by line
@@ -142,10 +196,10 @@ def readMatchLines(filename):
     '''
     # Open File
     file = io.open(filename, "r", encoding='utf8')
-    fileText = file.readlines()
+    file_text = file.readlines()
     # Filter through lines that matter:
     match_lines = []
-    for line in fileText:
+    for line in file_text:
         # check for format
         # {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
         if ' - ' in line and '(' in line and ')' in line and 'Vs.' in line and '- SSBU' in line:
@@ -200,12 +254,12 @@ def createMatches(match_lines):
         # Loop through character lists and check mapping
         for count in range(0, len(player1_chars)):
             a_char = player1_chars[count]
-            if a_char in _character_mapping.keys():
-                player1_chars[count] = _character_mapping[a_char]
+            if a_char in _character_database.keys():
+                player1_chars[count] = _character_database[a_char]
         for count in range(0, len(player2_chars)):
             a_char = player2_chars[count]
-            if a_char in _character_mapping.keys():
-                player2_chars[count] = _character_mapping[a_char]
+            if a_char in _character_database.keys():
+                player2_chars[count] = _character_database[a_char]
         # Check that an image exists for their character(s) here
         for a_list in [player1_chars, player2_chars]:
             for a_char in a_list:
@@ -621,9 +675,12 @@ def saveImages(match_list, folder_location, event_bool=False):
 
 
 if __name__ == "__main__":
+    # 0. Read Player Database and Character Database
+    readCharDatabase('Character_Database.csv')
+    readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 39 names.txt')
-    #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 6 names.txt')
+    #match_lines = readMatchLines('..\\Vod Names\\Quarantainment 39 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 7 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
@@ -631,8 +688,8 @@ if __name__ == "__main__":
     #back_image = Image.open('Overlays\\Background_U32.png')
     # back_image.show()
     #front_image = Image.open('Overlays\\Foreground_U32.png')
-    front_image = Image.open('Overlays\\Foreground_Q.png')
-    #front_image = Image.open('Overlays\\Foreground_SxT.png')
+    #front_image = Image.open('Overlays\\Foreground_Q.png')
+    front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
     match_list = createRoundImages(match_list, back_image, front_image)
