@@ -391,6 +391,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     :return:
     """
     # Create Canvas
+    # TODO: Create canvas that is larger such that characters do not get cut off
     canvas = Image.new('RGBA', win_size, (255, 0, 0, 0))
     canvas_list = []
     # 1. Resize all the images to fit in this canvas
@@ -679,8 +680,8 @@ if __name__ == "__main__":
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    #match_lines = readMatchLines('..\\Vod Names\\Quarantainment 39 names.txt')
-    match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 7 names.txt')
+    #match_lines = readMatchLines('..\\Vod Names\\Quarantainment 40 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
