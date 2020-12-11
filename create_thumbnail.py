@@ -551,6 +551,9 @@ def createRoundImages(match_list, background, foreground):
                     break
             # open character renders
             c1_image = Image.open(os.path.join('Character_Renders', char1_file + '.png'))
+            # check if not rgba image
+            if c1_image.mode != 'RGBA':
+                c1_image = c1_image.convert('RGBA')
             c1_renders.append(c1_image)
         c2_renders = []
         # Check player database to character list
@@ -573,6 +576,9 @@ def createRoundImages(match_list, background, foreground):
                     break
             # open character renders
             c2_image = Image.open(os.path.join('Character_Renders', char2_file + '.png'))
+            # check if not rgba image
+            if c2_image.mode != 'RGBA':
+                c2_image = c1_image.convert('RGBA')
             c2_renders.append(c2_image)
         # # Background:
         # Create images with the characters and add them to the Match.match_Images list
@@ -680,8 +686,8 @@ if __name__ == "__main__":
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    #match_lines = readMatchLines('..\\Vod Names\\Quarantainment 40 names.txt')
-    match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 41 names.txt')
+    #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
@@ -689,8 +695,8 @@ if __name__ == "__main__":
     #back_image = Image.open('Overlays\\Background_U32.png')
     # back_image.show()
     #front_image = Image.open('Overlays\\Foreground_U32.png')
-    #front_image = Image.open('Overlays\\Foreground_Q.png')
-    front_image = Image.open('Overlays\\Foreground_SxT.png')
+    front_image = Image.open('Overlays\\Foreground_Q.png')
+    #front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
     match_list = createRoundImages(match_list, back_image, front_image)
