@@ -17,23 +17,6 @@ import math
 
 '''Global Variables used in script'''
 _character_database = {}
-#     # Character : Image
-#     'Banjo': 'Banjo and Kazooie',
-#     'Cpt Falcon': 'Captain Falcon',
-#     'Diddy': 'Diddy Kong',
-#     'Game&Watch': 'Mr. Game and Watch',
-#     'Game & Watch': 'Mr. Game and Watch',
-#     'Ganon': 'Ganondorf',
-#     'K. Rool': 'King K. Rool',
-#     'King K Rool': 'King K. Rool',
-#     'King DDD': 'King DeDeDe',
-#     'MegaMan': 'Mega Man',
-#     'Mii SwordFighter': 'Mii Swordman',
-#     'Pac Man': 'Pac-Man',
-#     'PKM Trainer': 'Pokemon Trainer',
-#     'ZSS': 'Zero Suit Samus'
-#
-# }
 
 _player_database = {}
 
@@ -686,7 +669,7 @@ if __name__ == "__main__":
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 41 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 42 names.txt')
     #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
