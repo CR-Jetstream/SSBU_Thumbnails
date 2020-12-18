@@ -35,6 +35,7 @@ class Match:
 
 def common_start(sa, sb):
     """ returns the longest common substring from the beginning of sa and sb """
+
     def _iter():
         for a, b in zip(sa, sb):
             if a == b:
@@ -58,7 +59,7 @@ def create_rotated_text(angle, text, font):
     _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]")  # want the tallest possible word
 
     # build a transparency mask large enough to hold the text
-    max_dim = 2*max(x_text, y_text)
+    max_dim = 2 * max(x_text, y_text)
 
     # build a transparency mask large enough to hold the text
     mask_size = (max_dim, max_dim)
@@ -66,14 +67,14 @@ def create_rotated_text(angle, text, font):
 
     # add text to mask at center of box
     draw = ImageDraw.Draw(mask)
-    draw.text((max_dim/2 - x_text/2, max_dim/2 - y_text/2), text, 255, font=font)
+    draw.text((max_dim / 2 - x_text / 2, max_dim / 2 - y_text / 2), text, 255, font=font)
 
     if angle % 90 == 0:
         # rotate by multiple of 90 deg is easier
         rotated_mask = mask.rotate(angle)
     else:
         # rotate an an enlarged mask to minimize jaggies
-        bigger_mask = mask.resize((max_dim*8, max_dim*8), resample=Image.BICUBIC)
+        bigger_mask = mask.resize((max_dim * 8, max_dim * 8), resample=Image.BICUBIC)
         rotated_mask = bigger_mask.rotate(angle).resize(mask_size, resample=Image.LANCZOS)
 
     # return text transparency mask
@@ -149,7 +150,7 @@ def readPlayerDatabase(filename, deliminator=','):
         # loop through character & alts
         char_alt_list = []
         for i in range(0, len(line), 2):
-            j = i+1
+            j = i + 1
             a_char = line[i].strip()
             a_alt = line[j].strip()
             # skip if blank
@@ -234,74 +235,59 @@ def createMatches(match_lines):
         player2_chars = player2_info[1]
         player2_chars = player2_chars.split(')')[0]  # trim off ')'
         player2_chars = [x.strip() for x in player2_chars.split(',')]  # create a list for characters (strip whitespace)
-        # Loop through character lists and check mapping
-        for count in range(0, len(player1_chars)):
-            a_char = player1_chars[count]
-            if a_char in _character_database.keys():
-                player1_chars[count] = _character_database[a_char]
-        for count in range(0, len(player2_chars)):
-            a_char = player2_chars[count]
-            if a_char in _character_database.keys():
-                player2_chars[count] = _character_database[a_char]
-        # Check that an image exists for their character(s) here
+        # Loop through character lists and grab character render
+        #  Add them to the new lists
+        player1_char_renders = []
+        player2_char_renders = []
+        p1_flag = True  # used in loop
         for a_list in [player1_chars, player2_chars]:
             for a_char in a_list:
-                if not os.path.exists(os.path.join('Character_Renders', a_char + ' (1).png')):
-                    raise NameError("Character not found in " + a_round+": " + a_char)
+                # Character lookup in mapping
+                if a_char in _character_database.keys():
+                    a_char = _character_database[a_char]
+                # Presume Character alt 1
+                char_file = a_char + ' (1)'
+                # Lookup character in player database for alt costume (if it exists)
+                if p1_flag:
+                    player_name = player1_name.removesuffix(' [L]')  # want just name
+                else:
+                    player_name = player2_name.removesuffix(' [L]')
+                # Player not found case
+                if player_name not in _player_database.keys():
+                    print("-- Note: Player", player_name, "not found in Player Database --")
+                else:  # Player found
+                    player_chars_lookup = _player_database[player_name]
+                    char_found = False
+                    for p_char in player_chars_lookup:
+                        if a_char in p_char:
+                            char_file = p_char
+                            char_found = True
+                            break
+                    # Char not found case
+                    if not char_found:
+                        print("-- Note: Character", a_char, "not found for Player", player_name, "in Player Database --")
+                # Check if char file exists
+                if not os.path.exists(os.path.join('Character_Renders', char_file + '.png')):
+                    raise NameError("Character not found in " + a_round + ": " + char_file)
+                # Open character render
+                char_image = Image.open(os.path.join('Character_Renders', char_file + '.png'))
+                # Check if not rgba image
+                if char_image.mode != 'RGBA':
+                    char_image = char_image.convert('RGBA')
+                # Add to renders
+                if p1_flag:
+                    player1_char_renders.append(char_image)
+                else:
+                    player2_char_renders.append(char_image)
+            # end of loop
+            p1_flag = False  # flip boolean
+        # end of loop
+
         # Have all the information, create a match
-        a_match = Match(a_title, event, a_round, player1_name, player1_chars, player2_name, player2_chars)
+        a_match = Match(a_title, event, a_round, player1_name, player1_char_renders, player2_name, player2_char_renders)
         match_list.append(a_match)
     # end of loop
     return match_list
-
-
-def calculateOffset(input_image, background_image, right_bool=False):
-    '''
-    Calculate the offset and resize information for the input image based off background dimensions
-    Desire is to have the image fit nicely in the center of the left or right half of the background
-    :param input_image:
-    :param background_image:
-    :return:
-    '''
-    back_x, back_y = background_image.size
-    input_x, input_y = input_image.size
-    # Desire is to have the placement 100 pixels top/bottom boarder (1/7 above/below), and centered on the half
-    # x_centerline will be 22% (want that little extra for the middle)
-    x_centerline = back_x*0.22
-    y_centerline = back_y/2
-    x_max_height = back_x/2
-    y_max_height = back_y*5/7
-    # the window is x_max by y_max. Interested in the limiting dimension
-    xy_ratio = x_max_height/y_max_height
-    # variables needed for return statement
-    x_offset = 0
-    y_offset = 0
-    x_resize = 0
-    y_resize = 0
-    # Resize the image based off which dimension is outside the window
-    if input_y * xy_ratio > input_x:
-        # Image is taller than wide, will center based off x centerline
-        # scale image to y_max_height and keep aspect ratio
-        ratio = y_max_height/input_y
-        y_resize = y_max_height # = ratio*input_y
-        x_resize = ratio*input_x
-        y_offset = y_centerline - (y_resize/2)
-        x_offset = x_centerline - (x_resize/2)
-    else:
-        # Image is wider than tall, will center based off y centerline
-        ratio = x_max_height/input_x
-        x_resize = x_max_height # = ratio*input_x
-        y_resize = ratio*input_y
-        x_offset = x_centerline - (x_resize/2)
-        y_offset = y_centerline - (y_resize/2)
-    # endif
-    if right_bool:
-        # flip the offset x coordinate to the other side of the image
-        x_offset = back_x - x_centerline - (x_resize/2)
-    # Return
-    offset = (int(x_offset), int(y_offset))
-    resize = (int(x_resize), int(y_resize))
-    return offset, resize
 
 
 def calculateCenter(xy_image):
@@ -312,7 +298,7 @@ def calculateCenter(xy_image):
     :return:
     """
     x_image, y_image = xy_image
-    return int(x_image/2), int(y_image/2)
+    return int(x_image / 2), int(y_image / 2)
 
 
 def calculateOffsetFromCenter(xy_center, xy_image):
@@ -380,13 +366,13 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # 1. Resize all the images to fit in this canvas
     resized_char = []
     x_max_height, y_max_height = win_size
-    xy_ratio = x_max_height/y_max_height
+    xy_ratio = x_max_height / y_max_height
     for a_char in char_list:
         x_char, y_char = a_char.size
         # Resize the image such that it fits in the window while maintaining its aspect ratio
         if y_char * xy_ratio > x_char:
             # character image is taller than it is wide
-            scaler_ratio = y_max_height/y_char
+            scaler_ratio = y_max_height / y_char
             y_resize = y_max_height  # = ratio*input_y
             x_resize = scaler_ratio * x_char
         else:
@@ -445,7 +431,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                 a_canvas = canvas.copy()
                 # grab sizes of appropriate characters
                 a_char = resized_list[a_ind][0]  # This is the first character on the canvas
-                b_char = resized_list[b_ind][1]             # second character on the canvas
+                b_char = resized_list[b_ind][1]  # second character on the canvas
                 # grab offsets
                 a_char_offset = calculateOffsetFromCenter(a_center, a_char.size)
                 b_char_offset = calculateOffsetFromCenter(b_center, b_char.size)
@@ -473,8 +459,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     a_canvas = canvas.copy()
                     # grab sizes of appropriate characters
                     a_char = resized_list[a_ind][0]  # This is the first character on the canvas
-                    b_char = resized_list[b_ind][1]             # second character on the canvas
-                    c_char = resized_list[c_ind][2]              # third character on the canvas
+                    b_char = resized_list[b_ind][1]  # second character on the canvas
+                    c_char = resized_list[c_ind][2]  # third character on the canvas
                     # grab offsets
                     a_char_offset = calculateOffsetFromCenter(a_center, a_char.size)
                     b_char_offset = calculateOffsetFromCenter(b_center, b_char.size)
@@ -491,7 +477,6 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     # Canvas5 [Char3, Char1, Char2]
                     # Canvas6 [Char3, Char2, Char1]
         # end of loop
-
 
     # Return canvas list
     return canvas_list
@@ -511,69 +496,20 @@ def createRoundImages(match_list, background, foreground):
         # # # Create background and foreground images and combine
         # # Characters:
         # Grab all the character images to prepare them to add to the background
-        # TODO: rework this to make all characters present on the window. requires more settings
-        # TODO: Insert case for Ike, Bayo, and others with different alts
-        c1_renders = []
-        # Check player database to character list
-        player1 = a_match.p1
-        player1 = player1.removesuffix(' [L]')
-        player1_chars = []
-        if player1 in _player_database.keys():
-            player1_chars = _player_database[player1]
-        # Open character images for the player
-        for char1 in a_match.c1:
-            # Override case
-            if char1 == 'Blank':
-                char1_file = char1 + ' (2)'
-            else:
-                char1_file = char1 + ' (1)'
-            # Check player database for character
-            for p1_char in player1_chars:
-                if char1 in p1_char:
-                    char1_file = p1_char
-                    break
-            # open character renders
-            c1_image = Image.open(os.path.join('Character_Renders', char1_file + '.png'))
-            # check if not rgba image
-            if c1_image.mode != 'RGBA':
-                c1_image = c1_image.convert('RGBA')
-            c1_renders.append(c1_image)
-        c2_renders = []
-        # Check player database to character list
-        player2 = a_match.p2
-        player2 = player2.removesuffix(' [L]')
-        player2_chars = []
-        if player2 in _player_database.keys():
-            player2_chars = _player_database[player2]
-        # Open character images for the player
-        for char2 in a_match.c2:
-            # Override case
-            if char2 == 'Blank':
-                char2_file = char2 + ' (2)'
-            else:
-                char2_file = char2 + ' (1)'
-            # Check player database for character
-            for p2_char in player2_chars:
-                if char2 in p2_char:
-                    char2_file = p2_char
-                    break
-            # open character renders
-            c2_image = Image.open(os.path.join('Character_Renders', char2_file + '.png'))
-            # check if not rgba image
-            if c2_image.mode != 'RGBA':
-                c2_image = c1_image.convert('RGBA')
-            c2_renders.append(c2_image)
+        c1_renders = a_match.c1
+        c2_renders = a_match.c2
+
         # # Background:
         # Create images with the characters and add them to the Match.match_Images list
         ## TODO: preset char window and offset locations as global variables
         # Call Function to create the combined character images
-        char_window = (int(background.size[0]/2), int(background.size[1]*0.74))
+        char_window = (int(background.size[0] / 2), int(background.size[1] * 0.74))
         # Create Left character space
         c1_image_list = createCharacterWindow(c1_renders, char_window)
-        offset1 = (0, int(background.size[1]*0.14))
+        offset1 = (0, int(background.size[1] * 0.14))
         # Create Right character space
         c2_image_list = createCharacterWindow(c2_renders, char_window, right_bool=True)
-        offset2 = (int(background.size[0]/2), int(background.size[1]*0.14))
+        offset2 = (int(background.size[0] / 2), int(background.size[1] * 0.14))
         # Add characters to background and insert into Match.Images
         for c1_image in c1_image_list:
             for c2_image in c2_image_list:
@@ -590,35 +526,36 @@ def createRoundImages(match_list, background, foreground):
         # Apply this foreground to all the images in Match.Images list
         match_fore = foreground.copy()
         # Apply the Text information to the desired locations on the foreground
-        font = ImageFont.truetype('C:\\Users\\Jetstream\\AppData\\Local\\Microsoft\\Windows\\Fonts\\tt2004m.ttf', size=45)
+        font = ImageFont.truetype('C:\\Users\\Jetstream\\AppData\\Local\\Microsoft\\Windows\\Fonts\\tt2004m.ttf',
+                                  size=45)
         # TODO: Calculate the text offsets and center them
-        #calculateTextOffset(a_match, back_image)
+        # calculateTextOffset(a_match, back_image)
         angle = 2
         ## Temporary
         # Player 1
-        t_offset = (640-320, 55)
+        t_offset = (640 - 320, 55)
         t_mask = create_rotated_text(angle, a_match.p1, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Player 2
-        t_offset = (640+320, 55)
+        t_offset = (640 + 320, 55)
         t_mask = create_rotated_text(angle, a_match.p2, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Event
-        t_offset = (640-320, 720-55)
+        t_offset = (640 - 320, 720 - 55)
         t_mask = create_rotated_text(angle, a_match.e, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
-        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset,  t_mask.size), mask=t_mask)
+        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Round
-        t_offset = (640+320, 720-55)
+        t_offset = (640 + 320, 720 - 55)
         t_mask = create_rotated_text(angle, a_match.r, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
-        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset,  t_mask.size), mask=t_mask)
+        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         ##
         # # Combine
         # Loop through Match.Images and apply the foreground
@@ -629,7 +566,7 @@ def createRoundImages(match_list, background, foreground):
             if show_one:
                 an_image.show()
                 show_one = False
-                #return match_list
+                # return match_list
         print("Image:", a_match.t)
         # end of inner loop
     # end loop
@@ -670,16 +607,16 @@ if __name__ == "__main__":
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
     match_lines = readMatchLines('..\\Vod Names\\Quarantainment 42 names.txt')
-    #match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
+    # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
     back_image = Image.open('Overlays\\Background.png')
-    #back_image = Image.open('Overlays\\Background_U32.png')
+    # back_image = Image.open('Overlays\\Background_U32.png')
     # back_image.show()
-    #front_image = Image.open('Overlays\\Foreground_U32.png')
+    # front_image = Image.open('Overlays\\Foreground_U32.png')
     front_image = Image.open('Overlays\\Foreground_Q.png')
-    #front_image = Image.open('Overlays\\Foreground_SxT.png')
+    # front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
     match_list = createRoundImages(match_list, back_image, front_image)
@@ -688,12 +625,3 @@ if __name__ == "__main__":
     saveImages(match_list, save_location, event_bool=True)
 
     print("Done")
-
-
-
-
-
-
-
-
-
