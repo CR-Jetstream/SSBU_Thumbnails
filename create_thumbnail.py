@@ -17,8 +17,11 @@ import math
 
 '''Global Variables used in script'''
 _character_database = {}
-
 _player_database = {}
+_char_window = (0.5, 1)  # canvas for characters
+_char_border = (0.0, 0.26)  # border for characters
+_char_offset1 = (0, 0.01)  # offset for character window placement on canvas
+_char_offset2 = (0.5, 0.01)
 
 
 class Match:
@@ -347,25 +350,33 @@ def resizeCraracterList(char_list, num_resizes):
     return return_list
 
 
-def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False):
+def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False, border_bool=True):
     """
     Function to create images of the characters in a single image.
     Returns a list of images with the character models.
     Right bool is to identify this is a Player 2 image and not a Player 1 image.
     Single bool is to decide if there is only one character in the image.
+    Border bool is used when there wishes to be padding around the character placement.
+        This will pad with respect to win_size
     :param char_list:
     :param win_size:
     :param right_bool:
     :param single_bool:
+    :param border_bool:
     :return:
     """
     # Create Canvas
     # TODO: Create canvas that is larger such that characters do not get cut off
     canvas = Image.new('RGBA', win_size, (255, 0, 0, 0))
     canvas_list = []
-    # 1. Resize all the images to fit in this canvas
     resized_char = []
-    x_max_height, y_max_height = win_size
+    # 1. Resize all the images to fit in this canvas
+    if not border_bool:
+        x_max_height, y_max_height = win_size
+    else:
+        # apply border
+        x_max_height = int(win_size[0] * (1 - _char_border[0]))
+        y_max_height = int(win_size[1] * (1 - _char_border[1]))
     xy_ratio = x_max_height / y_max_height
     for a_char in char_list:
         x_char, y_char = a_char.size
@@ -397,14 +408,14 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         sign = -1
     # TODO: have offsets as global variables
     # This is the centerline of the characters
-    offset_shift = (sign * -int(win_size[0] * 0.04), 0)
+    offset_shift = (sign * -int(x_max_height * 0.04), 0)
     # This is the offsets for 2 characters
-    offset_shift_2_1 = (-int(win_size[0] * 0.20), +int(win_size[1] * 0.15))
-    offset_shift_2_2 = (+int(win_size[0] * 0.20), -int(win_size[1] * 0.15))
+    offset_shift_2_1 = (-int(x_max_height * 0.20), +int(y_max_height * 0.15))
+    offset_shift_2_2 = (+int(x_max_height * 0.20), -int(y_max_height * 0.15))
     # This is the shift for a third character
-    offset_shift_3_1 = (-int(win_size[0] * 0.15), +int(win_size[1] * 0.20))
-    offset_shift_3_2 = (+int(win_size[0] * 0.25), -int(win_size[1] * 0.05))
-    offset_shift_3_3 = (-int(win_size[0] * 0.20), -int(win_size[1] * 0.20))
+    offset_shift_3_1 = (-int(x_max_height * 0.15), +int(y_max_height * 0.20))
+    offset_shift_3_2 = (+int(x_max_height * 0.25), -int(y_max_height * 0.05))
+    offset_shift_3_3 = (-int(x_max_height * 0.20), -int(y_max_height * 0.20))
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
@@ -498,18 +509,18 @@ def createRoundImages(match_list, background, foreground):
         # Grab all the character images to prepare them to add to the background
         c1_renders = a_match.c1
         c2_renders = a_match.c2
-
         # # Background:
         # Create images with the characters and add them to the Match.match_Images list
         ## TODO: preset char window and offset locations as global variables
         # Call Function to create the combined character images
-        char_window = (int(background.size[0] / 2), int(background.size[1] * 0.74))
+        char_window = (int(background.size[0]*_char_window[0]), int(background.size[1]*_char_window[1]))
         # Create Left character space
         c1_image_list = createCharacterWindow(c1_renders, char_window)
-        offset1 = (0, int(background.size[1] * 0.14))
         # Create Right character space
         c2_image_list = createCharacterWindow(c2_renders, char_window, right_bool=True)
-        offset2 = (int(background.size[0] / 2), int(background.size[1] * 0.14))
+        # Grab offsets for placing the character windows
+        offset1 = (int(background.size[0]*_char_offset1[0]), int(background.size[1]*_char_offset1[1]))
+        offset2 = (int(background.size[0]*_char_offset2[0]), int(background.size[1]*_char_offset2[1]))
         # Add characters to background and insert into Match.Images
         for c1_image in c1_image_list:
             for c2_image in c2_image_list:
@@ -520,7 +531,6 @@ def createRoundImages(match_list, background, foreground):
                 match_back.paste(c2_image, offset2, mask=c2_image)
                 # Add this image to Match.Images
                 a_match.Images.append(match_back)
-
         # # Foreground
         # Take match information and populate the foreground
         # Apply this foreground to all the images in Match.Images list
@@ -606,7 +616,7 @@ if __name__ == "__main__":
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines('..\\Vod Names\\Quarantainment 42 names.txt')
+    match_lines = readMatchLines('..\\Vod Names\\Quarantainment test names.txt')
     # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
