@@ -57,7 +57,7 @@ _font_color3 = '#F5F5F5'  # (245, 245, 245)
 _font_color4 = '#F5F5F5'  # (245, 245, 245)
 # Useful flags
 _show_first_image = True  # Flag for showing one sample image when generating
-
+_one_char_flag = False  # Flag to determine if there is only one character on the overlay or multiple
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -233,8 +233,52 @@ def setGlobals(weekly, number):
     :param number:
     :return:
     """
+    if weekly == 'Quarantainment':
+        setGlobalsQuarantainment(number)
+    elif weekly == 'Students x Treehouse':
+        setGlobalsSxT(number)
+    elif weekly == 'Fro Friday':
+        setGlobalsFro(number)
 
 
+def setGlobalsQuarantainment(number):
+    """
+    Set necessary globals for Quarantainment event {number}
+    :param number:
+    :return:
+    """
+    # Event match file information location
+    global _event_info
+    _event_info = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
+
+
+
+def setGlobalsSxT(number):
+    """
+    Set necessary globals for Students x Treehouse event {number}
+    :param number:
+    :return:
+    """
+    # Event match file information location
+    global _event_info
+    _event_info = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
+    # Foreground overlay locations
+    global _foreground_file
+    _foreground_file = os.path.join('Overlays', 'Foreground_SxT.png')
+
+def setGlobalsFro(number):
+    """
+    Set all globals for Fro Friday event {number}
+    :param number:
+    :return:
+    """
+    # Background and Foreground overlay locations
+    global _background_file, _foreground_file
+    _background_file = os.path.join('Overlays', 'Background_Fro.png')
+    _foreground_file = os.path.join('Overlays', 'Foreground_Fro.png')
+    # Single character flag on overlay
+    global _one_char_flag
+    _one_char_flag = True
 
 def readMatchLines(filename):
     '''
@@ -569,8 +613,8 @@ def createRoundImages(match_list, background, foreground):
         c2_renders = a_match.c2
         # Call Function to create the combined character images - Left and Right space
         char_window = (int(background.size[0]*_char_window[0]), int(background.size[1]*_char_window[1]))
-        c1_image_list = createCharacterWindow(c1_renders, char_window)
-        c2_image_list = createCharacterWindow(c2_renders, char_window, right_bool=True)
+        c1_image_list = createCharacterWindow(c1_renders, char_window, single_bool=_one_char_flag)
+        c2_image_list = createCharacterWindow(c2_renders, char_window, right_bool=True, single_bool=_one_char_flag)
         # Grab offsets for placing the character windows
         offset1 = (int(background.size[0]*_char_offset1[0]), int(background.size[1]*_char_offset1[1]))
         offset2 = (int(background.size[0]*_char_offset2[0]), int(background.size[1]*_char_offset2[1]))
@@ -648,12 +692,17 @@ def saveImages(match_list, folder_location, event_bool=False):
 
 
 if __name__ == "__main__":
-    # 0. Read Player Database and Character Database
+    # 0. Setup information
+    # Event
+    setGlobals('Quarantainment', 'test')
+    #setGlobals('Students x Treehouse', '8')
+    #setGlobals('Fro Friday', 'test')
+    # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
     match_lines = readMatchLines(_event_info)
-    #match_lines = readMatchLines('..\\Vod Names\\Roth Tourney names.txt')
+    # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
@@ -662,7 +711,7 @@ if __name__ == "__main__":
     # back_image.show()
     # front_image = Image.open('Overlays\\Foreground_U32.png')
     front_image = Image.open(_foreground_file)
-    #front_image = Image.open('Overlays\\Foreground_Roth.png')
+    # front_image = Image.open('Overlays\\Foreground_Roth.png')
     # front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
