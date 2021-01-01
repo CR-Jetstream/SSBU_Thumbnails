@@ -16,12 +16,25 @@ from PIL import Image, ImageDraw, ImageFont
 import math
 
 '''Global Variables used in script'''
+# Dictionaries for lookups
 _character_database = {}
 _player_database = {}
+# Canvas variables for character window
 _char_window = (0.5, 1)  # canvas for characters
-_char_border = (0.0, 0.26)  # border for characters
-_char_offset1 = (0, 0.01)  # offset for character window placement on canvas
-_char_offset2 = (0.5, 0.01)
+_char_border = (0.00, 0.26)  # border for characters
+_char_offset1 = (0, 0.01)  # offset for left player window placement on canvas
+_char_offset2 = (0.5, 0.01)  # offset for right player window placement on canvas
+# Scaler Variables for multiple characters in window
+_resize_1 = 0.85  # resize for character for multiple renders on image
+_resize_2 = 0.75
+_resize_3 = 0.60
+# Center-point shift for canvas for characters
+_center_shift_1 = (-0.04, +0.00)  # Universal character shift
+_center_shift_2_1 = (-0.20, +0.15)  # Two character shift
+_center_shift_2_2 = (+0.20, -0.15)
+_center_shift_3_1 = (-0.15, +0.20)  # Three character shift
+_center_shift_3_2 = (+0.25, -0.05)
+_center_shift_3_3 = (-0.20, -0.20)
 
 
 class Match:
@@ -330,14 +343,11 @@ def resizeCraracterList(char_list, num_resizes):
     :return:
     """
     return_list = []
-    # TODO: these will become global variables
-    resize_1 = 0.85
-    resize_2 = 0.75
-    resize_3 = 0.60
     # Loop through the characters
     for a_char in char_list:
         return_list.append([])
-        for a_resize in [resize_1, resize_2, resize_3]:
+        # Resize are global variables that scale the renders
+        for a_resize in [_resize_1, _resize_2, _resize_3]:
             x_resize, y_resize = a_char.size
             x_resize = int(x_resize * a_resize)
             y_resize = int(y_resize * a_resize)
@@ -366,17 +376,18 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     :return:
     """
     # Create Canvas
-    # TODO: Create canvas that is larger such that characters do not get cut off
     canvas = Image.new('RGBA', win_size, (255, 0, 0, 0))
     canvas_list = []
     resized_char = []
     # 1. Resize all the images to fit in this canvas
+    # Check border bool to apply a border for canvas
     if not border_bool:
         x_max_height, y_max_height = win_size
     else:
         # apply border
         x_max_height = int(win_size[0] * (1 - _char_border[0]))
         y_max_height = int(win_size[1] * (1 - _char_border[1]))
+    # Identify ratio for scaling
     xy_ratio = x_max_height / y_max_height
     for a_char in char_list:
         x_char, y_char = a_char.size
@@ -406,22 +417,21 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     sign = 1
     if right_bool:
         sign = -1
-    # TODO: have offsets as global variables
-    # This is the centerline of the characters
-    offset_shift = (sign * -int(x_max_height * 0.04), 0)
-    # This is the offsets for 2 characters
-    offset_shift_2_1 = (-int(x_max_height * 0.20), +int(y_max_height * 0.15))
-    offset_shift_2_2 = (+int(x_max_height * 0.20), -int(y_max_height * 0.15))
-    # This is the shift for a third character
-    offset_shift_3_1 = (-int(x_max_height * 0.15), +int(y_max_height * 0.20))
-    offset_shift_3_2 = (+int(x_max_height * 0.25), -int(y_max_height * 0.05))
-    offset_shift_3_3 = (-int(x_max_height * 0.20), -int(y_max_height * 0.20))
+    # This is the center-point offset of the character render
+    offset_shift_1 = (sign * int(x_max_height * _center_shift_1[0]), int(0 * _center_shift_1[1]))
+    # This is the center-point offsets for 2 characters
+    offset_shift_2_1 = (int(x_max_height * _center_shift_2_1[0]), int(y_max_height * _center_shift_2_1[1]))
+    offset_shift_2_2 = (int(x_max_height * _center_shift_2_2[0]), int(y_max_height * _center_shift_2_2[1]))
+    # This is the center-point offset for 3 character
+    offset_shift_3_1 = (int(x_max_height * _center_shift_3_1[0]), int(y_max_height * _center_shift_3_1[1]))
+    offset_shift_3_2 = (int(x_max_height * _center_shift_3_2[0]), int(y_max_height * _center_shift_3_2[1]))
+    offset_shift_3_3 = (int(x_max_height * _center_shift_3_3[0]), int(y_max_height * _center_shift_3_3[1]))
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
         a_offset = calculateOffsetFromCenter(calculateCenter(win_size), resized_char[0].size)
         # shift from center by offset
-        a_offset = a_offset[0] + offset_shift[0], a_offset[1] + offset_shift[1]
+        a_offset = a_offset[0] + offset_shift_1[0], a_offset[1] + offset_shift_1[1]
         # apply characters to canvas, add to canvas list
         for a_char in resized_char:
             a_canvas = canvas.copy()
@@ -431,8 +441,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         # acquire resized characters from scaling for multiple characters
         resized_list = resizeCraracterList(resized_char, 2)
         # Calculate center for resized images
-        a_center = x_center + offset_shift[0] + offset_shift_2_1[0], y_center + offset_shift[1] + offset_shift_2_1[1]
-        b_center = x_center + offset_shift[0] + offset_shift_2_2[0], y_center + offset_shift[1] + offset_shift_2_2[1]
+        a_center = x_center + offset_shift_1[0] + offset_shift_2_1[0], y_center + offset_shift_1[1] + offset_shift_2_1[1]
+        b_center = x_center + offset_shift_1[0] + offset_shift_2_2[0], y_center + offset_shift_1[1] + offset_shift_2_2[1]
         # two character, two permutations on order of characters
         for a_ind in range(0, 2):
             for b_ind in range(0, 2):
@@ -457,9 +467,9 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         # acquire resized characters from scaling for multiple characters
         resized_list = resizeCraracterList(resized_char, 3)
         # Calculate center for resized images
-        a_center = x_center + offset_shift[0] + offset_shift_3_1[0], y_center + offset_shift[1] + offset_shift_3_1[1]
-        b_center = x_center + offset_shift[0] + offset_shift_3_2[0], y_center + offset_shift[1] + offset_shift_3_2[1]
-        c_center = x_center + offset_shift[0] + offset_shift_3_3[0], y_center + offset_shift[1] + offset_shift_3_3[1]
+        a_center = x_center + offset_shift_1[0] + offset_shift_3_1[0], y_center + offset_shift_1[1] + offset_shift_3_1[1]
+        b_center = x_center + offset_shift_1[0] + offset_shift_3_2[0], y_center + offset_shift_1[1] + offset_shift_3_2[1]
+        c_center = x_center + offset_shift_1[0] + offset_shift_3_3[0], y_center + offset_shift_1[1] + offset_shift_3_3[1]
         # two character, two permutations on order of characters
         for a_ind in range(0, 3):
             for b_ind in range(0, 3):
@@ -617,7 +627,7 @@ if __name__ == "__main__":
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
     match_lines = readMatchLines('..\\Vod Names\\Quarantainment test names.txt')
-    # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
+    #match_lines = readMatchLines('..\\Vod Names\\Roth Tourney names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
@@ -626,6 +636,7 @@ if __name__ == "__main__":
     # back_image.show()
     # front_image = Image.open('Overlays\\Foreground_U32.png')
     front_image = Image.open('Overlays\\Foreground_Q.png')
+    #front_image = Image.open('Overlays\\Foreground_Roth.png')
     # front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
