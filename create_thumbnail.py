@@ -41,6 +41,12 @@ _text_player2 = (0.75, 0.076)
 _text_event = (0.25, 0.924)
 _text_round = (0.75, 0.924)
 _text_angle = 2  # degree of rotation counter-clockwise
+# Font settings
+_font_location = os.path.join("Fonts", "tt2004m.ttf")
+_font_size = 45
+_font_color1 = '#F5F5F5'  # (245, 245, 245)
+_font_color2 = '#F5F5F5'  # (245, 245, 245)
+
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -55,8 +61,12 @@ class Match:
 
 
 def common_start(sa, sb):
-    """ returns the longest common substring from the beginning of sa and sb """
-
+    """
+    returns the longest common substring from the beginning of sa and sb
+    :param sa:
+    :param sb:
+    :return:
+    """
     def _iter():
         for a, b in zip(sa, sb):
             if a == b:
@@ -101,6 +111,16 @@ def create_rotated_text(angle, text, font):
     # return text transparency mask
     return rotated_mask
 
+
+def hex_to_rgb(hex_input):
+    """
+    converts a single hex input into RGB tuple
+    :param hex_input:
+    :return:
+    """
+    hex_input = hex_input.lstrip('#')
+    hlen = len(hex_input)
+    return tuple(int(hex_input[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
 
 def readCharDatabase(filename, deliminator=','):
     '''
@@ -551,31 +571,30 @@ def createRoundImages(match_list, background, foreground):
         # Apply this foreground to all the images in Match.Images list
         match_fore = foreground.copy()
         # Apply the Text information to the desired locations on the foreground
-        font = ImageFont.truetype('C:\\Users\\Jetstream\\AppData\\Local\\Microsoft\\Windows\\Fonts\\tt2004m.ttf',
-                                  size=45)
+        font = ImageFont.truetype(_font_location, size=_font_size)
         # Player 1
         t_offset = (int(foreground.size[0] * _text_player1[0]), int(foreground.size[1] * _text_player1[1]))
         t_mask = create_rotated_text(_text_angle, a_match.p1, font)
         # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
+        color_image = Image.new('RGBA', t_mask.size, color=_font_color1)
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Player 2
         t_offset = (int(foreground.size[0] * _text_player2[0]), int(foreground.size[1] * _text_player2[1]))
         t_mask = create_rotated_text(_text_angle, a_match.p2, font)
         # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
+        color_image = Image.new('RGBA', t_mask.size, color=_font_color2)
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Event
         t_offset = (int(foreground.size[0] * _text_event[0]), int(foreground.size[1] * _text_event[1]))
         t_mask = create_rotated_text(_text_angle, a_match.e, font)
         # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
+        color_image = Image.new('RGBA', t_mask.size, color=_font_color1)
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Round
         t_offset = (int(foreground.size[0] * _text_round[0]), int(foreground.size[1] * _text_round[1]))
         t_mask = create_rotated_text(_text_angle, a_match.r, font)
         # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
+        color_image = Image.new('RGBA', t_mask.size, color=_font_color2)
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         ##
         # # Combine
