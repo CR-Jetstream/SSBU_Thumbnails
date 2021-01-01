@@ -19,7 +19,7 @@ import math
 # Dictionaries for lookups
 _character_database = {}
 _player_database = {}
-# Canvas variables for character window
+# Canvas variables for character window with respect to whole canvas
 _char_window = (0.5, 1)  # canvas for characters
 _char_border = (0.00, 0.26)  # border for characters
 _char_offset1 = (0, 0.01)  # offset for left player window placement on canvas
@@ -46,6 +46,10 @@ _font_location = os.path.join("Fonts", "tt2004m.ttf")
 _font_size = 45
 _font_color1 = '#F5F5F5'  # (245, 245, 245)
 _font_color2 = '#F5F5F5'  # (245, 245, 245)
+_font_color3 = '#F5F5F5'  # (245, 245, 245)
+_font_color4 = '#F5F5F5'  # (245, 245, 245)
+# Useful flags
+_show_first_image = True  # Flag for showing one sample image when generating
 
 
 class Match:
@@ -537,26 +541,21 @@ def createRoundImages(match_list, background, foreground):
     :return:
     '''
     # Loop through the matches and add the images
-    show_one = True
+    show_first = _show_first_image
     for a_match in match_list:
         # # # Create background and foreground images and combine
-        # # Characters:
+        # # Background:
         # Grab all the character images to prepare them to add to the background
         c1_renders = a_match.c1
         c2_renders = a_match.c2
-        # # Background:
-        # Create images with the characters and add them to the Match.match_Images list
-        ## TODO: preset char window and offset locations as global variables
-        # Call Function to create the combined character images
+        # Call Function to create the combined character images - Left and Right space
         char_window = (int(background.size[0]*_char_window[0]), int(background.size[1]*_char_window[1]))
-        # Create Left character space
         c1_image_list = createCharacterWindow(c1_renders, char_window)
-        # Create Right character space
         c2_image_list = createCharacterWindow(c2_renders, char_window, right_bool=True)
         # Grab offsets for placing the character windows
         offset1 = (int(background.size[0]*_char_offset1[0]), int(background.size[1]*_char_offset1[1]))
         offset2 = (int(background.size[0]*_char_offset2[0]), int(background.size[1]*_char_offset2[1]))
-        # Add characters to background and insert into Match.Images
+        # Add characters to background, create every permutation and insert into Match.Images
         for c1_image in c1_image_list:
             for c2_image in c2_image_list:
                 # Create a copy of the background
@@ -566,49 +565,36 @@ def createRoundImages(match_list, background, foreground):
                 match_back.paste(c2_image, offset2, mask=c2_image)
                 # Add this image to Match.Images
                 a_match.Images.append(match_back)
-        # # Foreground
+        # # Foreground:
         # Take match information and populate the foreground
         # Apply this foreground to all the images in Match.Images list
         match_fore = foreground.copy()
         # Apply the Text information to the desired locations on the foreground
         font = ImageFont.truetype(_font_location, size=_font_size)
-        # Player 1
-        t_offset = (int(foreground.size[0] * _text_player1[0]), int(foreground.size[1] * _text_player1[1]))
-        t_mask = create_rotated_text(_text_angle, a_match.p1, font)
-        # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, color=_font_color1)
-        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
-        # Player 2
-        t_offset = (int(foreground.size[0] * _text_player2[0]), int(foreground.size[1] * _text_player2[1]))
-        t_mask = create_rotated_text(_text_angle, a_match.p2, font)
-        # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, color=_font_color2)
-        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
-        # Event
-        t_offset = (int(foreground.size[0] * _text_event[0]), int(foreground.size[1] * _text_event[1]))
-        t_mask = create_rotated_text(_text_angle, a_match.e, font)
-        # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, color=_font_color1)
-        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
-        # Round
-        t_offset = (int(foreground.size[0] * _text_round[0]), int(foreground.size[1] * _text_round[1]))
-        t_mask = create_rotated_text(_text_angle, a_match.r, font)
-        # apply mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, color=_font_color2)
-        match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
-        ##
+        # Loop through the following [ Player 1, Player 2, Event, Round ]
+        text_center_list = [_text_player1, _text_player2, _text_event, _text_round]
+        text_contents = [a_match.p1, a_match.p2, a_match.e, a_match.r]
+        text_colors = [_font_color1, _font_color2, _font_color3, _font_color4]
+        # Apply text on foreground image
+        for t_center, t_contents, t_color in zip(text_center_list, text_contents, text_colors):
+            # Determine center point for text
+            t_offset = (int(foreground.size[0] * t_center[0]), int(foreground.size[1] * t_center[1]))
+            t_mask = create_rotated_text(_text_angle, t_contents, font)
+            # apply mask to image at location
+            color_image = Image.new('RGBA', t_mask.size, color=t_color)
+            match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # # Combine
         # Loop through Match.Images and apply the foreground
         for an_image in a_match.Images:
             # Apply the Foreground to the Background
             an_image.paste(match_fore, mask=match_fore)
             # Show image
-            if show_one:
+            if show_first:
                 an_image.show()
-                show_one = False
+                show_first = False
                 # return match_list
-        print("Image:", a_match.t)
         # end of inner loop
+        print("Image:", a_match.t)
     # end loop
     return match_list
 
@@ -618,6 +604,7 @@ def saveImages(match_list, folder_location, event_bool=False):
     Saves images to folder location. If event name is true, then create a folder with the event name
     :param match_list:
     :param folder_location:
+    :param event_bool:
     :return:
     '''
     # Check if event is being used as folder name
