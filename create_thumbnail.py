@@ -252,7 +252,6 @@ def setGlobalsQuarantainment(number):
     _event_info = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
 
 
-
 def setGlobalsSxT(number):
     """
     Set necessary globals for Students x Treehouse event {number}
@@ -265,6 +264,7 @@ def setGlobalsSxT(number):
     # Foreground overlay locations
     global _foreground_file
     _foreground_file = os.path.join('Overlays', 'Foreground_SxT.png')
+
 
 def setGlobalsFro(number):
     """
@@ -279,6 +279,21 @@ def setGlobalsFro(number):
     # Single character flag on overlay
     global _one_char_flag
     _one_char_flag = True
+    # Center-point shift for canvas for characters
+    global _center_shift_1
+    _center_shift_1 = (-0.00, +0.00)  # Universal character shift
+    # Center-point for text on canvas with respect to whole canvas
+    global _text_player1, _text_player2, _text_event, _text_round, _text_angle
+    _text_player1 = (0.20, 0.75)
+    _text_player2 = (0.80, 0.75)
+    _text_event = (0.40, 0.08)
+    _text_round = (0.60, 0.08)
+    _text_angle = 0  # degree of rotation counter-clockwise
+    # Font settings
+    global _font_location, _font_size
+    _font_location = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
+    #_font_location = os.path.join("Fonts", "Marykate-XLMj.ttf")
+    _font_size = 42
 
 def readMatchLines(filename):
     '''
@@ -521,12 +536,13 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
-        a_offset = calculateOffsetFromCenter(calculateCenter(win_size), resized_char[0].size)
-        # shift from center by offset
-        a_offset = a_offset[0] + offset_shift_1[0], a_offset[1] + offset_shift_1[1]
         # apply characters to canvas, add to canvas list
         for a_char in resized_char:
             a_canvas = canvas.copy()
+            # Calculate offset and shift from center
+            a_offset = calculateOffsetFromCenter((x_center, y_center), a_char.size)
+            a_offset = a_offset[0] + offset_shift_1[0], a_offset[1] + offset_shift_1[1]
+            # Paste character
             a_canvas.paste(a_char, a_offset, mask=a_char)
             canvas_list.append(a_canvas)
     elif num_chars == 2:  # 2.2 Two characters
@@ -694,9 +710,9 @@ def saveImages(match_list, folder_location, event_bool=False):
 if __name__ == "__main__":
     # 0. Setup information
     # Event
-    setGlobals('Quarantainment', 'test')
+    #setGlobals('Quarantainment', 'test')
     #setGlobals('Students x Treehouse', '8')
-    #setGlobals('Fro Friday', 'test')
+    setGlobals('Fro Friday', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
