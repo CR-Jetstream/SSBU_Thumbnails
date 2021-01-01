@@ -35,7 +35,12 @@ _center_shift_2_2 = (+0.20, -0.15)
 _center_shift_3_1 = (-0.15, +0.20)  # Three character shift
 _center_shift_3_2 = (+0.25, -0.05)
 _center_shift_3_3 = (-0.20, -0.20)
-
+# Center-point for text on canvas with respect to whole canvas
+_text_player1 = (0.25, 0.076)
+_text_player2 = (0.75, 0.076)
+_text_event = (0.25, 0.924)
+_text_round = (0.75, 0.924)
+_text_angle = 2  # degree of rotation counter-clockwise
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -548,31 +553,27 @@ def createRoundImages(match_list, background, foreground):
         # Apply the Text information to the desired locations on the foreground
         font = ImageFont.truetype('C:\\Users\\Jetstream\\AppData\\Local\\Microsoft\\Windows\\Fonts\\tt2004m.ttf',
                                   size=45)
-        # TODO: Calculate the text offsets and center them
-        # calculateTextOffset(a_match, back_image)
-        angle = 2
-        ## Temporary
         # Player 1
-        t_offset = (640 - 320, 55)
-        t_mask = create_rotated_text(angle, a_match.p1, font)
+        t_offset = (int(foreground.size[0] * _text_player1[0]), int(foreground.size[1] * _text_player1[1]))
+        t_mask = create_rotated_text(_text_angle, a_match.p1, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Player 2
-        t_offset = (640 + 320, 55)
-        t_mask = create_rotated_text(angle, a_match.p2, font)
+        t_offset = (int(foreground.size[0] * _text_player2[0]), int(foreground.size[1] * _text_player2[1]))
+        t_mask = create_rotated_text(_text_angle, a_match.p2, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Event
-        t_offset = (640 - 320, 720 - 55)
-        t_mask = create_rotated_text(angle, a_match.e, font)
+        t_offset = (int(foreground.size[0] * _text_event[0]), int(foreground.size[1] * _text_event[1]))
+        t_mask = create_rotated_text(_text_angle, a_match.e, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # Round
-        t_offset = (640 + 320, 720 - 55)
-        t_mask = create_rotated_text(angle, a_match.r, font)
+        t_offset = (int(foreground.size[0] * _text_round[0]), int(foreground.size[1] * _text_round[1]))
+        t_mask = create_rotated_text(_text_angle, a_match.r, font)
         # apply mask to image at location
         color_image = Image.new('RGBA', t_mask.size, (245, 245, 245))
         match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
