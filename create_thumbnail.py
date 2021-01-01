@@ -19,6 +19,13 @@ import math
 # Dictionaries for lookups
 _character_database = {}
 _player_database = {}
+# Event match file information location
+_event_info = os.path.join('..', 'Vod Names', 'Quarantainment test names.txt')
+# Background and Foreground overlay locations
+_background_file = os.path.join('Overlays', 'Background.png')
+_foreground_file = os.path.join('Overlays', 'Foreground_Q.png')
+# Output save location
+_save_location = os.path.join('..', 'Youtube_Thumbnails')
 # Canvas variables for character window with respect to whole canvas
 _char_window = (0.5, 1)  # canvas for characters
 _char_border = (0.00, 0.26)  # border for characters
@@ -126,6 +133,7 @@ def hex_to_rgb(hex_input):
     hlen = len(hex_input)
     return tuple(int(hex_input[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
 
+
 def readCharDatabase(filename, deliminator=','):
     '''
     Open and read player database from a file.
@@ -215,6 +223,17 @@ def readPlayerDatabase(filename, deliminator=','):
         _player_database[player_name] = char_alt_list
     # end loop
     return
+
+
+def setGlobals(weekly, number):
+    """
+    Set all globals based off the type of event. Weekly is the series, Number is the event number.
+    These globals are set to then create the associated thumbnails
+    :param weekly:
+    :param number:
+    :return:
+    """
+
 
 
 def readMatchLines(filename):
@@ -633,23 +652,22 @@ if __name__ == "__main__":
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines('..\\Vod Names\\Quarantainment test names.txt')
+    match_lines = readMatchLines(_event_info)
     #match_lines = readMatchLines('..\\Vod Names\\Roth Tourney names.txt')
     # create list of matches
     match_list = createMatches(match_lines)
     # 2. Have a blank graphic ready to populate the information
-    back_image = Image.open('Overlays\\Background.png')
+    back_image = Image.open(_background_file)
     # back_image = Image.open('Overlays\\Background_U32.png')
     # back_image.show()
     # front_image = Image.open('Overlays\\Foreground_U32.png')
-    front_image = Image.open('Overlays\\Foreground_Q.png')
+    front_image = Image.open(_foreground_file)
     #front_image = Image.open('Overlays\\Foreground_Roth.png')
     # front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
     match_list = createRoundImages(match_list, back_image, front_image)
     # 4. Save the images
-    save_location = os.path.join('..', 'Youtube_Thumbnails')
-    saveImages(match_list, save_location, event_bool=True)
+    saveImages(match_list, _save_location, event_bool=True)
 
     print("Done")
