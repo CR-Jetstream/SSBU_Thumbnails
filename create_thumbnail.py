@@ -29,19 +29,19 @@ _save_location = os.path.join('..', 'Youtube_Thumbnails')
 # Canvas variables for character window with respect to whole canvas
 _char_window = (0.5, 1)  # canvas for characters
 _char_border = (0.00, 0.26)  # border for characters
-_char_offset1 = (0, 0.01)  # offset for left player window placement on canvas
-_char_offset2 = (0.5, 0.01)  # offset for right player window placement on canvas
+_char_offset1 = (0, 0.00)  # offset for left player window placement on canvas
+_char_offset2 = (0.5, 0.00)  # offset for right player window placement on canvas
 # Scaler Variables for multiple characters in window
 _resize_1 = 0.85  # resize for character for multiple renders on image
 _resize_2 = 0.75
 _resize_3 = 0.60
 # Center-point shift for canvas for characters
-_center_shift_1 = (-0.04, +0.00)  # Universal character shift
-_center_shift_2_1 = (-0.20, +0.15)  # Two character shift
-_center_shift_2_2 = (+0.20, -0.15)
-_center_shift_3_1 = (-0.15, +0.20)  # Three character shift
-_center_shift_3_2 = (+0.25, -0.05)
-_center_shift_3_3 = (-0.20, -0.20)
+_center_shift_1 = (-0.04, +0.01)  # Universal character shift
+_center_shift_2_1 = (-0.20, +0.11)  # Two character shift
+_center_shift_2_2 = (+0.20, -0.11)
+_center_shift_3_1 = (-0.15, +0.148)  # Three character shift
+_center_shift_3_2 = (+0.25, -0.037)
+_center_shift_3_3 = (-0.20, -0.148)
 # Center-point for text on canvas with respect to whole canvas
 _text_player1 = (0.25, 0.076)
 _text_player2 = (0.75, 0.076)
@@ -530,18 +530,18 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Calculate center and offsets
     x_center, y_center = calculateCenter(win_size)
     # Flip sign if on the right of the canvas instead of the left
-    sign = 1
+    x_sign = 1
     if right_bool:
-        sign = -1
+        x_sign = -1
     # This is the center-point offset of the character render
-    offset_shift_1 = (sign * int(x_max_height * _center_shift_1[0]), int(0 * _center_shift_1[1]))
+    offset_shift_1 = (x_sign * int(win_size[0] * _center_shift_1[0]), int(win_size[1] * _center_shift_1[1]))
     # This is the center-point offsets for 2 characters
-    offset_shift_2_1 = (int(x_max_height * _center_shift_2_1[0]), int(y_max_height * _center_shift_2_1[1]))
-    offset_shift_2_2 = (int(x_max_height * _center_shift_2_2[0]), int(y_max_height * _center_shift_2_2[1]))
+    offset_shift_2_1 = (int(win_size[0] * _center_shift_2_1[0]), int(win_size[1] * _center_shift_2_1[1]))
+    offset_shift_2_2 = (int(win_size[0] * _center_shift_2_2[0]), int(win_size[1] * _center_shift_2_2[1]))
     # This is the center-point offset for 3 character
-    offset_shift_3_1 = (int(x_max_height * _center_shift_3_1[0]), int(y_max_height * _center_shift_3_1[1]))
-    offset_shift_3_2 = (int(x_max_height * _center_shift_3_2[0]), int(y_max_height * _center_shift_3_2[1]))
-    offset_shift_3_3 = (int(x_max_height * _center_shift_3_3[0]), int(y_max_height * _center_shift_3_3[1]))
+    offset_shift_3_1 = (int(win_size[0] * _center_shift_3_1[0]), int(win_size[1] * _center_shift_3_1[1]))
+    offset_shift_3_2 = (int(win_size[0] * _center_shift_3_2[0]), int(win_size[1] * _center_shift_3_2[1]))
+    offset_shift_3_3 = (int(win_size[0] * _center_shift_3_3[0]), int(win_size[1] * _center_shift_3_3[1]))
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
