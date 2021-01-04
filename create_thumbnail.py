@@ -23,7 +23,7 @@ _player_database = {}
 _event_info = os.path.join('..', 'Vod Names', 'Quarantainment test names.txt')
 # Background and Foreground overlay locations
 _background_file = os.path.join('Overlays', 'Background.png')
-_foreground_file = os.path.join('Overlays', 'Foreground_Q.png')
+_foreground_file = os.path.join('Overlays', 'Foreground.png')
 # Output save location
 _save_location = os.path.join('..', 'Youtube_Thumbnails')
 # Canvas variables for character window with respect to whole canvas
@@ -58,6 +58,8 @@ _font_color4 = '#F5F5F5'  # (245, 245, 245)
 # Useful flags
 _show_first_image = True  # Flag for showing one sample image when generating
 _one_char_flag = False  # Flag to determine if there is only one character on the overlay or multiple
+_event_round_single_text = False  # Flag to determine if the event and round text is combined
+_event_round_text_split = ' '  # Text for between event and round when a single element
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -250,6 +252,9 @@ def setGlobalsQuarantainment(number):
     # Event match file information location
     global _event_info
     _event_info = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
+    # Foreground overlay locations
+    global _foreground_file
+    _foreground_file = os.path.join('Overlays', 'Foreground_Q.png')
 
 
 def setGlobalsSxT(number):
@@ -286,14 +291,18 @@ def setGlobalsFro(number):
     global _text_player1, _text_player2, _text_event, _text_round, _text_angle
     _text_player1 = (0.20, 0.75)
     _text_player2 = (0.80, 0.75)
-    _text_event = (0.40, 0.08)
-    _text_round = (0.60, 0.08)
+    _text_event = (0.50, 0.08)
+    _text_round = (0.50, 0.08)
     _text_angle = 0  # degree of rotation counter-clockwise
     # Font settings
     global _font_location, _font_size
     _font_location = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
     #_font_location = os.path.join("Fonts", "Marykate-XLMj.ttf")
     _font_size = 42
+    #
+    global _event_round_single_text, _event_round_text_split
+    _event_round_single_text = True
+    _event_round_text_split = ' - '
 
 def readMatchLines(filename):
     '''
@@ -651,9 +660,18 @@ def createRoundImages(match_list, background, foreground):
         # Apply the Text information to the desired locations on the foreground
         font = ImageFont.truetype(_font_location, size=_font_size)
         # Loop through the following [ Player 1, Player 2, Event, Round ]
-        text_center_list = [_text_player1, _text_player2, _text_event, _text_round]
-        text_contents = [a_match.p1, a_match.p2, a_match.e, a_match.r]
-        text_colors = [_font_color1, _font_color2, _font_color3, _font_color4]
+        text_center_list = [_text_player1, _text_player2]
+        text_contents = [a_match.p1, a_match.p2]
+        text_colors = [_font_color1, _font_color2]
+        # Case for combining Event and Round - [ Player 1, Player 2, Event&Round]
+        if _event_round_single_text:
+            text_center_list.append(_text_event)
+            text_contents.append(a_match.e + _event_round_text_split + a_match.r)
+            text_colors.append(_font_color3)
+        else:
+            text_center_list.extend([_text_event, _text_round])
+            text_contents.extend([a_match.e, a_match.r])
+            text_colors.extend([_font_color3, _font_color4])
         # Apply text on foreground image
         for t_center, t_contents, t_color in zip(text_center_list, text_contents, text_colors):
             # Determine center point for text
@@ -710,9 +728,10 @@ def saveImages(match_list, folder_location, event_bool=False):
 if __name__ == "__main__":
     # 0. Setup information
     # Event
+    setGlobals('Sample', 'test')
     #setGlobals('Quarantainment', 'test')
     #setGlobals('Students x Treehouse', '8')
-    setGlobals('Fro Friday', 'test')
+    #setGlobals('Fro Friday', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
