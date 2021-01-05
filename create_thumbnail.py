@@ -12,7 +12,8 @@
 
 import io
 import os
-from PIL import Image, ImageDraw, ImageFont
+
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import math
 
 '''Global Variables used in script'''
@@ -55,11 +56,16 @@ _font_color1 = '#F5F5F5'  # (245, 245, 245)
 _font_color2 = '#F5F5F5'  # (245, 245, 245)
 _font_color3 = '#F5F5F5'  # (245, 245, 245)
 _font_color4 = '#F5F5F5'  # (245, 245, 245)
+_font_filter_color = '#050505'  #
+_font_filter_px = 3  # Pixel count for the blur in all directions
+_font_filter_itr = 25  # Iterations on applying filter
+_font_filter_offset = (0, 3)  # Offset to apply the filtered effect
 # Useful flags
 _show_first_image = True  # Flag for showing one sample image when generating
 _one_char_flag = False  # Flag to determine if there is only one character on the overlay or multiple
 _event_round_single_text = False  # Flag to determine if the event and round text is combined
 _event_round_text_split = ' '  # Text for between event and round when a single element
+_font_glow_bool = False  # Flag to apply glow to font
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -100,7 +106,8 @@ def create_rotated_text(angle, text, font):
     """
     # get the size of the text
     x_text, _ = font.getsize(text)
-    _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]")  # want the tallest possible word
+    _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]")
+    # want the tallest possible word
 
     # build a transparency mask large enough to hold the text
     max_dim = 2 * max(x_text, y_text)
@@ -137,7 +144,7 @@ def hex_to_rgb(hex_input):
 
 
 def readCharDatabase(filename, deliminator=','):
-    '''
+    """
     Open and read player database from a file.
     By default, it is expected to be a CSV format
     Line: Player,character,alt,character,alt,character,alt,character,alt, ...
@@ -145,7 +152,7 @@ def readCharDatabase(filename, deliminator=','):
     :param filename:
     :param deliminator:
     :return:
-    '''
+    """
     # Open File
     file = io.open(filename, "r", encoding='utf8')
     file_text = file.readlines()
@@ -173,7 +180,7 @@ def readCharDatabase(filename, deliminator=','):
 
 
 def readPlayerDatabase(filename, deliminator=','):
-    '''
+    """
     Open and read player database from a file.
     By default, it is expected to be a CSV format
     Line: Player,character,alt,character,alt,character,alt,character,alt, ...
@@ -181,7 +188,7 @@ def readPlayerDatabase(filename, deliminator=','):
     :param filename:
     :param deliminator:
     :return:
-    '''
+    """
     # Open File
     file = io.open(filename, "r", encoding='utf8')
     file_text = file.readlines()
@@ -277,6 +284,9 @@ def setGlobalsFro(number):
     :param number:
     :return:
     """
+    # Event match file information location
+    global _event_info
+    _event_info = os.path.join('..', 'Vod Names', 'Fro Friday {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     global _background_file, _foreground_file
     _background_file = os.path.join('Overlays', 'Background_Fro.png')
@@ -297,9 +307,10 @@ def setGlobalsFro(number):
     # Font settings
     global _font_location, _font_size
     _font_location = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
-    #_font_location = os.path.join("Fonts", "Marykate-XLMj.ttf")
     _font_size = 42
-    #
+    global _font_glow_bool
+    _font_glow_bool = True
+    # Combined event and round text
     global _event_round_single_text, _event_round_text_split
     _event_round_single_text = True
     _event_round_text_split = ' - '
@@ -679,6 +690,18 @@ def createRoundImages(match_list, background, foreground):
             t_mask = create_rotated_text(_text_angle, t_contents, font)
             # apply mask to image at location
             color_image = Image.new('RGBA', t_mask.size, color=t_color)
+            # apply shadow if present
+            if _font_filter_color:
+                # Blur the mask by applying a filter
+                t_shadow_size = t_mask.size
+                shadow_image = Image.new('RGBA', t_shadow_size, color=_font_filter_color)
+                t_filter = t_mask.filter(ImageFilter.BoxBlur(_font_filter_px))
+                # Calculate offset for filter
+                t_filter_offset = (t_offset[0] + _font_filter_offset[0], t_offset[1] + _font_filter_offset[1])
+                # Apply filter to image
+                for i in range(0, _font_filter_itr):
+                    match_fore.paste(shadow_image, calculateOffsetFromCenter(t_filter_offset, t_filter.size), mask=t_filter)
+            # Apply text to image
             match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # # Combine
         # Loop through Match.Images and apply the foreground
@@ -731,7 +754,7 @@ if __name__ == "__main__":
     setGlobals('Sample', 'test')
     #setGlobals('Quarantainment', 'test')
     #setGlobals('Students x Treehouse', '8')
-    #setGlobals('Fro Friday', 'test')
+    setGlobals('Fro Friday', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
