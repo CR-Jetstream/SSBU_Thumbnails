@@ -57,15 +57,16 @@ _font_color2 = '#F5F5F5'  # (245, 245, 245)
 _font_color3 = '#F5F5F5'  # (245, 245, 245)
 _font_color4 = '#F5F5F5'  # (245, 245, 245)
 _font_filter_color = '#050505'  #
-_font_filter_px = 3  # Pixel count for the blur in all directions
-_font_filter_itr = 25  # Iterations on applying filter
-_font_filter_offset = (0, 3)  # Offset to apply the filtered effect
+_font_filter_px = 5  # Pixel count for the blur in all directions
+_font_filter_itr = 1  # Iterations on applying filter
+_font_filter_offset = (0, 0)  # Offset to apply the filtered effect
 # Useful flags
 _show_first_image = True  # Flag for showing one sample image when generating
 _one_char_flag = False  # Flag to determine if there is only one character on the overlay or multiple
 _event_round_single_text = False  # Flag to determine if the event and round text is combined
 _event_round_text_split = ' '  # Text for between event and round when a single element
 _font_glow_bool = False  # Flag to apply glow to font
+
 
 class Match:
     def __init__(self, _title, _event, _round, _player1, _char1, _player2, _char2):
@@ -248,6 +249,8 @@ def setGlobals(weekly, number):
         setGlobalsSxT(number)
     elif weekly == 'Fro Friday':
         setGlobalsFro(number)
+    elif weekly == 'AWG':
+        setGlobalsAWG(number)
 
 
 def setGlobalsQuarantainment(number):
@@ -308,12 +311,62 @@ def setGlobalsFro(number):
     global _font_location, _font_size
     _font_location = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
     _font_size = 42
-    global _font_glow_bool
+    global _font_glow_bool, _font_filter_px, _font_filter_itr, _font_filter_offset
     _font_glow_bool = True
+    _font_filter_px = 2  # Pixel count for the blur in all directions
+    _font_filter_itr = 25  # Iterations on applying filter
+    _font_filter_offset = (0, 3)  # Offset to apply the filtered effect
     # Combined event and round text
     global _event_round_single_text, _event_round_text_split
     _event_round_single_text = True
     _event_round_text_split = ' - '
+
+
+def setGlobalsAWG(number):
+    """
+    Set all globals for AWG event {number}
+    :param number:
+    :return:
+    """
+    # Event match file information location
+    global _event_info
+    _event_info = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
+    # Background and Foreground overlay locations
+    global _background_file, _foreground_file
+    _background_file = os.path.join('Overlays', 'Background_AWG.png')
+    _foreground_file = os.path.join('Overlays', 'Foreground_AWG.png')
+    # Character border settings
+    global _char_border, _char_offset1, _char_offset2
+    _char_border = (0.00, 0.35)  # border for characters
+    _char_offset1 = (0, -0.00)  # offset for left player window placement on canvas
+    _char_offset2 = (0.5, -0.00)  # offset for right player window placement on canvas
+    # Single character flag on overlay
+    global _one_char_flag
+    _one_char_flag = True
+    # Center-point shift for canvas for characters
+    global _center_shift_1
+    _center_shift_1 = (+0.03, -0.03)  # Universal character shift
+    # Center-point for text on canvas with respect to whole canvas
+    global _text_player1, _text_player2, _text_event, _text_round, _text_angle
+    _text_player1 = (0.30, 0.70)
+    _text_player2 = (0.70, 0.70)
+    _text_event = (0.50, 0.10)
+    _text_round = (0.50, 0.10)
+    _text_angle = 0  # degree of rotation counter-clockwise
+    # Font settings
+    global _font_location, _font_size
+    _font_location = os.path.join("Fonts", "ConnectionIi-2wj8.otf")
+    _font_size = 42
+    global _font_glow_bool, _font_filter_px, _font_filter_itr, _font_filter_offset
+    _font_glow_bool = True
+    _font_filter_px = 2  # Pixel count for the blur in all directions
+    _font_filter_itr = 15  # Iterations on applying filter
+    _font_filter_offset = (0, 1)  # Offset to apply the filtered effect
+    # Combined event and round text
+    global _event_round_single_text, _event_round_text_split
+    _event_round_single_text = True
+    _event_round_text_split = ' - '
+
 
 def readMatchLines(filename):
     '''
@@ -691,7 +744,7 @@ def createRoundImages(match_list, background, foreground):
             # apply mask to image at location
             color_image = Image.new('RGBA', t_mask.size, color=t_color)
             # apply shadow if present
-            if _font_filter_color:
+            if _font_glow_bool:
                 # Blur the mask by applying a filter
                 t_shadow_size = t_mask.size
                 shadow_image = Image.new('RGBA', t_shadow_size, color=_font_filter_color)
@@ -754,7 +807,8 @@ if __name__ == "__main__":
     setGlobals('Sample', 'test')
     #setGlobals('Quarantainment', 'test')
     #setGlobals('Students x Treehouse', '8')
-    setGlobals('Fro Friday', 'test')
+    #setGlobals('Fro Friday', 'test')
+    setGlobals('AWG', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
