@@ -685,13 +685,13 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
 
 
 def createRoundImages(match_list, background, foreground):
-    '''
+    """
     Creates images based off of the content in match list and applies it to the Background and Foreground images
     :param match_list:
     :param background:
     :param foreground:
     :return:
-    '''
+    """
     # Loop through the matches and add the images
     show_first = _show_first_image
     for a_match in match_list:
@@ -773,13 +773,13 @@ def createRoundImages(match_list, background, foreground):
 
 
 def saveImages(match_list, folder_location, event_bool=False):
-    '''
+    """
     Saves images to folder location. If event name is true, then create a folder with the event name
     :param match_list:
     :param folder_location:
     :param event_bool:
     :return:
-    '''
+    """
     # Check if event is being used as folder name
     if event_bool is True:
         event_name = match_list[0].e
@@ -805,10 +805,10 @@ if __name__ == "__main__":
     # 0. Setup information
     # Event
     setGlobals('Sample', 'test')
-    #setGlobals('Quarantainment', 'test')
+    setGlobals('Quarantainment', '43')
     #setGlobals('Students x Treehouse', '8')
     #setGlobals('Fro Friday', 'test')
-    setGlobals('AWG', 'test')
+    #setGlobals('AWG', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
