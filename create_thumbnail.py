@@ -1,4 +1,6 @@
-'''
+"""
+Script to create thumbnails for YouTube for Smash Ultimate
+
 1. Read in the names file to get event, round, names, characters information
 
 2. Have a blank graphic ready to populate the information
@@ -8,64 +10,20 @@
 4. Have the script open the graphic and add the information
 
 7. Have the script output the images in a specified File location
-'''
+"""
 
 import io
 import os
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import math
+import populate_globals
 
 '''Global Variables used in script'''
 # Dictionaries for lookups
 _character_database = {}
 _player_database = {}
-# Event match file information location
-_event_info = os.path.join('..', 'Vod Names', 'Quarantainment test names.txt')
-# Background and Foreground overlay locations
-_background_file = os.path.join('Overlays', 'Background.png')
-_foreground_file = os.path.join('Overlays', 'Foreground.png')
-# Output save location
-_save_location = os.path.join('..', 'Youtube_Thumbnails')
-# Canvas variables for character window with respect to whole canvas
-_char_window = (0.5, 1)  # canvas for characters
-_char_border = (0.00, 0.26)  # border for characters
-_char_offset1 = (0, 0.00)  # offset for left player window placement on canvas
-_char_offset2 = (0.5, 0.00)  # offset for right player window placement on canvas
-# Scaler Variables for multiple characters in window
-_resize_1 = 0.85  # resize for character for multiple renders on image
-_resize_2 = 0.75
-_resize_3 = 0.60
-# Center-point shift for canvas for characters
-_center_shift_1 = (-0.04, +0.01)  # Universal character shift
-_center_shift_2_1 = (-0.20, +0.11)  # Two character shift
-_center_shift_2_2 = (+0.20, -0.11)
-_center_shift_3_1 = (-0.15, +0.148)  # Three character shift
-_center_shift_3_2 = (+0.25, -0.037)
-_center_shift_3_3 = (-0.20, -0.148)
-# Center-point for text on canvas with respect to whole canvas
-_text_player1 = (0.25, 0.076)
-_text_player2 = (0.75, 0.076)
-_text_event = (0.25, 0.924)
-_text_round = (0.75, 0.924)
-_text_angle = 2  # degree of rotation counter-clockwise
-# Font settings
-_font_location = os.path.join("Fonts", "tt2004m.ttf")
-_font_size = 45
-_font_color1 = '#F5F5F5'  # (245, 245, 245)
-_font_color2 = '#F5F5F5'  # (245, 245, 245)
-_font_color3 = '#F5F5F5'  # (245, 245, 245)
-_font_color4 = '#F5F5F5'  # (245, 245, 245)
-_font_filter_color = '#050505'  #
-_font_filter_px = 5  # Pixel count for the blur in all directions
-_font_filter_itr = 1  # Iterations on applying filter
-_font_filter_offset = (0, 0)  # Offset to apply the filtered effect
-# Useful flags
-_show_first_image = True  # Flag for showing one sample image when generating
-_one_char_flag = False  # Flag to determine if there is only one character on the overlay or multiple
-_event_round_single_text = False  # Flag to determine if the event and round text is combined
-_event_round_text_split = ' '  # Text for between event and round when a single element
-_font_glow_bool = False  # Flag to apply glow to font
+# Dictionary for global properties
+_properties = dict()
 
 
 class Match:
@@ -87,6 +45,7 @@ def common_start(sa, sb):
     :param sb:
     :return:
     """
+
     def _iter():
         for a, b in zip(sa, sb):
             if a == b:
@@ -141,7 +100,7 @@ def hex_to_rgb(hex_input):
     """
     hex_input = hex_input.lstrip('#')
     hlen = len(hex_input)
-    return tuple(int(hex_input[i:i+hlen//3], 16) for i in range(0, hlen, hlen//3))
+    return tuple(int(hex_input[i:i + hlen // 3], 16) for i in range(0, hlen, hlen // 3))
 
 
 def readCharDatabase(filename, deliminator=','):
@@ -243,6 +202,10 @@ def setGlobals(weekly, number):
     :param number:
     :return:
     """
+    # Set properties to default
+    global _properties
+    _properties = populate_globals.set_default_properties()
+    # Modify globals based off of type of weekly
     if weekly == 'Quarantainment':
         setGlobalsQuarantainment(number)
     elif weekly == 'Students x Treehouse':
@@ -259,12 +222,11 @@ def setGlobalsQuarantainment(number):
     :param number:
     :return:
     """
+    global _properties
     # Event match file information location
-    global _event_info
-    _event_info = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
+    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
     # Foreground overlay locations
-    global _foreground_file
-    _foreground_file = os.path.join('Overlays', 'Foreground_Q.png')
+    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Q.png')
 
 
 def setGlobalsSxT(number):
@@ -273,12 +235,11 @@ def setGlobalsSxT(number):
     :param number:
     :return:
     """
+    global _properties
     # Event match file information location
-    global _event_info
-    _event_info = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
+    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
     # Foreground overlay locations
-    global _foreground_file
-    _foreground_file = os.path.join('Overlays', 'Foreground_SxT.png')
+    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_SxT.png')
 
 
 def setGlobalsFro(number):
@@ -287,39 +248,33 @@ def setGlobalsFro(number):
     :param number:
     :return:
     """
+    global _properties
     # Event match file information location
-    global _event_info
-    _event_info = os.path.join('..', 'Vod Names', 'Fro Friday {s} names.txt'.format(s=number))
+    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Fro Friday {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
-    global _background_file, _foreground_file
-    _background_file = os.path.join('Overlays', 'Background_Fro.png')
-    _foreground_file = os.path.join('Overlays', 'Foreground_Fro.png')
+    _properties['background_file'] = os.path.join('Overlays', 'Background_Fro.png')
+    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Fro.png')
     # Single character flag on overlay
-    global _one_char_flag
-    _one_char_flag = True
+    _properties['one_char_flag'] = True
     # Center-point shift for canvas for characters
-    global _center_shift_1
-    _center_shift_1 = (-0.00, +0.00)  # Universal character shift
+    _properties['center_shift_1'] = (-0.00, +0.00)  # Universal character shift
     # Center-point for text on canvas with respect to whole canvas
-    global _text_player1, _text_player2, _text_event, _text_round, _text_angle
-    _text_player1 = (0.20, 0.75)
-    _text_player2 = (0.80, 0.75)
-    _text_event = (0.50, 0.08)
-    _text_round = (0.50, 0.08)
-    _text_angle = 0  # degree of rotation counter-clockwise
+    _properties['text_player1'] = (0.20, 0.75)
+    _properties['text_player2'] = (0.80, 0.75)
+    _properties['text_event'] = (0.50, 0.08)
+    _properties['text_round'] = (0.50, 0.08)
+    _properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
-    global _font_location, _font_size
-    _font_location = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
-    _font_size = 42
-    global _font_glow_bool, _font_filter_px, _font_filter_itr, _font_filter_offset
-    _font_glow_bool = True
-    _font_filter_px = 2  # Pixel count for the blur in all directions
-    _font_filter_itr = 25  # Iterations on applying filter
-    _font_filter_offset = (0, 3)  # Offset to apply the filtered effect
+    _properties['font_location'] = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
+    _properties['font_size'] = 42
+    _properties['font_glow_bool'] = True
+    _properties['font_filter_color'] = '#641fbf'  # (100, 31, 191)
+    _properties['font_filter_px'] = 2  # Pixel count for the blur in all directions
+    _properties['font_filter_itr'] = 25  # Iterations on applying filter
+    _properties['font_filter_offset'] = (0, 2)  # Offset to apply the filtered effect
     # Combined event and round text
-    global _event_round_single_text, _event_round_text_split
-    _event_round_single_text = True
-    _event_round_text_split = ' - '
+    _properties['event_round_single_text'] = True
+    _properties['event_round_text_split'] = ' - '
 
 
 def setGlobalsAWG(number):
@@ -328,74 +283,67 @@ def setGlobalsAWG(number):
     :param number:
     :return:
     """
+    global _properties
     # Event match file information location
-    global _event_info
-    _event_info = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
+    _properties['event_info'] = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
-    global _background_file, _foreground_file
-    _background_file = os.path.join('Overlays', 'Background_AWG.png')
-    _foreground_file = os.path.join('Overlays', 'Foreground_AWG.png')
+    _properties['background_file'] = os.path.join('Overlays', 'Background_AWG.png')
+    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_AWG.png')
     # Character border settings
-    global _char_border, _char_offset1, _char_offset2
-    _char_border = (0.00, 0.35)  # border for characters
-    _char_offset1 = (0, -0.00)  # offset for left player window placement on canvas
-    _char_offset2 = (0.5, -0.00)  # offset for right player window placement on canvas
+    _properties['char_border'] = (0.00, 0.35)  # border for characters
+    _properties['char_offset1'] = (0, -0.00)  # offset for left player window placement on canvas
+    _properties['char_offset2'] = (0.5, -0.00)  # offset for right player window placement on canvas
     # Single character flag on overlay
-    global _one_char_flag
-    _one_char_flag = True
+    _properties['one_char_flag'] = True
     # Center-point shift for canvas for characters
-    global _center_shift_1
-    _center_shift_1 = (+0.03, -0.03)  # Universal character shift
+    _properties['center_shift_1'] = (+0.03, -0.03)  # Universal character shift
     # Center-point for text on canvas with respect to whole canvas
-    global _text_player1, _text_player2, _text_event, _text_round, _text_angle
-    _text_player1 = (0.30, 0.70)
-    _text_player2 = (0.70, 0.70)
-    _text_event = (0.50, 0.10)
-    _text_round = (0.50, 0.10)
-    _text_angle = 0  # degree of rotation counter-clockwise
+    _properties['text_player1'] = (0.30, 0.70)
+    _properties['text_player2'] = (0.70, 0.70)
+    _properties['text_event'] = (0.50, 0.10)
+    _properties['text_round'] = (0.50, 0.10)
+    _properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
-    global _font_location, _font_size
-    _font_location = os.path.join("Fonts", "ConnectionIi-2wj8.otf")
-    _font_size = 42
-    global _font_glow_bool, _font_filter_px, _font_filter_itr, _font_filter_offset
-    _font_glow_bool = True
-    _font_filter_px = 2  # Pixel count for the blur in all directions
-    _font_filter_itr = 15  # Iterations on applying filter
-    _font_filter_offset = (0, 1)  # Offset to apply the filtered effect
+    _properties['font_location'] = os.path.join("Fonts", "ConnectionIi-2wj8.otf")
+    _properties['font_size'] = 42
+    _properties['font_glow_bool'] = True
+    _properties['font_filter_px'] = 2  # Pixel count for the blur in all directions
+    _properties['font_filter_itr'] = 15  # Iterations on applying filter
+    _properties['font_filter_offset'] = (0, 1)  # Offset to apply the filtered effect
     # Combined event and round text
-    global _event_round_single_text, _event_round_text_split
-    _event_round_single_text = True
-    _event_round_text_split = ' - '
+    _properties['event_round_single_text'] = True
+    _properties['event_round_text_split'] = ' - '
 
 
 def readMatchLines(filename):
-    '''
+    """
     Open file and read in line by line
+    return a list of lines with match information
     :param filename:
     :return:
-    '''
+    """
     # Open File
     file = io.open(filename, "r", encoding='utf8')
     file_text = file.readlines()
     # Filter through lines that matter:
-    match_lines = []
+    return_lines = []
     for line in file_text:
         # check for format
         # {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
         if ' - ' in line and '(' in line and ')' in line and 'Vs.' in line and '- SSBU' in line:
-            match_lines.append(line)
+            return_lines.append(line)
     # end loop
-    return match_lines
+    return return_lines
 
 
 def createMatches(match_lines):
-    '''
+    """
     Take in list of line information, create a list of matches
-    :param match_list:
+    :param match_lines:
     :return:
-    '''
+    """
     # Read each line and grab information
-    match_list = []
+    return_list = []
     # Event name is present in every match at the beginning of the line
     #  Use common_start function to compare lines and get the common beginning substring
     # Loop through list - event is the same in the whole list
@@ -461,7 +409,7 @@ def createMatches(match_lines):
                             break
                     # Char not found case
                     if not char_found:
-                        print("-- Note: Character", a_char, "not found for Player", player_name, "in Player Database --")
+                        print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
                 # Check if char file exists
                 if not os.path.exists(os.path.join('Character_Renders', char_file + '.png')):
                     raise NameError("Character not found in " + a_round + ": " + char_file)
@@ -481,9 +429,9 @@ def createMatches(match_lines):
 
         # Have all the information, create a match
         a_match = Match(a_title, event, a_round, player1_name, player1_char_renders, player2_name, player2_char_renders)
-        match_list.append(a_match)
+        return_list.append(a_match)
     # end of loop
-    return match_list
+    return return_list
 
 
 def calculateCenter(xy_image):
@@ -511,7 +459,7 @@ def calculateOffsetFromCenter(xy_center, xy_image):
     return x_off, y_off
 
 
-def resizeCraracterList(char_list, num_resizes):
+def resizeCharacterList(char_list, num_resizes):
     """
     Function to resize the characters in char list for
     Returns a list of images with each resize as an element in the list.
@@ -527,7 +475,7 @@ def resizeCraracterList(char_list, num_resizes):
     for a_char in char_list:
         return_list.append([])
         # Resize are global variables that scale the renders
-        for a_resize in [_resize_1, _resize_2, _resize_3]:
+        for a_resize in [_properties['resize_1'], _properties['resize_2'], _properties['resize_3']]:
             x_resize, y_resize = a_char.size
             x_resize = int(x_resize * a_resize)
             y_resize = int(y_resize * a_resize)
@@ -565,8 +513,9 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         x_max_height, y_max_height = win_size
     else:
         # apply border
-        x_max_height = int(win_size[0] * (1 - _char_border[0]))
-        y_max_height = int(win_size[1] * (1 - _char_border[1]))
+        char_border = _properties['char_border']
+        x_max_height = int(win_size[0] * (1 - char_border[0]))
+        y_max_height = int(win_size[1] * (1 - char_border[1]))
     # Identify ratio for scaling
     xy_ratio = x_max_height / y_max_height
     for a_char in char_list:
@@ -591,6 +540,13 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # enf of loop
     #  Each offset for each character depends on the number of characters
     #  Create permutations for which character in front
+    # Grab center shifts from properties
+    center_shift_1 = _properties['center_shift_1']
+    center_shift_2_1 = _properties['center_shift_2_1']
+    center_shift_2_2 = _properties['center_shift_2_2']
+    center_shift_3_1 = _properties['center_shift_3_1']
+    center_shift_3_2 = _properties['center_shift_3_2']
+    center_shift_3_3 = _properties['center_shift_3_3']
     # Calculate center and offsets
     x_center, y_center = calculateCenter(win_size)
     # Flip sign if on the right of the canvas instead of the left
@@ -598,14 +554,14 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     if right_bool:
         x_sign = -1
     # This is the center-point offset of the character render
-    offset_shift_1 = (x_sign * int(win_size[0] * _center_shift_1[0]), int(win_size[1] * _center_shift_1[1]))
+    offset_shift_1 = (x_sign * int(win_size[0] * center_shift_1[0]), int(win_size[1] * center_shift_1[1]))
     # This is the center-point offsets for 2 characters
-    offset_shift_2_1 = (int(win_size[0] * _center_shift_2_1[0]), int(win_size[1] * _center_shift_2_1[1]))
-    offset_shift_2_2 = (int(win_size[0] * _center_shift_2_2[0]), int(win_size[1] * _center_shift_2_2[1]))
+    offset_shift_2_1 = (int(win_size[0] * center_shift_2_1[0]), int(win_size[1] * center_shift_2_1[1]))
+    offset_shift_2_2 = (int(win_size[0] * center_shift_2_2[0]), int(win_size[1] * center_shift_2_2[1]))
     # This is the center-point offset for 3 character
-    offset_shift_3_1 = (int(win_size[0] * _center_shift_3_1[0]), int(win_size[1] * _center_shift_3_1[1]))
-    offset_shift_3_2 = (int(win_size[0] * _center_shift_3_2[0]), int(win_size[1] * _center_shift_3_2[1]))
-    offset_shift_3_3 = (int(win_size[0] * _center_shift_3_3[0]), int(win_size[1] * _center_shift_3_3[1]))
+    offset_shift_3_1 = (int(win_size[0] * center_shift_3_1[0]), int(win_size[1] * center_shift_3_1[1]))
+    offset_shift_3_2 = (int(win_size[0] * center_shift_3_2[0]), int(win_size[1] * center_shift_3_2[1]))
+    offset_shift_3_3 = (int(win_size[0] * center_shift_3_3[0]), int(win_size[1] * center_shift_3_3[1]))
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
@@ -620,7 +576,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             canvas_list.append(a_canvas)
     elif num_chars == 2:  # 2.2 Two characters
         # acquire resized characters from scaling for multiple characters
-        resized_list = resizeCraracterList(resized_char, 2)
+        resized_list = resizeCharacterList(resized_char, 2)
         # Calculate center for resized images
         a_center = x_center + offset_shift_1[0] + offset_shift_2_1[0], y_center + offset_shift_1[1] + offset_shift_2_1[1]
         b_center = x_center + offset_shift_1[0] + offset_shift_2_2[0], y_center + offset_shift_1[1] + offset_shift_2_2[1]
@@ -646,11 +602,14 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         # end of loop
     elif num_chars >= 3:  # 2.3 Three characters (or more, only take first three)
         # acquire resized characters from scaling for multiple characters
-        resized_list = resizeCraracterList(resized_char, 3)
+        resized_list = resizeCharacterList(resized_char, 3)
         # Calculate center for resized images
-        a_center = x_center + offset_shift_1[0] + offset_shift_3_1[0], y_center + offset_shift_1[1] + offset_shift_3_1[1]
-        b_center = x_center + offset_shift_1[0] + offset_shift_3_2[0], y_center + offset_shift_1[1] + offset_shift_3_2[1]
-        c_center = x_center + offset_shift_1[0] + offset_shift_3_3[0], y_center + offset_shift_1[1] + offset_shift_3_3[1]
+        a_center = x_center + offset_shift_1[0] + offset_shift_3_1[0], y_center + offset_shift_1[1] + offset_shift_3_1[
+            1]
+        b_center = x_center + offset_shift_1[0] + offset_shift_3_2[0], y_center + offset_shift_1[1] + offset_shift_3_2[
+            1]
+        c_center = x_center + offset_shift_1[0] + offset_shift_3_3[0], y_center + offset_shift_1[1] + offset_shift_3_3[
+            1]
         # two character, two permutations on order of characters
         for a_ind in range(0, 3):
             for b_ind in range(0, 3):
@@ -693,7 +652,7 @@ def createRoundImages(match_list, background, foreground):
     :return:
     """
     # Loop through the matches and add the images
-    show_first = _show_first_image
+    show_first = _properties['show_first_image']
     for a_match in match_list:
         # # # Create background and foreground images and combine
         # # Background:
@@ -701,12 +660,16 @@ def createRoundImages(match_list, background, foreground):
         c1_renders = a_match.c1
         c2_renders = a_match.c2
         # Call Function to create the combined character images - Left and Right space
-        char_window = (int(background.size[0]*_char_window[0]), int(background.size[1]*_char_window[1]))
-        c1_image_list = createCharacterWindow(c1_renders, char_window, single_bool=_one_char_flag)
-        c2_image_list = createCharacterWindow(c2_renders, char_window, right_bool=True, single_bool=_one_char_flag)
+        char_window = _properties['char_window']
+        one_char_flag = _properties['one_char_flag']
+        char_canvas = (int(background.size[0] * char_window[0]), int(background.size[1] * char_window[1]))
+        c1_image_list = createCharacterWindow(c1_renders, char_canvas, single_bool=one_char_flag)
+        c2_image_list = createCharacterWindow(c2_renders, char_canvas, right_bool=True, single_bool=one_char_flag)
         # Grab offsets for placing the character windows
-        offset1 = (int(background.size[0]*_char_offset1[0]), int(background.size[1]*_char_offset1[1]))
-        offset2 = (int(background.size[0]*_char_offset2[0]), int(background.size[1]*_char_offset2[1]))
+        char_offset1 = _properties['char_offset1']
+        offset1 = (int(background.size[0] * char_offset1[0]), int(background.size[1] * char_offset1[1]))
+        char_offset2 = _properties['char_offset2']
+        offset2 = (int(background.size[0] * char_offset2[0]), int(background.size[1] * char_offset2[1]))
         # Add characters to background, create every permutation and insert into Match.Images
         for c1_image in c1_image_list:
             for c2_image in c2_image_list:
@@ -722,38 +685,41 @@ def createRoundImages(match_list, background, foreground):
         # Apply this foreground to all the images in Match.Images list
         match_fore = foreground.copy()
         # Apply the Text information to the desired locations on the foreground
-        font = ImageFont.truetype(_font_location, size=_font_size)
+        font = ImageFont.truetype(_properties['font_location'], size=_properties['font_size'])
         # Loop through the following [ Player 1, Player 2, Event, Round ]
-        text_center_list = [_text_player1, _text_player2]
+
+        text_center_list = [_properties['text_player1'], _properties['text_player2']]
         text_contents = [a_match.p1, a_match.p2]
-        text_colors = [_font_color1, _font_color2]
+        text_colors = [_properties['font_color1'], _properties['font_color2']]
         # Case for combining Event and Round - [ Player 1, Player 2, Event&Round]
-        if _event_round_single_text:
-            text_center_list.append(_text_event)
-            text_contents.append(a_match.e + _event_round_text_split + a_match.r)
-            text_colors.append(_font_color3)
+        if _properties['event_round_single_text']:
+            text_center_list.append(_properties['text_event'])
+            text_contents.append(a_match.e + _properties['event_round_text_split'] + a_match.r)
+            text_colors.append(_properties['font_color3'])
         else:
-            text_center_list.extend([_text_event, _text_round])
+            text_center_list.extend([_properties['text_event'], _properties['text_round']])
             text_contents.extend([a_match.e, a_match.r])
-            text_colors.extend([_font_color3, _font_color4])
+            text_colors.extend([_properties['font_color3'], _properties['font_color4']])
         # Apply text on foreground image
         for t_center, t_contents, t_color in zip(text_center_list, text_contents, text_colors):
             # Determine center point for text
             t_offset = (int(foreground.size[0] * t_center[0]), int(foreground.size[1] * t_center[1]))
-            t_mask = create_rotated_text(_text_angle, t_contents, font)
+            t_mask = create_rotated_text(_properties['text_angle'], t_contents, font)
             # apply mask to image at location
             color_image = Image.new('RGBA', t_mask.size, color=t_color)
             # apply shadow if present
-            if _font_glow_bool:
+            if _properties['font_glow_bool']:
                 # Blur the mask by applying a filter
                 t_shadow_size = t_mask.size
-                shadow_image = Image.new('RGBA', t_shadow_size, color=_font_filter_color)
-                t_filter = t_mask.filter(ImageFilter.BoxBlur(_font_filter_px))
+                filter_image = Image.new('RGBA', t_shadow_size, color=_properties['font_filter_color'])
+                t_filter = t_mask.filter(ImageFilter.BoxBlur(_properties['font_filter_px']))
                 # Calculate offset for filter
-                t_filter_offset = (t_offset[0] + _font_filter_offset[0], t_offset[1] + _font_filter_offset[1])
+                font_filter_offset = _properties['font_filter_offset']
+                t_filter_offset = (t_offset[0] + font_filter_offset[0], t_offset[1] + font_filter_offset[1])
                 # Apply filter to image
-                for i in range(0, _font_filter_itr):
-                    match_fore.paste(shadow_image, calculateOffsetFromCenter(t_filter_offset, t_filter.size), mask=t_filter)
+                for i in range(0, _properties['font_filter_itr']):
+                    match_fore.paste(filter_image, calculateOffsetFromCenter(t_filter_offset, t_filter.size),
+                                     mask=t_filter)
             # Apply text to image
             match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # # Combine
@@ -805,30 +771,30 @@ if __name__ == "__main__":
     # 0. Setup information
     # Event
     setGlobals('Sample', 'test')
-    setGlobals('Quarantainment', '43')
-    #setGlobals('Students x Treehouse', '8')
-    #setGlobals('Fro Friday', 'test')
-    #setGlobals('AWG', 'test')
+    # setGlobals('Quarantainment', '43')
+    # setGlobals('Students x Treehouse', '8')
+    setGlobals('Fro Friday', 'test')
+    # setGlobals('AWG', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
     # 1. Read in the names file to get event, round, names, characters information
-    match_lines = readMatchLines(_event_info)
+    event_match_lines = readMatchLines(_properties['event_info'])
     # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
-    match_list = createMatches(match_lines)
+    event_match_list = createMatches(event_match_lines)
     # 2. Have a blank graphic ready to populate the information
-    back_image = Image.open(_background_file)
+    back_image = Image.open(_properties['background_file'])
     # back_image = Image.open('Overlays\\Background_U32.png')
     # back_image.show()
     # front_image = Image.open('Overlays\\Foreground_U32.png')
-    front_image = Image.open(_foreground_file)
+    front_image = Image.open(_properties['foreground_file'])
     # front_image = Image.open('Overlays\\Foreground_Roth.png')
     # front_image = Image.open('Overlays\\Foreground_SxT.png')
     # front_image.show()
     # 3. Have the script read in the character and add them to the graphic
-    match_list = createRoundImages(match_list, back_image, front_image)
+    event_match_list = createRoundImages(event_match_list, back_image, front_image)
     # 4. Save the images
-    saveImages(match_list, _save_location, event_bool=True)
+    saveImages(event_match_list, _properties['save_location'], event_bool=True)
 
     print("Done")
