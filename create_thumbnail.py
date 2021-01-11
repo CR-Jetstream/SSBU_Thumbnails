@@ -310,6 +310,9 @@ def setGlobalsAWG(number):
     _properties['font_filter_px'] = 2  # Pixel count for the blur in all directions
     _properties['font_filter_itr'] = 15  # Iterations on applying filter
     _properties['font_filter_offset'] = (0, 1)  # Offset to apply the filtered effect
+    # Character Pixelation filter to characters
+    _properties['pixelate_filter_bool'] = True  # Flag to pixelate the characters
+    _properties['pixelate_filter_size'] = 250  # size of pixel squares
     # Combined event and round text
     _properties['event_round_single_text'] = True
     _properties['event_round_text_split'] = ' - '
@@ -671,6 +674,7 @@ def createRoundImages(match_list, background, foreground):
         char_offset2 = _properties['char_offset2']
         offset2 = (int(background.size[0] * char_offset2[0]), int(background.size[1] * char_offset2[1]))
         # Add characters to background, create every permutation and insert into Match.Images
+        #  Add filter for pixelation if true
         for c1_image in c1_image_list:
             for c2_image in c2_image_list:
                 # Create a copy of the background
@@ -678,6 +682,14 @@ def createRoundImages(match_list, background, foreground):
                 # Apply the characters to the image
                 match_back.paste(c1_image, offset1, mask=c1_image)
                 match_back.paste(c2_image, offset2, mask=c2_image)
+                # Pixelate if filter is set
+                if _properties['pixelate_filter_bool']:
+                    # Resize smoothly down to x pixels
+                    pixel_size = _properties['pixelate_filter_size']
+                    temp_image = match_back.resize((pixel_size, pixel_size), resample=Image.BILINEAR)
+                    # Scale back up using NEAREST to original size
+                    match_back = temp_image.resize(match_back.size, Image.NEAREST)
+                # End of pixelate
                 # Add this image to Match.Images
                 a_match.Images.append(match_back)
         # # Foreground:
@@ -687,7 +699,6 @@ def createRoundImages(match_list, background, foreground):
         # Apply the Text information to the desired locations on the foreground
         font = ImageFont.truetype(_properties['font_location'], size=_properties['font_size'])
         # Loop through the following [ Player 1, Player 2, Event, Round ]
-
         text_center_list = [_properties['text_player1'], _properties['text_player2']]
         text_contents = [a_match.p1, a_match.p2]
         text_colors = [_properties['font_color1'], _properties['font_color2']]
@@ -711,13 +722,13 @@ def createRoundImages(match_list, background, foreground):
             if _properties['font_glow_bool']:
                 # Blur the mask by applying a filter
                 t_shadow_size = t_mask.size
-                filter_image = Image.new('RGBA', t_shadow_size, color=_properties['font_filter_color'])
-                t_filter = t_mask.filter(ImageFilter.BoxBlur(_properties['font_filter_px']))
+                filter_image = Image.new('RGBA', t_shadow_size, color=_properties['font_glow_color'])
+                t_filter = t_mask.filter(ImageFilter.BoxBlur(_properties['font_glow_px']))
                 # Calculate offset for filter
-                font_filter_offset = _properties['font_filter_offset']
+                font_filter_offset = _properties['font_glow_offset']
                 t_filter_offset = (t_offset[0] + font_filter_offset[0], t_offset[1] + font_filter_offset[1])
                 # Apply filter to image
-                for i in range(0, _properties['font_filter_itr']):
+                for i in range(0, _properties['font_glow_itr']):
                     match_fore.paste(filter_image, calculateOffsetFromCenter(t_filter_offset, t_filter.size),
                                      mask=t_filter)
             # Apply text to image
@@ -773,8 +784,8 @@ if __name__ == "__main__":
     setGlobals('Sample', 'test')
     # setGlobals('Quarantainment', '43')
     # setGlobals('Students x Treehouse', '8')
-    setGlobals('Fro Friday', 'test')
-    # setGlobals('AWG', 'test')
+    # setGlobals('Fro Friday', 'test')
+    setGlobals('AWG', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')

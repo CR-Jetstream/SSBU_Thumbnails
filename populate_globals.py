@@ -41,6 +41,8 @@ def set_default_properties():
     properties['text_event'] = (0.25, 0.924)
     properties['text_round'] = (0.75, 0.924)
     properties['text_angle'] = 2  # degree of rotation counter-clockwise
+    properties['event_round_single_text'] = False  # Flag to determine if the event and round text is combined
+    properties['event_round_text_split'] = ' '  # Text for between event and round when a single element
     # Font settings
     properties['font_location'] = os.path.join("Fonts", "tt2004m.ttf")
     properties['font_size'] = 45
@@ -48,16 +50,18 @@ def set_default_properties():
     properties['font_color2'] = '#F5F5F5'  # (245, 245, 245)
     properties['font_color3'] = '#F5F5F5'  # (245, 245, 245)
     properties['font_color4'] = '#F5F5F5'  # (245, 245, 245)
-    properties['font_filter_color'] = '#050505'  # (5, 5, 5)
-    properties['font_filter_px'] = 3  # Pixel count for the blur in all directions
-    properties['font_filter_itr'] = 25  # Iterations on applying filter
-    properties['font_filter_offset'] = (0, 3)  # Offset to apply the filtered effect
+    # Border Filter settings
+    properties['font_glow_bool'] = False  # Flag to apply glow to font
+    properties['font_glow_color'] = '#050505'  # (5, 5, 5)
+    properties['font_glow_px'] = 3  # Pixel count for the blur in all directions
+    properties['font_glow_itr'] = 25  # Iterations on applying filter
+    properties['font_glow_offset'] = (0, 3)  # Offset to apply the filtered effect
+    # Character Pixelation filter to characters
+    properties['pixelate_filter_bool'] = False  # Flag to pixelate the characters
+    properties['pixelate_filter_size'] = 16  # size of pixel squares
     # Useful flags
     properties['show_first_image'] = True  # Flag for showing one sample image when generating
     properties['one_char_flag'] = False  # Flag to determine if there is only one character on the overlay or multiple
-    properties['event_round_single_text'] = False  # Flag to determine if the event and round text is combined
-    properties['event_round_text_split'] = ' '  # Text for between event and round when a single element
-    properties['font_glow_bool'] = False  # Flag to apply glow to font
 
     # return properties
     return properties
