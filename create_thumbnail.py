@@ -18,6 +18,9 @@ import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import populate_globals
 
+import sys
+import getopt
+
 '''Global Variables used in script'''
 # Dictionaries for lookups
 _character_database = {}
@@ -194,7 +197,7 @@ def readPlayerDatabase(filename, deliminator=','):
     return
 
 
-def setGlobals(weekly, number):
+def setGlobals(weekly, number, property_settings):
     """
     Set all globals based off the type of event. Weekly is the series, Number is the event number.
     These globals are set to then create the associated thumbnails
@@ -312,7 +315,7 @@ def setGlobalsAWG(number):
     _properties['font_filter_offset'] = (0, 1)  # Offset to apply the filtered effect
     # Character Pixelation filter to characters
     _properties['pixelate_filter_bool'] = True  # Flag to pixelate the characters
-    _properties['pixelate_filter_size'] = 250  # size of pixel squares
+    _properties['pixelate_filter_size'] = 280  # size of pixel squares
     # Combined event and round text
     _properties['event_round_single_text'] = True
     _properties['event_round_text_split'] = ' - '
@@ -396,9 +399,12 @@ def createMatches(match_lines):
                 char_file = a_char + ' (1)'
                 # Lookup character in player database for alt costume (if it exists)
                 if p1_flag:
-                    player_name = player1_name.removesuffix(' [L]')  # want just name
+                    player_name = player1_name
                 else:
-                    player_name = player2_name.removesuffix(' [L]')
+                    player_name = player2_name
+                # Remove [L] suffix if present when searching for player
+                if player_name[-4:] == ' [L]':
+                    player_name = player_name[:-4]
                 # Player not found case
                 if player_name not in _player_database.keys():
                     print("-- Note: Player", player_name, "not found in Player Database --")
@@ -778,14 +784,37 @@ def saveImages(match_list, folder_location, event_bool=False):
     return
 
 
-if __name__ == "__main__":
+def main(argv):
+    event = 'Sample'
+    number = 'Test'
+    property_file = ''
+    try:
+        opts, args = getopt.getopt(argv, "he:n:p:", ["event=", "number=", "property_file="])
+    except getopt.GetoptError:
+        print('create_thumbnail.py -e <event> -n <number>, -p <property_file>')
+        sys.exit(2)
+    for opt, arg in opts:
+        if opt == '-h':
+            print('create_thumbnail.py -e <event> -n <number>, -p <property_file>')
+            sys.exit()
+        elif opt in ("-e", "--event"):
+            event = arg
+        elif opt in ("-n", "--number"):
+            number = arg
+        elif opt in ("-p", "--property_file"):
+            property_file = arg
+    print('Event is', event, number)
+    # print('Property file is ', property_file)
+    # End of Command Line Arguments
+
     # 0. Setup information
     # Event
-    setGlobals('Sample', 'test')
+    setGlobals(event, number, property_file)
+    # setGlobals('Sample', 'test')
     # setGlobals('Quarantainment', '43')
     # setGlobals('Students x Treehouse', '8')
     # setGlobals('Fro Friday', 'test')
-    setGlobals('AWG', 'test')
+    # setGlobals('AWG', 'test')
     # Read Player Database and Character Database
     readCharDatabase('Character_Database.csv')
     readPlayerDatabase('Player_Database.csv')
@@ -808,4 +837,9 @@ if __name__ == "__main__":
     # 4. Save the images
     saveImages(event_match_list, _properties['save_location'], event_bool=True)
 
+
+
+if __name__ == "__main__":
+    # Get command line inputs
+    main(sys.argv[1:])
     print("Done")
