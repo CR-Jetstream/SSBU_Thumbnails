@@ -213,7 +213,7 @@ def setGlobals(weekly, number, property_settings):
         setGlobalsQuarantainment(number)
     elif weekly == 'Students x Treehouse':
         setGlobalsSxT(number)
-    elif weekly == 'Fro Friday':
+    elif weekly == 'Fro Fridays':
         setGlobalsFro(number)
     elif weekly == 'AWG':
         setGlobalsAWG(number)
@@ -253,7 +253,7 @@ def setGlobalsFro(number):
     """
     global _properties
     # Event match file information location
-    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Fro Friday {s} names.txt'.format(s=number))
+    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Fro Fridays {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     _properties['background_file'] = os.path.join('Overlays', 'Background_Fro.png')
     _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Fro.png')
@@ -271,10 +271,10 @@ def setGlobalsFro(number):
     _properties['font_location'] = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
     _properties['font_size'] = 42
     _properties['font_glow_bool'] = True
-    _properties['font_filter_color'] = '#641fbf'  # (100, 31, 191)
-    _properties['font_filter_px'] = 2  # Pixel count for the blur in all directions
-    _properties['font_filter_itr'] = 25  # Iterations on applying filter
-    _properties['font_filter_offset'] = (0, 2)  # Offset to apply the filtered effect
+    _properties['font_glow_color'] = '#641fbf'  # (100, 31, 191)
+    _properties['font_glow_px'] = 2  # Pixel count for the blur in all directions
+    _properties['font_glow_itr'] = 25  # Iterations on applying filter
+    _properties['font_glow_offset'] = (0, 2)  # Offset to apply the filtered effect
     # Combined event and round text
     _properties['event_round_single_text'] = True
     _properties['event_round_text_split'] = ' - '
@@ -338,7 +338,11 @@ def readMatchLines(filename):
         # {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
         if ' - ' in line and '(' in line and ')' in line and 'Vs.' in line and '- SSBU' in line:
             return_lines.append(line)
+        elif ' - ' in line and '(' in line and ')' in line and 'vs.' in line and '- SSBU' in line:
+            return_lines.append(line)
     # end loop
+    if len(return_lines) == 0:
+        raise NameError("Filename " + filename + " was not properly read in")
     return return_lines
 
 
@@ -370,7 +374,12 @@ def createMatches(match_lines):
         a_round = a_line[0].strip()
         a_line = a_line[1]
         # split based off of Vs. to get Player 1 and Player 2
-        a_line = a_line.split('Vs.', 1)
+        if 'Vs.' in a_line:
+            a_line = a_line.split('Vs.', 1)
+        elif 'vs.' in a_line:
+            a_line = a_line.split('vs.', 1)
+        else:
+            NameError("Error in file format, unable to split on Vs.")
         player1_info = a_line[0]
         player2_info = a_line[1]
         # Grab player 1 name and characters {player_1} ({char_1})
@@ -740,13 +749,18 @@ def createRoundImages(match_list, background, foreground):
             # Apply text to image
             match_fore.paste(color_image, calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_mask)
         # # Combine
-        # Loop through Match.Images and apply the foreground
-        for an_image in a_match.Images:
-            # Apply the Foreground to the Background
-            an_image.paste(match_fore, mask=match_fore)
+        # Loop through Match.Images and create composite image of the background and foreground
+        background_ims = a_match.Images
+        a_match.Images = []
+        for an_image in background_ims:
+            # Make new composite image, apply Background, then Forground
+            comb_image = Image.new("RGBA", an_image.size)
+            comb_image = Image.alpha_composite(comb_image, an_image)
+            comb_image = Image.alpha_composite(comb_image, match_fore)
+            a_match.Images.append(comb_image)
             # Show image
             if show_first:
-                an_image.show()
+                comb_image.show()
                 show_first = False
                 # return match_list
         # end of inner loop
