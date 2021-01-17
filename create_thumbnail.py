@@ -719,6 +719,7 @@ def createRoundImages(match_list, background, foreground):
         match_fore = foreground.copy()
         # Apply the Text information to the desired locations on the foreground
         # Grab Font information
+        # TODO: open font as part of the set globals function so the imagefont is not called every loop
         font_player1 = ImageFont.truetype(_properties['font_location'], size=_properties['font_player1_size'])
         font_player2 = ImageFont.truetype(_properties['font_location'], size=_properties['font_player2_size'])
         font_event = ImageFont.truetype(_properties['font_location'], size=_properties['font_event_size'])
