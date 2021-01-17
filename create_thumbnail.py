@@ -136,8 +136,8 @@ def readCharDatabase(filename, deliminator=','):
         # grab character name
         char_key = line.pop(0).strip()
         char_value = line.pop(0).strip()
-        # Add to character database dictionary
-        _character_database[char_key] = char_value
+        # Add to character database dictionary (change to upper case)
+        _character_database[char_key] = char_value.upper()
     # end loop
     return
 
@@ -264,12 +264,15 @@ def setGlobalsFro(number):
     # Center-point for text on canvas with respect to whole canvas
     _properties['text_player1'] = (0.20, 0.75)
     _properties['text_player2'] = (0.80, 0.75)
-    _properties['text_event'] = (0.50, 0.08)
-    _properties['text_round'] = (0.50, 0.08)
+    _properties['text_event'] = (0.50, 0.075)
+    _properties['text_round'] = (0.50, 0.075)
     _properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
     _properties['font_location'] = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
-    _properties['font_size'] = 42
+    _properties['font_player1_size'] = 42
+    _properties['font_player2_size'] = 42
+    _properties['font_event_size'] = 37
+    _properties['font_round_size'] = 37
     _properties['font_glow_bool'] = True
     _properties['font_glow_color'] = '#641fbf'  # (100, 31, 191)
     _properties['font_glow_px'] = 2  # Pixel count for the blur in all directions
@@ -308,7 +311,10 @@ def setGlobalsAWG(number):
     _properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
     _properties['font_location'] = os.path.join("Fonts", "ConnectionIi-2wj8.otf")
-    _properties['font_size'] = 42
+    _properties['font_player1_size'] = 42
+    _properties['font_player2_size'] = 42
+    _properties['font_event_size'] = 42
+    _properties['font_round_size'] = 42
     _properties['font_glow_bool'] = True
     _properties['font_filter_px'] = 2  # Pixel count for the blur in all directions
     _properties['font_filter_itr'] = 15  # Iterations on applying filter
@@ -421,7 +427,7 @@ def createMatches(match_lines):
                     player_chars_lookup = _player_database[player_name]
                     char_found = False
                     for p_char in player_chars_lookup:
-                        if a_char in p_char:
+                        if a_char.upper() in p_char.upper():
                             char_file = p_char
                             char_found = True
                             break
@@ -712,25 +718,32 @@ def createRoundImages(match_list, background, foreground):
         # Apply this foreground to all the images in Match.Images list
         match_fore = foreground.copy()
         # Apply the Text information to the desired locations on the foreground
-        font = ImageFont.truetype(_properties['font_location'], size=_properties['font_size'])
+        # Grab Font information
+        font_player1 = ImageFont.truetype(_properties['font_location'], size=_properties['font_player1_size'])
+        font_player2 = ImageFont.truetype(_properties['font_location'], size=_properties['font_player2_size'])
+        font_event = ImageFont.truetype(_properties['font_location'], size=_properties['font_event_size'])
+        font_round = ImageFont.truetype(_properties['font_location'], size=_properties['font_round_size'])
         # Loop through the following [ Player 1, Player 2, Event, Round ]
+        font_list = [font_player1, font_player2]
         text_center_list = [_properties['text_player1'], _properties['text_player2']]
         text_contents = [a_match.p1, a_match.p2]
         text_colors = [_properties['font_color1'], _properties['font_color2']]
         # Case for combining Event and Round - [ Player 1, Player 2, Event&Round]
         if _properties['event_round_single_text']:
+            font_list.append(font_event)
             text_center_list.append(_properties['text_event'])
             text_contents.append(a_match.e + _properties['event_round_text_split'] + a_match.r)
             text_colors.append(_properties['font_color3'])
         else:
+            font_list.extend([font_event, font_round])
             text_center_list.extend([_properties['text_event'], _properties['text_round']])
             text_contents.extend([a_match.e, a_match.r])
             text_colors.extend([_properties['font_color3'], _properties['font_color4']])
         # Apply text on foreground image
-        for t_center, t_contents, t_color in zip(text_center_list, text_contents, text_colors):
+        for t_font, t_center, t_contents, t_color in zip(font_list, text_center_list, text_contents, text_colors):
             # Determine center point for text
             t_offset = (int(foreground.size[0] * t_center[0]), int(foreground.size[1] * t_center[1]))
-            t_mask = create_rotated_text(_properties['text_angle'], t_contents, font)
+            t_mask = create_rotated_text(_properties['text_angle'], t_contents, t_font)
             # apply mask to image at location
             color_image = Image.new('RGBA', t_mask.size, color=t_color)
             # apply shadow if present

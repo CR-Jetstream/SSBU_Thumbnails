@@ -45,7 +45,10 @@ def set_default_properties():
     properties['event_round_text_split'] = ' '  # Text for between event and round when a single element
     # Font settings
     properties['font_location'] = os.path.join("Fonts", "tt2004m.ttf")
-    properties['font_size'] = 45
+    properties['font_player1_size'] = 45
+    properties['font_player2_size'] = 45
+    properties['font_event_size'] = 45
+    properties['font_round_size'] = 45
     properties['font_color1'] = '#F5F5F5'  # (245, 245, 245)
     properties['font_color2'] = '#F5F5F5'  # (245, 245, 245)
     properties['font_color3'] = '#F5F5F5'  # (245, 245, 245)
