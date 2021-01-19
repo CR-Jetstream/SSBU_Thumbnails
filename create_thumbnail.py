@@ -187,7 +187,7 @@ def readPlayerDatabase(filename, deliminator=','):
             # format "{character} ({alt})"
             a_char_alt = '{char} ({alt})'.format(char=a_char, alt=a_alt)
             # Confirm character image exists
-            if not os.path.exists(os.path.join('Character_Renders', a_char_alt + '.png')):
+            if not os.path.exists(os.path.join(_properties['char_renders'], a_char_alt + '.png')):
                 raise NameError("Character and alt not found in player database: " + a_char_alt)
             # add char alt combo to list
             char_alt_list.append(a_char_alt)
@@ -435,10 +435,10 @@ def createMatches(match_lines):
                     if not char_found:
                         print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
                 # Check if char file exists
-                if not os.path.exists(os.path.join('Character_Renders', char_file + '.png')):
+                if not os.path.exists(os.path.join(_properties['char_renders'], char_file + '.png')):
                     raise NameError("Character not found in " + a_round + ": " + char_file)
                 # Open character render
-                char_image = Image.open(os.path.join('Character_Renders', char_file + '.png'))
+                char_image = Image.open(os.path.join(_properties['char_renders'], char_file + '.png'))
                 # Check if not rgba image
                 if char_image.mode != 'RGBA':
                     char_image = char_image.convert('RGBA')
@@ -735,7 +735,7 @@ def createRoundImages(match_list, background, foreground):
             text_center_list.append(_properties['text_event'])
             text_contents.append(a_match.e + _properties['event_round_text_split'] + a_match.r)
             text_colors.append(_properties['font_color3'])
-        else:
+        else:  # Normal case
             font_list.extend([font_event, font_round])
             text_center_list.extend([_properties['text_event'], _properties['text_round']])
             text_contents.extend([a_match.e, a_match.r])

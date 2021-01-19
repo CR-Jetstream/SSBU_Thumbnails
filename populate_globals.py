@@ -12,6 +12,8 @@ def set_default_properties():
     # # Set All property values to a default
     # Dictionary for global properties
     properties = dict()
+    # Character renders folder location
+    properties['char_renders'] = os.path.join("Character_Renders", "Full render")
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Sample test names.txt')
     # Background and Foreground overlay locations

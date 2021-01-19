@@ -1,27 +1,30 @@
 ## These are comments,
 # Expecting the following format for each row,
 # Character,Character in filename
-Banjo,Banjo and Kazooie
+Banjo,Banjo & Kazooie
+Bowser Jr,Bowser Jr (Koopalings)
+Bowser Jr.,Bowser Jr (Koopalings)
 Cpt Falcon,Captain Falcon
 Diddy,Diddy Kong
 DK,Donkey Kong
-Dr Mario,Dr. Mario
-Game & Watch,Mr. Game and Watch
-Game&Watch,Mr. Game and Watch
+Falcon,Captain Falcon
+Fighter,Mii Fighter
+Game & Watch,Mr Game and Watch
+Game&Watch,Mr Game and Watch
 Ganon,Ganondorf
-K. Rool,King K. Rool
+Gunner,Mii Gunner
+K. Rool,King K Rool
 King DDD,King DeDeDe
-King K Rool,King K. Rool
 MegaMan,Mega Man
 Mii SwordFighter,Mii Swordman
+Olimar,Olimar (Alph)
+P Plant,Piranha Plant
 Pac Man,Pac-Man
 PKM Trainer,Pokemon Trainer
 Puff,Jigglypuff
-ZSS,Zero Suit Samus
-Fighter,Mii Fighter
-Gunner,Mii Gunner
-Swordfighter,Mii Swordman
-P Plant,Piranha Plant
 Rosalina,Rosalina and Luma
-Falcon,Captain Falcon
-Bowser Jr.,Bowser Jr
+Swordfighter,Mii Swordman
+ZSS,Zero Suit Samus
+King K. Rool,King K Rool
+Dr. Mario,Dr Mario
+Mr. Game and Watch,Mr Game and Watch
