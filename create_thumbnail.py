@@ -304,7 +304,7 @@ def setGlobalsAWG(number):
     # Center-point shift for canvas for characters
     _properties['center_shift_1'] = (+0.03, -0.03)  # Universal character shift
     # Center-point for text on canvas with respect to whole canvas
-    _properties['text_player1'] = (0.30, 0.70)
+    _properties['text_player1'] = (0.25, 0.70)
     _properties['text_player2'] = (0.70, 0.70)
     _properties['text_event'] = (0.50, 0.10)
     _properties['text_round'] = (0.50, 0.10)
