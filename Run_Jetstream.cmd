@@ -1,3 +1,4 @@
 echo off 
-python3 create_thumbnail.py -e Quarantainment -n 45
+call .\venv\Scripts\activate.bat
+python create_thumbnail.py -e Quarantainment -n 45
 pause
