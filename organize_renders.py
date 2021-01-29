@@ -105,7 +105,89 @@ _character_list = [
     "Zelda",
     "Zero Suit Samus"
 ]
+_character_mapping = {
 
+    "Banjo & Kazooie": "banjo_and_kazooie",
+    "Bayonetta": "bayonetta",
+    "Bowser": "bowser",
+    "Bowser Jr (Koopalings)": "bowser_jr",
+    "Byleth": "byleth",
+    "Captain Falcon": "captain_falcon",
+    "Chrom": "chrom",
+    "Cloud": "cloud",
+    "Corrin": "corrin",
+    "Daisy": "daisy",
+    "Dark Pit": "dark_pit",
+    "Dark Samus": "dark_samus",
+    "Diddy Kong": "diddy_kong",
+    "Donkey Kong": "donkey_kong",
+    "Hero": "dq_hero",
+    "Dr Mario": "dr_mario",
+    "Duck Hunt": "duck_hunt",
+    "Falco": "falco",
+    "Fox": "fox",
+    "Ganondorf": "ganondorf",
+    "Greninja": "greninja",
+    "Ice Climbers": "ice_climbers",
+    "Ike": "ike",
+    "Incineroar": "incineroar",
+    "Inkling": "inkling",
+    "Isabelle": "isabelle",
+    "Jigglypuff": "jigglypuff",
+    "Joker": "joker",
+    "Ken": "ken",
+    "King Dedede": "king_dedede",
+    "King K Rool": "king_k_rool",
+    "Kirby": "kirby",
+    "Link": "link",
+    "Little Mac": "little_mac",
+    "Lucario": "lucario",
+    "Lucas": "lucas",
+    "Lucina": "lucina",
+    "Luigi": "luigi",
+    "Mario": "mario",
+    "Marth": "marth",
+    "Mega Man": "mega_man",
+    "Meta Knight": "meta_knight",
+    "Mewtwo": "mewtwo",
+    "Min Min": "minmin",
+    "Mr Game and Watch": "mr_game_and_watch",
+    "Ness": "ness",
+    "Olimar (Alph)": "olimar",
+    "Pac-Man": "pac_man",
+    "Palutena": "palutena",
+    "Peach": "peach",
+    "Pichu": "pichu",
+    "Pikachu": "pikachu",
+    "Piranha Plant": "piranha_plant",
+    "Pit": "pit",
+    "Pokémon Trainer": "pokemon_trainer",
+    "Richter": "richter",
+    "Ridley": "ridley",
+    "ROB": "rob",
+    "Robin": "robin",
+    "Rosalina and Luma": "rosalina_and_luma",
+    "Roy": "roy",
+    "Ryu": "ryu",
+    "Samus": "samus",
+    "Sephiroth": "sephiroth",
+    "Sheik": "sheik",
+    "Shulk": "shulk",
+    "Simon": "simon",
+    "Snake": "snake",
+    "Sonic": "sonic",
+    "Steve": "steve",
+    "Terry Bogard": "terry",
+    "Toon Link": "toon_link",
+    "Villager": "villager",
+    "Wario": "wario",
+    "Wii Fit Trainer": "wii_fit_trainer",
+    "Wolf": "wolf",
+    "Yoshi": "yoshi",
+    "Young Link": "young_link",
+    "Zelda": "zelda",
+    "Zero Suit Samus": "zero_suit_samus"
+}
 
 def create_char_filename(char_name, char_file):
     """
@@ -118,6 +200,39 @@ def create_char_filename(char_name, char_file):
     """
     # Grab alt number from file name (5th last element) and increment by 1
     alt_num = int(char_file[-5]) + 1
+    alt_str = "(" + str(alt_num) + ")"
+    # Handle specific cases
+    if char_name == "Mii":
+        if "miigunn" in char_file:
+            char_name = "Mii Gunner"
+        elif "miiswordsman" in char_file:
+            char_name = "Mii Swordsman"
+        elif "miifight" in char_file:
+            char_name = "Mii Brawler"
+        else:
+            char_name = "Mii Fighters"
+    elif char_name == "Pokémon Trainer":
+        char_name = "Pokemon Trainer"
+    elif char_name == "Terry Bogard":
+        char_name = "Terry"
+    # Create dest filename
+    dest_filename = char_name + " " + alt_str + ".png"
+    return dest_filename
+
+
+def create_char_filename2(char_name, char_file):
+    """
+    Create the character destination filename based off of the input name and filename.
+    Extracts the alt from the filename
+    This also handles off cases such as The Mii characters
+    :param char_name:
+    :param char_file:
+    :return:
+    """
+    # Grab alt number from file name (5th last element) and increment by 1
+    alt_num = char_file[-5]
+    if alt_num == 'n':
+        alt_num = 1
     alt_str = "(" + str(alt_num) + ")"
     # Handle specific cases
     if char_name == "Mii":
@@ -176,6 +291,7 @@ def organize_from_renders_zip(char_name, new_folder_location):
     return_mapping = []
     # Lookup character folder
     source_path = os.path.join("Character_Renders_Backup", "Super Smash Bros Ultimate", "Fighter Portraits", char_name)
+    source_path = os.path.join("Character_Renders_Backup", "Full body")
     filenames = os.listdir(source_path)
     # Walk through files
     for a_file in filenames:
@@ -198,7 +314,22 @@ def organize_from_renders_zip(char_name, new_folder_location):
             elif a_file.startswith("chara_4_"):  # Char 4 case
                 dest_folder = os.path.join(new_folder_location, "Diamond render")
                 return_mapping.append((source_path, a_file, dest_folder, dest_file))
-        # end of png case
+            # end of chara case
+        elif a_file.endswith(".png") and "main" in a_file:
+            # Full render case
+            if char_name not in _character_mapping.keys():
+                print("Note:", char_name, "not found in mapping")
+                continue
+            # check if source file {character}_main exists
+            s_char_name = _character_mapping[char_name]
+            if not a_file.startswith(s_char_name.lower() + "_main"):
+                continue
+            # Create filename for character "{char} (0).png", ..., "{char} (8).png"
+            dest_file = create_char_filename2(char_name, a_file)
+            dest_folder = os.path.join(new_folder_location, "Full render")
+            return_mapping.append((source_path, a_file, dest_folder, dest_file))
+            # end of main case
+        # end of loop
     return return_mapping
 
 
