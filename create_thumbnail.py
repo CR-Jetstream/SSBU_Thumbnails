@@ -376,7 +376,7 @@ def createMatches(match_lines):
         # trim off the event
         a_line = a_line[r_start:]
         # split based off '-' to grab round information
-        a_line = a_line.split('-', 1)
+        a_line = a_line.split(' - ', 1)
         a_round = a_line[0].strip()
         a_line = a_line[1]
         # split based off of Vs. to get Player 1 and Player 2
