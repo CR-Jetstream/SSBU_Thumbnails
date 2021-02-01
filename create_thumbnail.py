@@ -186,8 +186,9 @@ def readPlayerDatabase(filename, deliminator=','):
                 a_char = _character_database[a_char]
             # format "{character} ({alt})"
             a_char_alt = '{char} ({alt})'.format(char=a_char, alt=a_alt)
-            # Confirm character image exists
-            if not os.path.exists(os.path.join(_properties['char_renders'], a_char_alt + '.png')):
+            # Confirm character image exists in render folder
+            if not os.path.exists(os.path.join(_properties['char_renders'], _properties['render_type'],
+                                               a_char_alt + '.png')):
                 raise NameError("Character and alt not found in player database: " + a_char_alt)
             # add char alt combo to list
             char_alt_list.append(a_char_alt)
@@ -210,121 +211,13 @@ def setGlobals(weekly, number, property_settings):
     _properties = populate_globals.set_default_properties()
     # Modify globals based off of type of weekly
     if weekly == 'Quarantainment':
-        setGlobalsQuarantainment(number)
+        _properties = populate_globals.setGlobalsQuarantainment(_properties, number)
     elif weekly == 'Students x Treehouse':
-        setGlobalsSxT(number)
+        _properties = populate_globals.setGlobalsSxT(_properties, number)
     elif weekly == 'Fro Fridays':
-        setGlobalsFro(number)
+        _properties = populate_globals.setGlobalsFro(_properties, number)
     elif weekly == 'AWG':
-        setGlobalsAWG(number)
-
-
-def setGlobalsQuarantainment(number):
-    """
-    Set necessary globals for Quarantainment event {number}
-    :param number:
-    :return:
-    """
-    global _properties
-    # Event match file information location
-    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
-    # Foreground overlay locations
-    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Q.png')
-
-
-def setGlobalsSxT(number):
-    """
-    Set necessary globals for Students x Treehouse event {number}
-    :param number:
-    :return:
-    """
-    global _properties
-    # Event match file information location
-    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
-    # Foreground overlay locations
-    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_SxT.png')
-
-
-def setGlobalsFro(number):
-    """
-    Set all globals for Fro Friday event {number}
-    :param number:
-    :return:
-    """
-    global _properties
-    # Event match file information location
-    _properties['event_info'] = os.path.join('..', 'Vod Names', 'Fro Fridays {s} names.txt'.format(s=number))
-    # Background and Foreground overlay locations
-    _properties['background_file'] = os.path.join('Overlays', 'Background_Fro.png')
-    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Fro.png')
-    # Single character flag on overlay
-    _properties['one_char_flag'] = True
-    # Center-point shift for canvas for characters
-    _properties['center_shift_1'] = (-0.00, +0.00)  # Universal character shift
-    # Center-point for text on canvas with respect to whole canvas
-    _properties['text_player1'] = (0.20, 0.75)
-    _properties['text_player2'] = (0.80, 0.75)
-    _properties['text_event'] = (0.50, 0.075)
-    _properties['text_round'] = (0.50, 0.075)
-    _properties['text_angle'] = 0  # degree of rotation counter-clockwise
-    # Font settings
-    _properties['font_location'] = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
-    _properties['font_player1_size'] = 42
-    _properties['font_player2_size'] = 42
-    _properties['font_event_size'] = 37
-    _properties['font_round_size'] = 37
-    _properties['font_glow_bool'] = True
-    _properties['font_glow_color'] = '#641fbf'  # (100, 31, 191)
-    _properties['font_glow_px'] = 2  # Pixel count for the blur in all directions
-    _properties['font_glow_itr'] = 25  # Iterations on applying filter
-    _properties['font_glow_offset'] = (0, 2)  # Offset to apply the filtered effect
-    # Combined event and round text
-    _properties['event_round_single_text'] = True
-    _properties['event_round_text_split'] = ' - '
-
-
-def setGlobalsAWG(number):
-    """
-    Set all globals for AWG event {number}
-    :param number:
-    :return:
-    """
-    global _properties
-    # Event match file information location
-    _properties['event_info'] = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
-    # Background and Foreground overlay locations
-    _properties['background_file'] = os.path.join('Overlays', 'Background_AWG.png')
-    _properties['foreground_file'] = os.path.join('Overlays', 'Foreground_AWG.png')
-    # Character border settings
-    _properties['char_border'] = (0.00, 0.35)  # border for characters
-    _properties['char_offset1'] = (0, -0.00)  # offset for left player window placement on canvas
-    _properties['char_offset2'] = (0.5, -0.00)  # offset for right player window placement on canvas
-    # Single character flag on overlay
-    _properties['one_char_flag'] = True
-    # Center-point shift for canvas for characters
-    _properties['center_shift_1'] = (+0.03, -0.03)  # Universal character shift
-    # Center-point for text on canvas with respect to whole canvas
-    _properties['text_player1'] = (0.25, 0.70)
-    _properties['text_player2'] = (0.70, 0.70)
-    _properties['text_event'] = (0.50, 0.10)
-    _properties['text_round'] = (0.50, 0.10)
-    _properties['text_angle'] = 0  # degree of rotation counter-clockwise
-    # Font settings
-    _properties['font_location'] = os.path.join("Fonts", "ConnectionIi-2wj8.otf")
-    _properties['font_player1_size'] = 42
-    _properties['font_player2_size'] = 42
-    _properties['font_event_size'] = 42
-    _properties['font_round_size'] = 42
-    _properties['font_glow_bool'] = True
-    _properties['font_filter_px'] = 2  # Pixel count for the blur in all directions
-    _properties['font_filter_itr'] = 15  # Iterations on applying filter
-    _properties['font_filter_offset'] = (0, 1)  # Offset to apply the filtered effect
-    # Character Pixelation filter to characters
-    _properties['pixelate_filter_bool'] = True  # Flag to pixelate the characters
-    _properties['pixelate_filter_size'] = 280  # size of pixel squares
-    # Combined event and round text
-    _properties['event_round_single_text'] = True
-    _properties['event_round_text_split'] = ' - '
+        _properties = populate_globals.setGlobalsAWG(_properties, number)
 
 
 def readMatchLines(filename):
@@ -342,7 +235,10 @@ def readMatchLines(filename):
     for line in file_text:
         # check for format
         # {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
-        if ' - ' in line and '(' in line and ')' in line and 'Vs.' in line and '- SSBU' in line:
+        if line.startswith('#'):
+            # Comment case
+            continue
+        elif ' - ' in line and '(' in line and ')' in line and 'Vs.' in line and '- SSBU' in line:
             return_lines.append(line)
         elif ' - ' in line and '(' in line and ')' in line and 'vs.' in line and '- SSBU' in line:
             return_lines.append(line)
@@ -402,8 +298,8 @@ def createMatches(match_lines):
         player2_chars = [x.strip() for x in player2_chars.split(',')]  # create a list for characters (strip whitespace)
         # Loop through character lists and grab character render
         #  Add them to the new lists
-        player1_char_renders = []
-        player2_char_renders = []
+        player1_char_files = []
+        player2_char_files = []
         p1_flag = True  # used in loop
         for a_list in [player1_chars, player2_chars]:
             for a_char in a_list:
@@ -434,25 +330,25 @@ def createMatches(match_lines):
                     # Char not found case
                     if not char_found:
                         print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
-                # Check if char file exists
-                if not os.path.exists(os.path.join(_properties['char_renders'], char_file + '.png')):
-                    raise NameError("Character not found in " + a_round + ": " + char_file)
-                # Open character render
-                char_image = Image.open(os.path.join(_properties['char_renders'], char_file + '.png'))
-                # Check if not rgba image
-                if char_image.mode != 'RGBA':
-                    char_image = char_image.convert('RGBA')
-                # Add to renders
+                # Check if char file exists at render location
+                if _properties['render_type'] is None:
+                    raise NameError("Error: 'render_type' is set to None")
+                for rend_dir in [_properties['render_type'], _properties['render_type2'], _properties['render_type3']]:
+                    if rend_dir is None:
+                        continue
+                    char_location = os.path.join(_properties['char_renders'], rend_dir, char_file + '.png')
+                    if not os.path.exists(char_location):
+                        raise NameError("Character not found in " + a_round + ": " + rend_dir + "/" + char_file)
+                # Add to render files
                 if p1_flag:
-                    player1_char_renders.append(char_image)
+                    player1_char_files.append(char_file)
                 else:
-                    player2_char_renders.append(char_image)
+                    player2_char_files.append(char_file)
             # end of loop
             p1_flag = False  # flip boolean
         # end of loop
-
         # Have all the information, create a match
-        a_match = Match(a_title, event, a_round, player1_name, player1_char_renders, player2_name, player2_char_renders)
+        a_match = Match(a_title, event, a_round, player1_name, player1_char_files, player2_name, player2_char_files)
         return_list.append(a_match)
     # end of loop
     return return_list
@@ -530,7 +426,10 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Create Canvas
     canvas = Image.new('RGBA', win_size, (255, 0, 0, 0))
     canvas_list = []
-    resized_char = []
+    resized_char1 = []
+    resized_char2 = []
+    resized_char3 = []
+
     # 1. Resize all the images to fit in this canvas
     # Check border bool to apply a border for canvas
     if not border_bool:
@@ -542,24 +441,45 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         y_max_height = int(win_size[1] * (1 - char_border[1]))
     # Identify ratio for scaling
     xy_ratio = x_max_height / y_max_height
-    for a_char in char_list:
-        x_char, y_char = a_char.size
-        # Resize the image such that it fits in the window while maintaining its aspect ratio
-        if y_char * xy_ratio > x_char:
-            # character image is taller than it is wide
-            scaler_ratio = y_max_height / y_char
-            y_resize = y_max_height  # = ratio*input_y
-            x_resize = scaler_ratio * x_char
-        else:
-            # character image is wider than it is tall
-            scaler_ratio = x_max_height / x_char
-            x_resize = x_max_height  # = ratio*input_x
-            y_resize = scaler_ratio * y_char
-        # Resize the character image. No need to worry about offsets
-        xy_resize = (int(x_resize), int(y_resize))
-        # Add resized character to list
-        resized_char.append(a_char.resize(xy_resize))
-
+    # todo: This works for full renders, not Wide renders
+    # Loop through render types and save the images to resized_char lists
+    resized_char_list = [resized_char1, resized_char2, resized_char3]
+    render_list = [_properties['render_type'], _properties['render_type2'], _properties['render_type3']]
+    for a_render, a_resize in zip(render_list, resized_char_list):
+        # Check for None case for render
+        if a_render is None:
+            # skip remaining loop
+            continue
+        for a_char in char_list:
+            # Open character render
+            char_image = Image.open(os.path.join(_properties['char_renders'], a_render, a_char + '.png'))
+            # Check if not rgba image
+            if char_image.mode != 'RGBA':
+                char_image = char_image.convert('RGBA')
+            # Cases for different renders
+            if a_render == "Full render":
+                # Resize the image such that it fits in the window while maintaining its aspect ratio
+                x_char, y_char = char_image.size
+                if y_char * xy_ratio > x_char:
+                    # character image is taller than it is wide
+                    scaler_ratio = y_max_height / y_char
+                    y_resize = y_max_height  # = ratio*input_y
+                    x_resize = scaler_ratio * x_char
+                else:
+                    # character image is wider than it is tall
+                    scaler_ratio = x_max_height / x_char
+                    x_resize = x_max_height  # = ratio*input_x
+                    y_resize = scaler_ratio * y_char
+                # Resize the character image. No need to worry about offsets
+                xy_resize = (int(x_resize), int(y_resize))
+                char_image = char_image.resize(xy_resize)
+            # End of Full render
+            # elif a_resize == "Wide render":
+            # elif a_resize == "Body render":
+            # else: No change
+            # Add resized character to list
+            a_resize.append(char_image)
+        # end of char loop
     # 2. Now take the characters and apply them to the canvas
     # enf of loop
     #  Each offset for each character depends on the number of characters
@@ -590,7 +510,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
         # apply characters to canvas, add to canvas list
-        for a_char in resized_char:
+        for a_char in resized_char1:
             a_canvas = canvas.copy()
             # Calculate offset and shift from center
             a_offset = calculateOffsetFromCenter((x_center, y_center), a_char.size)
@@ -600,7 +520,11 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             canvas_list.append(a_canvas)
     elif num_chars == 2:  # 2.2 Two characters
         # acquire resized characters from scaling for multiple characters
-        resized_list = resizeCharacterList(resized_char, 2)
+        resized_list = resizeCharacterList(resized_char1, 2)
+        resized_list2 = resizeCharacterList(resized_char2, 2)
+        # check if list 2 is empty
+        if resized_char2 == []:
+            resized_list2 = resized_list
         # Calculate center for resized images
         a_center = x_center + offset_shift_1[0] + offset_shift_2_1[0], y_center + offset_shift_1[1] + offset_shift_2_1[1]
         b_center = x_center + offset_shift_1[0] + offset_shift_2_2[0], y_center + offset_shift_1[1] + offset_shift_2_2[1]
@@ -613,7 +537,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                 a_canvas = canvas.copy()
                 # grab sizes of appropriate characters
                 a_char = resized_list[a_ind][0]  # This is the first character on the canvas
-                b_char = resized_list[b_ind][1]  # second character on the canvas
+                b_char = resized_list2[b_ind][1]  # second character on the canvas
                 # grab offsets
                 a_char_offset = calculateOffsetFromCenter(a_center, a_char.size)
                 b_char_offset = calculateOffsetFromCenter(b_center, b_char.size)
@@ -626,7 +550,14 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         # end of loop
     elif num_chars >= 3:  # 2.3 Three characters (or more, only take first three)
         # acquire resized characters from scaling for multiple characters
-        resized_list = resizeCharacterList(resized_char, 3)
+        resized_list = resizeCharacterList(resized_char1, 3)
+        resized_list2 = resizeCharacterList(resized_char2, 3)
+        resized_list3 = resizeCharacterList(resized_char3, 3)
+        # check if list 2 and 3 are empty
+        if resized_list2 == []:
+            resized_list2 = resized_list
+        if resized_char3 == []:
+            resized_list3 = resized_list2
         # Calculate center for resized images
         a_center = x_center + offset_shift_1[0] + offset_shift_3_1[0], y_center + offset_shift_1[1] + offset_shift_3_1[
             1]
@@ -634,7 +565,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             1]
         c_center = x_center + offset_shift_1[0] + offset_shift_3_3[0], y_center + offset_shift_1[1] + offset_shift_3_3[
             1]
-        # two character, two permutations on order of characters
+        # three character, six permutations on order of characters
         for a_ind in range(0, 3):
             for b_ind in range(0, 3):
                 for c_ind in range(0, 3):
@@ -644,8 +575,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     a_canvas = canvas.copy()
                     # grab sizes of appropriate characters
                     a_char = resized_list[a_ind][0]  # This is the first character on the canvas
-                    b_char = resized_list[b_ind][1]  # second character on the canvas
-                    c_char = resized_list[c_ind][2]  # third character on the canvas
+                    b_char = resized_list2[b_ind][1]  # second character on the canvas
+                    c_char = resized_list3[c_ind][2]  # third character on the canvas
                     # grab offsets
                     a_char_offset = calculateOffsetFromCenter(a_center, a_char.size)
                     b_char_offset = calculateOffsetFromCenter(b_center, b_char.size)
@@ -681,14 +612,14 @@ def createRoundImages(match_list, background, foreground):
         # # # Create background and foreground images and combine
         # # Background:
         # Grab all the character images to prepare them to add to the background
-        c1_renders = a_match.c1
-        c2_renders = a_match.c2
+        c1_char_list = a_match.c1
+        c2_char_list = a_match.c2
         # Call Function to create the combined character images - Left and Right space
         char_window = _properties['char_window']
         one_char_flag = _properties['one_char_flag']
         char_canvas = (int(background.size[0] * char_window[0]), int(background.size[1] * char_window[1]))
-        c1_image_list = createCharacterWindow(c1_renders, char_canvas, single_bool=one_char_flag)
-        c2_image_list = createCharacterWindow(c2_renders, char_canvas, right_bool=True, single_bool=one_char_flag)
+        c1_image_list = createCharacterWindow(c1_char_list, char_canvas, single_bool=one_char_flag)
+        c2_image_list = createCharacterWindow(c2_char_list, char_canvas, right_bool=True, single_bool=one_char_flag)
         # Grab offsets for placing the character windows
         char_offset1 = _properties['char_offset1']
         offset1 = (int(background.size[0] * char_offset1[0]), int(background.size[1] * char_offset1[1]))
