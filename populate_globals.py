@@ -15,7 +15,7 @@ def set_default_properties():
     # Character renders folder location
     properties['char_renders'] = "Character_Renders"
     properties['render_type'] = "Full render"
-    properties['render_type2'] = "Diamond Render"
+    properties['render_type2'] = None
     properties['render_type3'] = None
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Sample test names.txt')

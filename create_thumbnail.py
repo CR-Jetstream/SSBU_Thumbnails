@@ -327,8 +327,8 @@ def createMatches(match_lines):
                             char_file = p_char
                             char_found = True
                             break
-                    # Char not found case
-                    if not char_found:
+                    # Char not found case and character is not random
+                    if not char_found and a_char.upper() != 'RANDOM':
                         print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
                 # Check if char file exists at render location
                 if _properties['render_type'] is None:
