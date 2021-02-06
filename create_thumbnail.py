@@ -509,8 +509,12 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
+        # acquire resized characters from scaling
+        resized_list = resizeCharacterList(resized_char1, 1)
         # apply characters to canvas, add to canvas list
-        for a_char in resized_char1:
+        for a_char in resized_list:
+            # set a_char equal to the only element in the list
+            a_char = a_char[0]
             a_canvas = canvas.copy()
             # Calculate offset and shift from center
             a_offset = calculateOffsetFromCenter((x_center, y_center), a_char.size)

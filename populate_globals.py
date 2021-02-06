@@ -14,14 +14,14 @@ def set_default_properties():
     properties = dict()
     # Character renders folder location
     properties['char_renders'] = "Character_Renders"
-    properties['render_type'] = "Full render"
+    properties['render_type'] = "Body render"
     properties['render_type2'] = None
     properties['render_type3'] = None
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Sample test names.txt')
     # Background and Foreground overlay locations
-    properties['background_file'] = os.path.join('Overlays', 'Background.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground.png')
+    properties['background_file'] = os.path.join('Overlays', 'Background Sample.png')
+    properties['foreground_file'] = os.path.join('Overlays', 'Foreground Sample.png')
     # Output save location
     properties['save_location'] = os.path.join('..', 'Youtube_Thumbnails')
     # Canvas variables for character window with respect to whole canvas
@@ -29,12 +29,12 @@ def set_default_properties():
     properties['char_border'] = (0.00, 0.26)  # border for characters
     properties['char_offset1'] = (0, 0.00)  # offset for left player window placement on canvas
     properties['char_offset2'] = (0.5, 0.00)  # offset for right player window placement on canvas
-    # Scaler Variables for multiple characters in window
-    properties['resize_1'] = 0.85  # resize for character for multiple renders on image
-    properties['resize_2'] = 0.75
-    properties['resize_3'] = 0.60
+    # Scaler Variables for characters in window
+    properties['resize_1'] = 1.65  # resize for character for multiple renders on image
+    properties['resize_2'] = 1.00
+    properties['resize_3'] = 1.00
     # Center-point shift for canvas for characters
-    properties['center_shift_1'] = (-0.04, +0.01)  # Universal character shift
+    properties['center_shift_1'] = (-0.00, +0.10)  # Universal character shift
     properties['center_shift_2_1'] = (-0.20, +0.11)  # Two character shift
     properties['center_shift_2_2'] = (+0.20, -0.11)
     properties['center_shift_3_1'] = (-0.15, +0.148)  # Three character shift
@@ -69,7 +69,7 @@ def set_default_properties():
     properties['pixelate_filter_size'] = 16  # size of pixel squares
     # Useful flags
     properties['show_first_image'] = True  # Flag for showing one sample image when generating
-    properties['one_char_flag'] = False  # Flag to determine if there is only one character on the overlay or multiple
+    properties['one_char_flag'] = True  # Flag to determine if there is only one character on the overlay or multiple
 
     # return properties
     return properties
@@ -83,10 +83,20 @@ def setGlobalsQuarantainment(properties, number):
     :param number:
     :return:
     """
+    # Character renders folder location
+    properties['render_type'] = "Full render"
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Q.png')
+    # Center-point shift for canvas for characters
+    properties['center_shift_1'] = (-0.04, +0.01)
+    properties['char_border'] = (0.00, 0.26)  # border for characters
+    properties['resize_1'] = 0.85  # resize for character for multiple renders on image
+    properties['resize_2'] = 0.75
+    properties['resize_3'] = 0.60
+    # Single character flag on overlay
+    properties['one_char_flag'] = False
     # Return with modifications
     return properties
 
@@ -99,6 +109,9 @@ def setGlobalsSxT(properties, number):
     :param number:
     :return:
     """
+    # Set to Quaratainment settings and then adjust
+    properties = setGlobalsQuarantainment(properties, number)
+    #
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
     # Foreground overlay locations
@@ -115,6 +128,8 @@ def setGlobalsFro(properties, number):
     :param number:
     :return:
     """
+    # Character renders folder location
+    properties['render_type'] = "Full render"
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Fro Fridays {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
@@ -159,6 +174,8 @@ def setGlobalsAWG(properties, number):
     :param number:
     :return:
     """
+    # Character renders folder location
+    properties['render_type'] = "Full render"
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
