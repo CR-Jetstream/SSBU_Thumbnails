@@ -131,7 +131,7 @@ def readCharDatabase(filename, deliminator=','):
             continue
         # Confirm there are two columns
         if len(line) > 2:
-            print("Warning: Bad format in player database", line)
+            print("Warning: Bad format in character database", line)
             continue
         # grab character name
         char_key = line.pop(0).strip()

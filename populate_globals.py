@@ -139,6 +139,8 @@ def setGlobalsFro(properties, number):
     properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Fro2.png')
     # Single character flag on overlay
     properties['one_char_flag'] = True
+    # Scaler Variables for characters in window
+    properties['resize_1'] = 1.00
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.00, +0.00)  # Universal character shift
     # Center-point for text on canvas with respect to whole canvas
@@ -187,6 +189,8 @@ def setGlobalsAWG(properties, number):
     properties['char_offset2'] = (0.5, -0.00)  # offset for right player window placement on canvas
     # Single character flag on overlay
     properties['one_char_flag'] = True
+    # Scaler Variables for characters in window
+    properties['resize_1'] = 1.00  
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (+0.03, -0.03)  # Universal character shift
     # Center-point for text on canvas with respect to whole canvas
