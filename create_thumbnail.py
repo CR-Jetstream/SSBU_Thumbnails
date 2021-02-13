@@ -266,6 +266,11 @@ def createMatches(match_lines):
     # Loop through and grab match data
     #  {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
     r_start = len(event)
+    # dictionaries for players and characters not found
+    player_not_found = {}
+    char_not_found = {}
+    # Begin loop
+    print("--- Reading Match Lines ---")
     for a_line in match_lines:
         # grab whole title
         a_title = a_line.strip()
@@ -318,7 +323,13 @@ def createMatches(match_lines):
                     player_name = player_name[:-4]
                 # Player not found case
                 if player_name not in _player_database.keys():
-                    print("-- Note: Player", player_name, "not found in Player Database --")
+                    # print("-- Note: Player", player_name, "not found in Player Database --")
+                    # add player to dictionary
+                    if player_name not in player_not_found.keys():
+                        player_not_found[player_name] = []
+                    # add character to player in dictionary
+                    if a_char not in player_not_found[player_name]:
+                        player_not_found[player_name].append(a_char)
                 else:  # Player found
                     player_chars_lookup = _player_database[player_name]
                     char_found = False
@@ -329,7 +340,13 @@ def createMatches(match_lines):
                             break
                     # Char not found case and character is not random
                     if not char_found and a_char.upper() != 'RANDOM':
-                        print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
+                        # print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
+                        # add player to dictionary
+                        if player_name not in char_not_found.keys():
+                            char_not_found[player_name] = []
+                        # add character to player in dictionary
+                        if a_char not in char_not_found[player_name]:
+                            char_not_found[player_name].append(a_char)
                 # Check if char file exists at render location
                 if _properties['render_type'] is None:
                     raise NameError("Error: 'render_type' is set to None")
@@ -351,6 +368,20 @@ def createMatches(match_lines):
         a_match = Match(a_title, event, a_round, player1_name, player1_char_files, player2_name, player2_char_files)
         return_list.append(a_match)
     # end of loop
+    # Print out player and character not found information
+    print("** List of players not found **")
+    for a_player in player_not_found.keys():
+        print("{s}".format(s=a_player), end=' ')
+        for a_char in player_not_found[a_player]:
+            print("\t{s}\t1".format(s=a_char), end=' ')
+        print()
+    print("** List of characters not found for players **")
+    for a_player in char_not_found.keys():
+        print("{s}".format(s=a_player), end=' ')
+        for a_char in char_not_found[a_player]:
+            print("\t{s}\t1".format(s=a_char), end=' ')
+        print()
+    # Return
     return return_list
 
 
@@ -611,6 +642,7 @@ def createRoundImages(match_list, background, foreground):
     :return:
     """
     # Loop through the matches and add the images
+    print("--- Creating Match Images ---")
     show_first = _properties['show_first_image']
     for a_match in match_list:
         # # # Create background and foreground images and combine
@@ -799,7 +831,6 @@ def main(argv):
     event_match_list = createRoundImages(event_match_list, back_image, front_image)
     # 4. Save the images
     saveImages(event_match_list, _properties['save_location'], event_bool=True)
-
 
 
 if __name__ == "__main__":
