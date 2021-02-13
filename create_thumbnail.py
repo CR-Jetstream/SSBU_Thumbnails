@@ -665,11 +665,20 @@ def createRoundImages(match_list, background, foreground):
         #  Add filter for pixelation if true
         for c1_image in c1_image_list:
             for c2_image in c2_image_list:
-                # Create a copy of the background
-                match_back = background.copy()
-                # Apply the characters to the image
-                match_back.paste(c1_image, offset1, mask=c1_image)
-                match_back.paste(c2_image, offset2, mask=c2_image)
+                # Add characters to canvas
+                if not _properties['char_glow_bool']:
+                    # Paste character models to transparent canvas
+                    blank_back = Image.new("RGBA", background.size)
+                    blank_back.paste(c1_image, offset1, mask=c1_image)
+                    blank_back.paste(c2_image, offset2, mask=c2_image)
+                    # Make new composite image of background and characters
+                    match_back = Image.alpha_composite(background.copy(), blank_back)
+                else:  # apply with transparency glow
+                    # Create a copy of the background
+                    match_back = background.copy()
+                    # Apply the characters to the image
+                    match_back.paste(c1_image, offset1, mask=c1_image)
+                    match_back.paste(c2_image, offset2, mask=c2_image)
                 # Pixelate if filter is set
                 if _properties['pixelate_filter_bool']:
                     # Resize smoothly down to x pixels
@@ -734,10 +743,8 @@ def createRoundImages(match_list, background, foreground):
         background_ims = a_match.Images
         a_match.Images = []
         for an_image in background_ims:
-            # Make new composite image, apply Background, then Forground
-            comb_image = Image.new("RGBA", an_image.size)
-            comb_image = Image.alpha_composite(comb_image, an_image)
-            comb_image = Image.alpha_composite(comb_image, match_fore)
+            # Make new composite image of Background and Foreground
+            comb_image = Image.alpha_composite(an_image, match_fore)
             a_match.Images.append(comb_image)
             # Show image
             if show_first:

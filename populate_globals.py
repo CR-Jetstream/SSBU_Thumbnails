@@ -25,6 +25,7 @@ def set_default_properties():
     # Output save location
     properties['save_location'] = os.path.join('..', 'Youtube_Thumbnails')
     # Canvas variables for character window with respect to whole canvas
+    properties['char_glow_bool'] = False
     properties['char_window'] = (0.5, 1)  # canvas for characters
     properties['char_border'] = (0.00, 0.26)  # border for characters
     properties['char_offset1'] = (0, 0.00)  # offset for left player window placement on canvas
@@ -90,6 +91,8 @@ def setGlobalsQuarantainment(properties, number):
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join('Overlays', 'Background_Q.png')
     properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Q.png')
+    # Canvas flag
+    properties['char_glow_bool'] = True
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.04, +0.01)
     properties['char_border'] = (0.00, 0.26)  # border for characters
