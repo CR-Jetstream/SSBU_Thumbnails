@@ -88,6 +88,7 @@ def setGlobalsQuarantainment(properties, number):
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
+    properties['background_file'] = os.path.join('Overlays', 'Background_Q.png')
     properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Q.png')
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.04, +0.01)
@@ -190,7 +191,7 @@ def setGlobalsAWG(properties, number):
     # Single character flag on overlay
     properties['one_char_flag'] = True
     # Scaler Variables for characters in window
-    properties['resize_1'] = 1.00  
+    properties['resize_1'] = 1.00
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (+0.03, -0.03)  # Universal character shift
     # Center-point for text on canvas with respect to whole canvas
