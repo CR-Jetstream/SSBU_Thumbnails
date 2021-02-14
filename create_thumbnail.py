@@ -248,10 +248,12 @@ def readMatchLines(filename):
     return return_lines
 
 
-def createMatches(match_lines):
+def createMatches(match_lines, log_file=None):
     """
     Take in list of line information, create a list of matches
+    Writes out information to log file if present
     :param match_lines:
+    :param log_file:
     :return:
     """
     # Read each line and grab information
@@ -368,19 +370,27 @@ def createMatches(match_lines):
         a_match = Match(a_title, event, a_round, player1_name, player1_char_files, player2_name, player2_char_files)
         return_list.append(a_match)
     # end of loop
-    # Print out player and character not found information
-    print("** List of players not found **")
+    # Write output information to log file - player and character not found information
+    out_text = ""
+    out_text += "** List of players not found **\n"
     for a_player in player_not_found.keys():
-        print("{s}".format(s=a_player), end=' ')
+        out_text += "{s}".format(s=a_player)
         for a_char in player_not_found[a_player]:
-            print("\t{s}\t1".format(s=a_char), end=' ')
-        print()
-    print("** List of characters not found for players **")
+            out_text += "\t{s}\t1".format(s=a_char)
+        out_text += "\n"
+    out_text += "** List of characters not found for players **\n"
     for a_player in char_not_found.keys():
-        print("{s}".format(s=a_player), end=' ')
+        out_text += "{s}".format(s=a_player)
         for a_char in char_not_found[a_player]:
-            print("\t{s}\t1".format(s=a_char), end=' ')
-        print()
+            out_text += "\t{s}\t1".format(s=a_char)
+        out_text += "\n"
+    # Print information to screen or to file
+    if log_file == '':
+        print(out_text)
+    else:
+        out_file = open(log_file, "w")
+        out_file.write(out_text)
+        out_file.close()
     # Return
     return return_list
 
@@ -790,14 +800,15 @@ def main(argv):
     event = 'Sample'
     number = 'Test'
     property_file = ''
+    output_file = 'test.txt'
     try:
-        opts, args = getopt.getopt(argv, "he:n:p:", ["event=", "number=", "property_file="])
+        opts, args = getopt.getopt(argv, "he:n:p:o:", ["event=", "number=", "property_file=", "output_file="])
     except getopt.GetoptError:
         print('create_thumbnail.py -e <event> -n <number>, -p <property_file>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('create_thumbnail.py -e <event> -n <number>, -p <property_file>')
+            print('create_thumbnail.py -e <event> -n <number>, -p <property_file> -o <output_file>')
             sys.exit()
         elif opt in ("-e", "--event"):
             event = arg
@@ -805,6 +816,8 @@ def main(argv):
             number = arg
         elif opt in ("-p", "--property_file"):
             property_file = arg
+        elif opt in ("-o", "--output_file"):
+            output_file = arg
     print('Event is', event, number)
     # print('Property file is ', property_file)
     # End of Command Line Arguments
@@ -824,7 +837,7 @@ def main(argv):
     event_match_lines = readMatchLines(_properties['event_info'])
     # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
-    event_match_list = createMatches(event_match_lines)
+    event_match_list = createMatches(event_match_lines, output_file)
     # 2. Have a blank graphic ready to populate the information
     back_image = Image.open(_properties['background_file'])
     # back_image = Image.open('Overlays\\Background_U32.png')
