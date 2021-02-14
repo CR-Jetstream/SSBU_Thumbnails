@@ -27,11 +27,11 @@ def set_default_properties():
     # Canvas variables for character window with respect to whole canvas
     properties['char_glow_bool'] = False
     properties['char_window'] = (0.5, 1)  # canvas for characters
-    properties['char_border'] = (0.00, 0.26)  # border for characters
+    properties['char_border'] = (0.00, 0.00)  # border for characters
     properties['char_offset1'] = (0, 0.00)  # offset for left player window placement on canvas
     properties['char_offset2'] = (0.5, 0.00)  # offset for right player window placement on canvas
     # Scaler Variables for characters in window
-    properties['resize_1'] = 1.65  # resize for character for multiple renders on image
+    properties['resize_1'] = 1.6  # resize for character for multiple renders on image
     properties['resize_2'] = 1.00
     properties['resize_3'] = 1.00
     # Center-point shift for canvas for characters
@@ -147,6 +147,7 @@ def setGlobalsFro(properties, number):
     properties['resize_1'] = 1.00
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.00, +0.00)  # Universal character shift
+    properties['char_border'] = (0.00, 0.26)  # border for characters
     # Center-point for text on canvas with respect to whole canvas
     properties['text_player1'] = (0.23, 0.75)  # (0.20, 0.75)
     properties['text_player2'] = (0.77, 0.75)  # (0.80, 0.75)

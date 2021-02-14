@@ -800,7 +800,7 @@ def main(argv):
     event = 'Sample'
     number = 'Test'
     property_file = ''
-    output_file = 'test.txt'
+    output_file = ''
     try:
         opts, args = getopt.getopt(argv, "he:n:p:o:", ["event=", "number=", "property_file=", "output_file="])
     except getopt.GetoptError:
