@@ -482,7 +482,6 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         y_max_height = int(win_size[1] * (1 - char_border[1]))
     # Identify ratio for scaling
     xy_ratio = x_max_height / y_max_height
-    # todo: This works for full renders, not Wide renders
     # Loop through render types and save the images to resized_char lists
     resized_char_list = [resized_char1, resized_char2, resized_char3]
     render_list = [_properties['render_type'], _properties['render_type2'], _properties['render_type3']]
@@ -550,10 +549,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
-        # acquire resized characters from scaling
-        resized_list = resizeCharacterList(resized_char1, 1)
         # apply characters to canvas, add to canvas list
-        for a_char in resized_list:
+        for a_char in [resized_char1]:
             # set a_char equal to the only element in the list
             a_char = a_char[0]
             a_canvas = canvas.copy()
