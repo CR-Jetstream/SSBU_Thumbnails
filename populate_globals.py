@@ -223,3 +223,25 @@ def setGlobalsAWG(properties, number):
     # Return with modifications
     return properties
 
+
+def setGlobalsC2C(properties, number):
+    """
+    Set necessary globals for Students x Treehouse event {number} for create_thumbnail.py
+    properties dictionary is fed in, modified, then returned
+    :param properties:
+    :param number:
+    :return:
+    """
+    # Set to Quaratainment settings and then adjust
+    properties = setGlobalsQuarantainment(properties, number)
+    #
+    # Event match file information location
+    properties['event_info'] = os.path.join('..', 'Vod Names', 'C2C Finale {s} names.txt'.format(s=number))
+    # Background and Foreground overlay locations
+    properties['background_file'] = os.path.join('Overlays', 'Background_C2C.png')
+    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_C2C.png')
+    # Single character flag on overlay
+    properties['one_char_flag'] = True
+    properties['resize_1'] = 1.0
+    # Return with modifications
+    return properties
