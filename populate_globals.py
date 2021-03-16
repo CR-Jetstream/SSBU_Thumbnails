@@ -187,7 +187,7 @@ def setGlobalsAWG(properties, number):
     properties['event_info'] = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join('Overlays', 'Background_AWG.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_AWG.png')
+    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_AWG_spring.png')
     # Character border settings
     properties['char_border'] = (0.00, 0.35)  # border for characters
     properties['char_offset1'] = (0, -0.00)  # offset for left player window placement on canvas

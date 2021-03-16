@@ -311,45 +311,54 @@ def createMatches(match_lines, log_file=None):
         p1_flag = True  # used in loop
         for a_list in [player1_chars, player2_chars]:
             for a_char in a_list:
-                # Character lookup in mapping
+                # Case for handling alts in the char name
+                alt_num_in_name = False
+                if a_char[-2] == ' ' and a_char[-1] in "12345678":
+                    alt_num_in_name = True
+                    alt_num = '(' + a_char[-1] + ')'
+                    a_char = a_char[:-2]
+                else:
+                    alt_num = '(1)'
+                # Search for character in char database
                 if a_char in _character_database.keys():
                     a_char = _character_database[a_char]
-                # Presume Character alt 1
-                char_file = a_char + ' (1)'
-                # Lookup character in player database for alt costume (if it exists)
-                if p1_flag:
-                    player_name = player1_name
-                else:
-                    player_name = player2_name
-                # Remove [L] suffix if present when searching for player
-                if player_name[-4:] == ' [L]':
-                    player_name = player_name[:-4]
-                # Player not found case
-                if player_name not in _player_database.keys():
-                    # print("-- Note: Player", player_name, "not found in Player Database --")
-                    # add player to dictionary
-                    if player_name not in player_not_found.keys():
-                        player_not_found[player_name] = []
-                    # add character to player in dictionary
-                    if a_char not in player_not_found[player_name]:
-                        player_not_found[player_name].append(a_char)
-                else:  # Player found
-                    player_chars_lookup = _player_database[player_name]
-                    char_found = False
-                    for p_char in player_chars_lookup:
-                        if a_char.upper() in p_char.upper():
-                            char_file = p_char
-                            char_found = True
-                            break
-                    # Char not found case and character is not random
-                    if not char_found and a_char.upper() != 'RANDOM':
-                        # print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
+                # Create char image file name
+                char_file = a_char + ' ' + alt_num
+                # Lookup character in player database for alt costume (if it exists) if alt not specified
+                if not alt_num_in_name:
+                    if p1_flag:
+                        player_name = player1_name
+                    else:
+                        player_name = player2_name
+                    # Remove [L] suffix if present when searching for player
+                    if player_name[-4:] == ' [L]':
+                        player_name = player_name[:-4]
+                    # Player not found case
+                    if player_name not in _player_database.keys():
+                        # print("-- Note: Player", player_name, "not found in Player Database --")
                         # add player to dictionary
-                        if player_name not in char_not_found.keys():
-                            char_not_found[player_name] = []
+                        if player_name not in player_not_found.keys():
+                            player_not_found[player_name] = []
                         # add character to player in dictionary
-                        if a_char not in char_not_found[player_name]:
-                            char_not_found[player_name].append(a_char)
+                        if a_char not in player_not_found[player_name]:
+                            player_not_found[player_name].append(a_char)
+                    else:  # Player found
+                        player_chars_lookup = _player_database[player_name]
+                        char_found = False
+                        for p_char in player_chars_lookup:
+                            if a_char.upper() in p_char.upper():
+                                char_file = p_char
+                                char_found = True
+                                break
+                        # Char not found case and character is not random
+                        if not char_found and a_char.upper() != 'RANDOM':
+                            # print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
+                            # add player to dictionary
+                            if player_name not in char_not_found.keys():
+                                char_not_found[player_name] = []
+                            # add character to player in dictionary
+                            if a_char not in char_not_found[player_name]:
+                                char_not_found[player_name].append(a_char)
                 # Check if char file exists at render location
                 if _properties['render_type'] is None:
                     raise NameError("Error: 'render_type' is set to None")
