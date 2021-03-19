@@ -79,6 +79,7 @@ _character_list = [
     "Pokémon Trainer (Charizard)",
     "Pokémon Trainer (Ivysaur)",
     "Pokémon Trainer (Squirtle)",
+    "Pyra and Mythra",
     "Richter",
     "Ridley",
     "ROB",
@@ -162,6 +163,7 @@ _character_mapping = {
     "Piranha Plant": "piranha_plant",
     "Pit": "pit",
     "Pokémon Trainer": "pokemon_trainer",
+    "Pyra and Mythra": "pyra",
     "Richter": "richter",
     "Ridley": "ridley",
     "ROB": "rob",
@@ -189,6 +191,7 @@ _character_mapping = {
     "Zero Suit Samus": "zero_suit_samus"
 }
 
+
 def create_char_filename(char_name, char_file):
     """
     Create the character destination filename based off of the input name and filename.
@@ -215,6 +218,8 @@ def create_char_filename(char_name, char_file):
         char_name = "Pokemon Trainer"
     elif char_name == "Terry Bogard":
         char_name = "Terry"
+    elif char_name == "Pyra and Mythra":
+        char_name = "Pyra"
     # Create dest filename
     dest_filename = char_name + " " + alt_str + ".png"
     return dest_filename
@@ -248,6 +253,8 @@ def create_char_filename2(char_name, char_file):
         char_name = "Pokemon Trainer"
     elif char_name == "Terry Bogard":
         char_name = "Terry"
+    elif char_name == "Pyra and Mythra":
+        char_name = "Pyra"
     # Create dest filename
     dest_filename = char_name + " " + alt_str + ".png"
     return dest_filename
@@ -277,6 +284,9 @@ def organize_from_renders_zip(char_name, new_folder_location):
         chara_1 --> Body render
         chara_3 --> Wide render
         chara_4 --> Diamond render
+        chara_5 --> Single Full render
+        chara_6 --> Face render
+        chara_7 --> Single render with shadow
     Create mapping for images to new format:
         chara_0_{char_shorthand}_00.png --> char_name (1)
         ...
@@ -290,8 +300,12 @@ def organize_from_renders_zip(char_name, new_folder_location):
     #  mapping has structure (source_filename, new_filename)
     return_mapping = []
     # Lookup character folder
-    source_path = os.path.join("Character_Renders_Backup", "Super Smash Bros Ultimate", "Fighter Portraits", char_name)
-    source_path = os.path.join("Character_Renders_Backup", "Full body")
+    source_path = os.path.join("Character_Renders_Backup", "Super Smash Bros Ultimate", "Fighter Portraits")
+    if char_name not in os.listdir(source_path):
+        return return_mapping
+    # Character folder exists
+    source_path = os.path.join(source_path, char_name)
+    # source_path = os.path.join("Character_Renders_Backup", "Full body")
     filenames = os.listdir(source_path)
     # Walk through files
     for a_file in filenames:
@@ -309,10 +323,14 @@ def organize_from_renders_zip(char_name, new_folder_location):
                 dest_folder = os.path.join(new_folder_location, "Body render")
                 return_mapping.append((source_path, a_file, dest_folder, dest_file))
             elif a_file.startswith("chara_3_"):  # Char 3 case
+                continue  # Skipping
                 dest_folder = os.path.join(new_folder_location, "Wide render")
                 return_mapping.append((source_path, a_file, dest_folder, dest_file))
             elif a_file.startswith("chara_4_"):  # Char 4 case
                 dest_folder = os.path.join(new_folder_location, "Diamond render")
+                return_mapping.append((source_path, a_file, dest_folder, dest_file))
+            elif a_file.startswith("chara_6_"):  # Char 6 case
+                dest_folder = os.path.join(new_folder_location, "Face render")
                 return_mapping.append((source_path, a_file, dest_folder, dest_file))
             # end of chara case
         elif a_file.endswith(".png") and "main" in a_file:
@@ -340,6 +358,8 @@ def save_char_files(file_mapping):
     :param file_mapping:
     :return:
     """
+    if not file_mapping:
+        return False
     for s_folder, s_file, d_folder, d_file in file_mapping:
         # Create folder if it does not exist
         if not os.path.exists(d_folder):
@@ -355,7 +375,7 @@ def save_char_files(file_mapping):
         # Rename copied file to destination path
         cpy_file = os.path.join(d_folder, s_file)
         os.rename(cpy_file, d_path)
-    return
+    return True
 
 
 if __name__ == "__main__":
@@ -363,7 +383,7 @@ if __name__ == "__main__":
     save_location = os.path.join("Character_Renders")
     for a_char in _character_list:
         char_file_mapping = organize_from_renders_zip(a_char, save_location)
-        save_char_files(char_file_mapping)
-        print(a_char, "saved successfully")
+        if save_char_files(char_file_mapping):
+            print(a_char, "saved successfully")
     print("Done")
 
