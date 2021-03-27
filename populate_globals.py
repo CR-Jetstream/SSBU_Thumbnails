@@ -36,8 +36,8 @@ def readCharDatabase(filename, deliminator=','):
         # grab character name
         char_key = line.pop(0).strip()
         char_value = line.pop(0).strip()
-        # Add to character database dictionary (change to upper case)
-        char_database[char_key] = char_value.upper()
+        # Add to character database dictionary (to uppercase)
+        char_database[char_key.upper()] = char_value
     # end loop
     return char_database
 
@@ -85,15 +85,15 @@ def readPlayerDatabase(filename, deliminator=',', char_database=None):
             # skip if blank
             if a_char == '' and a_alt == '':
                 continue
-            # check character mapping
-            if a_char in char_database.keys():
-                a_char = char_database[a_char]
+            # check character mapping (to uppercase)
+            if a_char.upper() in char_database.keys():
+                a_char = char_database[a_char.upper()]
             # format "{character} ({alt})"
             a_char_alt = '{char} ({alt})'.format(char=a_char, alt=a_alt)
             # add char alt combo to list
             char_alt_list.append(a_char_alt)
-        # Add to player database dictionary
-        play_database[player_name] = char_alt_list
+        # Add to player database dictionary (to uppercase)
+        play_database[player_name.upper()] = char_alt_list
     # end loop
     return play_database
 
@@ -170,14 +170,15 @@ def set_default_properties():
     return properties
 
 
-def setGlobalsQuarantainment(properties, number):
+def setGlobalsQuarantainment(number):
     """
     Set necessary globals for Quarantainment event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param properties:
     :param number:
     :return:
     """
+    # Load in default
+    properties = set_default_properties()
     # Character renders folder location
     properties['render_type'] = "Full render"
     # Event match file information location
@@ -199,16 +200,15 @@ def setGlobalsQuarantainment(properties, number):
     return properties
 
 
-def setGlobalsSxT(properties, number):
+def setGlobalsSxT(number):
     """
     Set necessary globals for Students x Treehouse event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param properties:
     :param number:
     :return:
     """
     # Set to Quaratainment settings and then adjust
-    properties = setGlobalsQuarantainment(properties, number)
+    properties = setGlobalsQuarantainment(number)
     #
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
@@ -218,14 +218,15 @@ def setGlobalsSxT(properties, number):
     return properties
 
 
-def setGlobalsFro(properties, number):
+def setGlobalsFro(number):
     """
     Set all globals for Fro Friday event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param properties:
     :param number:
     :return:
     """
+    # Load in default
+    properties = set_default_properties()
     # Character renders folder location
     properties['render_type'] = "Full render"
     # Event match file information location
@@ -267,14 +268,15 @@ def setGlobalsFro(properties, number):
     return properties
 
 
-def setGlobalsAWG(properties, number):
+def setGlobalsAWG(number):
     """
     Set all globals for AWG event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param properties:
     :param number:
     :return:
     """
+    # Load in default
+    properties = set_default_properties()
     # Character renders folder location
     properties['render_type'] = "Full render"
     # Event match file information location
@@ -322,12 +324,11 @@ def setGlobalsC2C(properties, number):
     """
     Set necessary globals for Students x Treehouse event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param properties:
     :param number:
     :return:
     """
     # Set to Quaratainment settings and then adjust
-    properties = setGlobalsQuarantainment(properties, number)
+    properties = setGlobalsQuarantainment(number)
     #
     # Event match file information location
     properties['event_info'] = os.path.join('..', 'Vod Names', 'C2C Finale {s} names.txt'.format(s=number))

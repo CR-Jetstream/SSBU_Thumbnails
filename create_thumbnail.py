@@ -115,19 +115,19 @@ def setGlobals(weekly, number, property_settings=None):
     :param property_settings:
     :return:
     """
-    # Set properties to default
-    global_properties = populate_globals.set_default_properties()
-    # Modify globals based off of type of weekly
+    # Set globals based off of type of weekly
     if weekly == 'Quarantainment':
-        global_properties = populate_globals.setGlobalsQuarantainment(global_properties, number)
+        global_properties = populate_globals.setGlobalsQuarantainment(number)
     elif weekly == 'Students x Treehouse':
-        global_properties = populate_globals.setGlobalsSxT(global_properties, number)
+        global_properties = populate_globals.setGlobalsSxT(number)
     elif weekly == 'Fro Fridays':
-        global_properties = populate_globals.setGlobalsFro(global_properties, number)
+        global_properties = populate_globals.setGlobalsFro(number)
     elif weekly == 'AWG':
-        global_properties = populate_globals.setGlobalsAWG(global_properties, number)
+        global_properties = populate_globals.setGlobalsAWG(number)
     elif weekly == 'C2C Finale':
-        global_properties = populate_globals.setGlobalsC2C(global_properties, number)
+        global_properties = populate_globals.setGlobalsC2C(number)
+    else:
+        global_properties = populate_globals.set_default_properties()
     # return properties
     return global_properties
 
@@ -231,8 +231,8 @@ def createMatches(match_lines, log_file=None):
                 else:
                     alt_num = '(1)'
                 # Search for character in char database
-                if a_char in _character_database.keys():
-                    a_char = _character_database[a_char]
+                if a_char.upper() in _character_database.keys():
+                    a_char = _character_database[a_char.upper()]
                 # Create char image file name
                 char_file = a_char + ' ' + alt_num
                 # Lookup character in player database for alt costume (if it exists) if alt not specified
@@ -244,33 +244,33 @@ def createMatches(match_lines, log_file=None):
                     # Remove [L] suffix if present when searching for player
                     if player_name[-4:] == ' [L]':
                         player_name = player_name[:-4]
-                    # Player not found case
-                    if player_name not in _player_database.keys():
-                        # print("-- Note: Player", player_name, "not found in Player Database --")
-                        # add player to dictionary
+                    # Player not found case (to uppercase)
+                    if player_name.upper() not in _player_database.keys():
+                        # add player to not found dictionary
                         if player_name not in player_not_found.keys():
                             player_not_found[player_name] = []
-                        # add character to player in dictionary
                         if a_char not in player_not_found[player_name]:
                             player_not_found[player_name].append(a_char)
-                    else:  # Player found
-                        player_chars_lookup = _player_database[player_name]
+                    else:  # Player found, now look for characters
+                        # Lookup character (to uppercase)
+                        player_chars_lookup = _player_database[player_name.upper()]
                         char_found = False
+                        # Search existing characters in player database
                         for p_char in player_chars_lookup:
                             if a_char.upper() in p_char.upper():
+                                # Char found, set char file
                                 char_file = p_char
                                 char_found = True
                                 break
                         # Char not found case and character is not random
                         if not char_found and a_char.upper() != 'RANDOM':
-                            # print("-- Note:", a_char, "not found for Player", player_name, "in Player Database --")
-                            # add player to dictionary
+                            # add player to not found dictionary (to uppercase)
                             if player_name not in char_not_found.keys():
                                 char_not_found[player_name] = []
-                            # add character to player in dictionary
                             if a_char not in char_not_found[player_name]:
                                 char_not_found[player_name].append(a_char)
                 # Check if char file exists at render location
+                #  Render type must be specified, Render type 2 & 3 need not be
                 if _properties['render_type'] is None:
                     raise NameError("Error: 'render_type' is set to None")
                 for rend_dir in [_properties['render_type'], _properties['render_type2'], _properties['render_type3']]:
