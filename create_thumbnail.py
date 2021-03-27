@@ -16,7 +16,7 @@ import io
 import os
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-import populate_globals
+from populate_globals import *
 
 import sys
 import getopt
@@ -36,8 +36,10 @@ class Match:
         self.r = _round
         self.p1 = _player1
         self.c1 = _char1
+        self.c1_renders = []
         self.p2 = _player2
         self.c2 = _char2
+        self.c2_renders = []
         self.Images = []
 
 
@@ -146,14 +148,13 @@ def readMatchLines(filename):
     return_lines = []
     for line in file_text:
         # check for format
-        # {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
+        # {event_1} {round_1} - {player_1} ({char_1}) Vs {player_2} ({char_2}) - SSBU
         if line.startswith('#'):
             # Comment case
             continue
-        elif ' - ' in line and '(' in line and ')' in line and 'Vs.' in line and '- SSBU' in line:
-            return_lines.append(line)
-        elif ' - ' in line and '(' in line and ')' in line and 'vs.' in line and '- SSBU' in line:
-            return_lines.append(line)
+        elif ' - ' in line and '(' in line and ')' in line and '- SSBU' in line:
+            if 'Vs' in line or 'vs' in line:  # 'vs' is flexible
+                return_lines.append(line)
     # end loop
     if len(return_lines) == 0:
         raise NameError("Filename " + filename + " was not properly read in")
@@ -177,14 +178,15 @@ def createMatches(match_lines, log_file=None):
     for a_line in match_lines:
         # set event to starting substring
         event = common_start(a_line, event).strip()
-    # Loop through and grab match data
-    #  {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) Smash Ultimate - SSBU
-    r_start = len(event)
     # dictionaries for players and characters not found
     player_not_found = {}
     char_not_found = {}
-    # Begin loop
+
+    # Read in Match Lines to grab initial match information
+    #  {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) - SSBU
     print("--- Reading Match Lines ---")
+    match_list = []
+    r_start = len(event)  # index for reading the round information
     for a_line in match_lines:
         # grab whole title
         a_title = a_line.strip()
@@ -195,12 +197,12 @@ def createMatches(match_lines, log_file=None):
         a_round = a_line[0].strip()
         a_line = a_line[1]
         # split based off of Vs. to get Player 1 and Player 2
-        if 'Vs.' in a_line:
-            a_line = a_line.split('Vs.', 1)
-        elif 'vs.' in a_line:
-            a_line = a_line.split('vs.', 1)
+        if ' Vs ' in a_line:
+            a_line = a_line.split(' Vs ', 1)
+        elif ' vs ' in a_line:
+            a_line = a_line.split(' vs ', 1)
         else:
-            NameError("Error in file format, unable to split on Vs.")
+            NameError("Error in file format, unable to split on 'Vs'")
         player1_info = a_line[0]
         player2_info = a_line[1]
         # Grab player 1 name and characters {player_1} ({char_1})
@@ -215,14 +217,25 @@ def createMatches(match_lines, log_file=None):
         player2_chars = player2_info[1]
         player2_chars = player2_chars.split(')')[0]  # trim off ')'
         player2_chars = [x.strip() for x in player2_chars.split(',')]  # create a list for characters (strip whitespace)
+        # Have all the information, create a match
+        a_match = Match(a_title, event, a_round, player1_name, player1_chars, player2_name, player2_chars)
+        match_list.append(a_match)
+    # end of match creation
+
+    # Loop through all matches and find character render file locations
+    #  This involves looking at the Character and Player Databases to successfully grab the alts
+    for a_match in match_list:
         # Loop through character lists and grab character render
         #  Add them to the new lists
         player1_char_files = []
         player2_char_files = []
         p1_flag = True  # used in loop
-        for a_list in [player1_chars, player2_chars]:
+        for a_list in [a_match.c1, a_match.c2]:
+            # Loop through all characters and find their file locations
             for a_char in a_list:
                 # Case for handling alts in the char name
+                #  {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) - SSBU
+                #  where {char_1[2]} = ["a_char a_alt", "a_char2 a_alt2", ...]
                 alt_num_in_name = False
                 if a_char[-2] == ' ' and a_char[-1] in "12345678":
                     alt_num_in_name = True
@@ -238,9 +251,9 @@ def createMatches(match_lines, log_file=None):
                 # Lookup character in player database for alt costume (if it exists) if alt not specified
                 if not alt_num_in_name:
                     if p1_flag:
-                        player_name = player1_name
+                        player_name = a_match.p1
                     else:
-                        player_name = player2_name
+                        player_name = a_match.p2
                     # Remove [L] suffix if present when searching for player
                     if player_name[-4:] == ' [L]':
                         player_name = player_name[:-4]
@@ -278,19 +291,22 @@ def createMatches(match_lines, log_file=None):
                         continue
                     char_location = os.path.join(_properties['char_renders'], rend_dir, char_file + '.png')
                     if not os.path.exists(char_location):
-                        raise NameError("Character not found in " + a_round + ": " + rend_dir + "/" + char_file)
+                        raise NameError("Character not found in " + a_match.r + ": " + rend_dir + "/" + char_file)
                 # Add to render files
                 if p1_flag:
                     player1_char_files.append(char_file)
                 else:
                     player2_char_files.append(char_file)
-            # end of loop
+            # end of character loop
             p1_flag = False  # flip boolean
-        # end of loop
-        # Have all the information, create a match
-        a_match = Match(a_title, event, a_round, player1_name, player1_char_files, player2_name, player2_char_files)
+        # end of c1, c2 loop
+        # Add character renders to match
+        a_match.c1_renders = player1_char_files
+        a_match.c2_renders = player2_char_files
+        # Add match to return list
         return_list.append(a_match)
-    # end of loop
+    # end of match loop
+
     # Write output information to log file - player and character not found information
     out_text = ""
     out_text += "** List of players not found **\n"
@@ -581,8 +597,8 @@ def createRoundImages(match_list, background, foreground):
         # # # Create background and foreground images and combine
         # # Background:
         # Grab all the character images to prepare them to add to the background
-        c1_char_list = a_match.c1
-        c2_char_list = a_match.c2
+        c1_char_list = a_match.c1_renders
+        c2_char_list = a_match.c2_renders
         # Call Function to create the combined character images - Left and Right space
         char_window = _properties['char_window']
         one_char_flag = _properties['one_char_flag']
