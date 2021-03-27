@@ -16,7 +16,7 @@ import io
 import os
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
-from populate_globals import *
+import populate_globals
 
 import sys
 import getopt
