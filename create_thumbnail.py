@@ -106,120 +106,31 @@ def hex_to_rgb(hex_input):
     return tuple(int(hex_input[i:i + hlen // 3], 16) for i in range(0, hlen, hlen // 3))
 
 
-def readCharDatabase(filename, deliminator=','):
-    """
-    Open and read player database from a file.
-    By default, it is expected to be a CSV format
-    Line: Player,character,alt,character,alt,character,alt,character,alt, ...
-    Populate the Player Database dictionary for use
-    :param filename:
-    :param deliminator:
-    :return:
-    """
-    # Open File
-    file = io.open(filename, "r", encoding='utf8')
-    file_text = file.readlines()
-    # Filter through lines that matter:
-    global _character_database
-    for line in file_text:
-        # check for format
-        if line.startswith('#'):
-            continue  # comment line
-        # {Char from names},{Char in filename}
-        line = line.split(deliminator)
-        if len(line) < 2:
-            continue
-        # Confirm there are two columns
-        if len(line) > 2:
-            print("Warning: Bad format in character database", line)
-            continue
-        # grab character name
-        char_key = line.pop(0).strip()
-        char_value = line.pop(0).strip()
-        # Add to character database dictionary (change to upper case)
-        _character_database[char_key] = char_value.upper()
-    # end loop
-    return
-
-
-def readPlayerDatabase(filename, deliminator=','):
-    """
-    Open and read player database from a file.
-    By default, it is expected to be a CSV format
-    Line: Player,character,alt,character,alt,character,alt,character,alt, ...
-    Populate the Player Database dictionary for use
-    :param filename:
-    :param deliminator:
-    :return:
-    """
-    # Open File
-    file = io.open(filename, "r", encoding='utf8')
-    file_text = file.readlines()
-    # Filter through lines that matter:
-    global _player_database
-    for line in file_text:
-        # check for format
-        if line.startswith('#'):
-            continue  # comment line
-        # {player},{Char_1},{Alt_1},{Char_2},{Alt_2},{Char_3},{Alt_3}, ...
-        line = line.split(deliminator)
-        # check if at least one char alt combination exists
-        if len(line) < 3:
-            continue
-        # check for odd count (requesting char & alt combinations)
-        if len(line) % 2 == 0:
-            print("Warning: Bad format in player database", line)
-            continue
-        # grab player name
-        player_name = line.pop(0)
-        # loop through character & alts
-        char_alt_list = []
-        for i in range(0, len(line), 2):
-            j = i + 1
-            a_char = line[i].strip()
-            a_alt = line[j].strip()
-            # skip if blank
-            if a_char == '' and a_alt == '':
-                continue
-            # check character mapping
-            if a_char in _character_database.keys():
-                a_char = _character_database[a_char]
-            # format "{character} ({alt})"
-            a_char_alt = '{char} ({alt})'.format(char=a_char, alt=a_alt)
-            # Confirm character image exists in render folder
-            if not os.path.exists(os.path.join(_properties['char_renders'], _properties['render_type'],
-                                               a_char_alt + '.png')):
-                raise NameError("Character and alt not found in player database: " + a_char_alt)
-            # add char alt combo to list
-            char_alt_list.append(a_char_alt)
-        # Add to player database dictionary
-        _player_database[player_name] = char_alt_list
-    # end loop
-    return
-
-
-def setGlobals(weekly, number, property_settings):
+def setGlobals(weekly, number, property_settings=None):
     """
     Set all globals based off the type of event. Weekly is the series, Number is the event number.
     These globals are set to then create the associated thumbnails
     :param weekly:
     :param number:
+    :param property_settings:
     :return:
     """
     # Set properties to default
-    global _properties
-    _properties = populate_globals.set_default_properties()
+    global_properties = populate_globals.set_default_properties()
     # Modify globals based off of type of weekly
     if weekly == 'Quarantainment':
-        _properties = populate_globals.setGlobalsQuarantainment(_properties, number)
+        global_properties = populate_globals.setGlobalsQuarantainment(global_properties, number)
     elif weekly == 'Students x Treehouse':
-        _properties = populate_globals.setGlobalsSxT(_properties, number)
+        global_properties = populate_globals.setGlobalsSxT(global_properties, number)
     elif weekly == 'Fro Fridays':
-        _properties = populate_globals.setGlobalsFro(_properties, number)
+        global_properties = populate_globals.setGlobalsFro(global_properties, number)
     elif weekly == 'AWG':
-        _properties = populate_globals.setGlobalsAWG(_properties, number)
+        global_properties = populate_globals.setGlobalsAWG(global_properties, number)
     elif weekly == 'C2C Finale':
-        _properties = populate_globals.setGlobalsC2C(_properties, number)
+        global_properties = populate_globals.setGlobalsC2C(global_properties, number)
+    # return properties
+    return global_properties
+
 
 def readMatchLines(filename):
     """
@@ -836,15 +747,18 @@ def main(argv):
 
     # 0. Setup information
     # Event
-    setGlobals(event, number, property_file)
+    global _properties
+    _properties = setGlobals(event, number, property_file)
     # setGlobals('Sample', 'test')
     # setGlobals('Quarantainment', '43')
     # setGlobals('Students x Treehouse', '8')
     # setGlobals('Fro Friday', 'test')
     # setGlobals('AWG', 'test')
     # Read Player Database and Character Database
-    readCharDatabase('Character_Database.csv')
-    readPlayerDatabase('Player_Database.csv')
+    global _character_database
+    _character_database = populate_globals.readCharDatabase('Character_Database.csv', )
+    global _player_database
+    _player_database = populate_globals.readPlayerDatabase('Player_Database.csv', char_database=_character_database)
     # 1. Read in the names file to get event, round, names, characters information
     event_match_lines = readMatchLines(_properties['event_info'])
     # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')

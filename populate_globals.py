@@ -1,7 +1,101 @@
 """
 Script to set globals needed for create_thumbnail
+Also populated player and character databases
 """
+import io
 import os
+
+
+def readCharDatabase(filename, deliminator=','):
+    """
+    Open and read player database from a file.
+    By default, it is expected to be a CSV format
+    Line: Player,character,alt,character,alt,character,alt,character,alt, ...
+    Populate the Player Database dictionary for use
+    :param filename:
+    :param deliminator:
+    :return:
+    """
+    # Open File
+    file = io.open(filename, "r", encoding='utf8')
+    file_text = file.readlines()
+    # Filter through lines that matter:
+    char_database = {}
+    for line in file_text:
+        # check for format
+        if line.startswith('#'):
+            continue  # comment line
+        # {Char from names},{Char in filename}
+        line = line.split(deliminator)
+        if len(line) < 2:
+            continue
+        # Confirm there are two columns
+        if len(line) > 2:
+            print("Warning: Bad format in character database", line)
+            continue
+        # grab character name
+        char_key = line.pop(0).strip()
+        char_value = line.pop(0).strip()
+        # Add to character database dictionary (change to upper case)
+        char_database[char_key] = char_value.upper()
+    # end loop
+    return char_database
+
+
+def readPlayerDatabase(filename, deliminator=',', char_database=None):
+    """
+    Open and read player database from a file.
+    By default, it is expected to be a CSV format
+    Requires character database to properly look up characters
+    Line: Player,character,alt,character,alt,character,alt,character,alt, ...
+    Populate the Player Database dictionary for use
+    :param filename:
+    :param deliminator:
+    :param char_database:
+    :return:
+    """
+    # Open File
+    if char_database is None:
+        char_database = dict()
+    file = io.open(filename, "r", encoding='utf8')
+    file_text = file.readlines()
+    # Filter through lines that matter:
+    play_database = {}
+    for line in file_text:
+        # check for format
+        if line.startswith('#'):
+            continue  # comment line
+        # {player},{Char_1},{Alt_1},{Char_2},{Alt_2},{Char_3},{Alt_3}, ...
+        line = line.split(deliminator)
+        # check if at least one char alt combination exists
+        if len(line) < 3:
+            continue
+        # check for odd count (requesting char & alt combinations)
+        if len(line) % 2 == 0:
+            print("Warning: Bad format in player database", line)
+            continue
+        # grab player name
+        player_name = line.pop(0)
+        # loop through character & alts
+        char_alt_list = []
+        for i in range(0, len(line), 2):
+            j = i + 1
+            a_char = line[i].strip()
+            a_alt = line[j].strip()
+            # skip if blank
+            if a_char == '' and a_alt == '':
+                continue
+            # check character mapping
+            if a_char in char_database.keys():
+                a_char = char_database[a_char]
+            # format "{character} ({alt})"
+            a_char_alt = '{char} ({alt})'.format(char=a_char, alt=a_alt)
+            # add char alt combo to list
+            char_alt_list.append(a_char_alt)
+        # Add to player database dictionary
+        play_database[player_name] = char_alt_list
+    # end loop
+    return play_database
 
 
 def set_default_properties():
