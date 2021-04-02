@@ -180,9 +180,6 @@ def createMatches(match_lines, log_file=None):
     for a_line in match_lines:
         # set event to starting substring
         event = common_start(a_line, event).strip()
-    # dictionaries for players and characters not found
-    player_not_found = {}
-    char_not_found = {}
 
     # Read in Match Lines to grab initial match information
     #  {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) - SSBU
@@ -226,6 +223,9 @@ def createMatches(match_lines, log_file=None):
 
     # Loop through all matches and find character render file locations
     #  This involves looking at the Character and Player Databases to successfully grab the alts
+    # Dictionaries for players and characters not found
+    player_not_found = {}
+    char_not_found = {}
     for a_match in match_list:
         # Loop through character lists and grab character render
         #  Add them to the new lists
@@ -387,6 +387,7 @@ def resizeCharacterList(char_list, num_resizes):
     # end of loop
     return return_list
 
+
 def fitToWindowResize(char_image, x_limit, y_limit):
     """
     Function to resize a character image to maximize its fit to the window
@@ -413,7 +414,6 @@ def fitToWindowResize(char_image, x_limit, y_limit):
     xy_resize = (int(x_resize), int(y_resize))
     char_image = char_image.resize(xy_resize)
     return char_image
-
 
 
 def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False, border_bool=True):
@@ -753,11 +753,11 @@ def main(argv):
     try:
         opts, args = getopt.getopt(argv, "he:n:p:o:", ["event=", "number=", "property_file=", "output_file="])
     except getopt.GetoptError:
-        print('create_thumbnail.py -e <event> -n <number>, -p <property_file>')
+        print('create_thumbnail.py -e <event>, -n <number>, -p <property_file>, -o <output_file>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('create_thumbnail.py -e <event> -n <number>, -p <property_file> -o <output_file>')
+            print('create_thumbnail.py -e <event>, -n <number>, -p <property_file>, -o <output_file>')
             sys.exit()
         elif opt in ("-e", "--event"):
             event = arg
