@@ -128,6 +128,8 @@ def setGlobals(weekly, number, property_settings=None):
         global_properties = populate_globals.setGlobalsAWG(number)
     elif weekly == 'C2C Finale':
         global_properties = populate_globals.setGlobalsC2C(number)
+    elif weekly == 'Catman':
+        global_properties = populate_globals.setGlobalsCatman(number)
     else:
         global_properties = populate_globals.set_default_properties()
     # return properties
@@ -385,6 +387,34 @@ def resizeCharacterList(char_list, num_resizes):
     # end of loop
     return return_list
 
+def fitToWindowResize(char_image, x_limit, y_limit):
+    """
+    Function to resize a character image to maximize its fit to the window
+    This resizes and keeps the aspect ration such that the width or the height is equal to the limit
+    :param char_image:
+    :param x_limit:
+    :param y_limit:
+    :return:
+    """
+    x_char, y_char = char_image.size
+    # Identify ratio for scaling
+    xy_ratio = x_limit / y_limit
+    if y_char * xy_ratio > x_char:
+        # character image is taller than it is wide
+        scaler_ratio = y_limit / y_char
+        y_resize = y_limit  # = ratio*input_y
+        x_resize = scaler_ratio * x_char
+    else:
+        # character image is wider than it is tall
+        scaler_ratio = x_limit / x_char
+        x_resize = x_limit  # = ratio*input_x
+        y_resize = scaler_ratio * y_char
+    # Resize the character image. No need to worry about offsets
+    xy_resize = (int(x_resize), int(y_resize))
+    char_image = char_image.resize(xy_resize)
+    return char_image
+
+
 
 def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False, border_bool=True):
     """
@@ -417,8 +447,6 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         char_border = _properties['char_border']
         x_max_height = int(win_size[0] * (1 - char_border[0]))
         y_max_height = int(win_size[1] * (1 - char_border[1]))
-    # Identify ratio for scaling
-    xy_ratio = x_max_height / y_max_height
     # Loop through render types and save the images to resized_char lists
     resized_char_list = [resized_char1, resized_char2, resized_char3]
     render_list = [_properties['render_type'], _properties['render_type2'], _properties['render_type3']]
@@ -429,33 +457,15 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             continue
         for a_char in char_list:
             # Open character render
-            char_image = Image.open(os.path.join(_properties['char_renders'], a_render, a_char + '.png'))
+            a_char_image = Image.open(os.path.join(_properties['char_renders'], a_render, a_char + '.png'))
             # Check if not rgba image
-            if char_image.mode != 'RGBA':
-                char_image = char_image.convert('RGBA')
-            # Cases for different renders
+            if a_char_image.mode != 'RGBA':
+                a_char_image = a_char_image.convert('RGBA')
+            # Fit to window for specific cases
             if a_render == "Full render":
-                # Resize the image such that it fits in the window while maintaining its aspect ratio
-                x_char, y_char = char_image.size
-                if y_char * xy_ratio > x_char:
-                    # character image is taller than it is wide
-                    scaler_ratio = y_max_height / y_char
-                    y_resize = y_max_height  # = ratio*input_y
-                    x_resize = scaler_ratio * x_char
-                else:
-                    # character image is wider than it is tall
-                    scaler_ratio = x_max_height / x_char
-                    x_resize = x_max_height  # = ratio*input_x
-                    y_resize = scaler_ratio * y_char
-                # Resize the character image. No need to worry about offsets
-                xy_resize = (int(x_resize), int(y_resize))
-                char_image = char_image.resize(xy_resize)
-            # End of Full render
-            # elif a_resize == "Wide render":
-            # elif a_resize == "Body render":
-            # else: No change
+                a_char_image = fitToWindowResize(a_char_image, x_max_height, y_max_height)
             # Add resized character to list
-            a_resize.append(char_image)
+            a_resize.append(a_char_image)
         # end of char loop
     # 2. Now take the characters and apply them to the canvas
     # enf of loop
