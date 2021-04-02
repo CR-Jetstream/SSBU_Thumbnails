@@ -17,6 +17,7 @@ import os
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import populate_globals
+import create_thumbnail
 
 import sys
 import getopt
@@ -36,6 +37,7 @@ class GraphicPlacement:
         self.tw = _twitter
         self.c1 = _char_list
         self.c1_renders = []
+        self.c1_offset = (0, 0)
         self.Images = []
 
 
@@ -83,8 +85,8 @@ def readGrpahicLines(filename):
     # Filter through lines that matter:
     info_dict = {}
     placement_list = []
+    print("--- Reading Top 8 Lines ---")
     for line in file_text:
-        print("--- Reading Top 8 Lines ---")
         # check for format
         # {event_1} {round_1} - {player_1} ({char_1}) Vs {player_2} ({char_2}) - SSBU
         if line.startswith('#'):
@@ -123,7 +125,8 @@ def readGrpahicLines(filename):
 
 def createPlacements(placements_list):
     """
-    Take in a list of placements, and add character render file locations
+    Take in a list of placements, and add character render file locations.
+    Also adds in the offset locations for the placement
     Writes out information to log file if present
     :param placements_list:
     :return:
@@ -137,6 +140,10 @@ def createPlacements(placements_list):
     player_not_found = {}
     char_not_found = {}
     for a_placement in placements_list:
+        # Add in offset based on placement
+        #  All offsets are in _properties['char_offset#'], where # is 1-8
+        char_offset = 'char_offset' + a_placement.p
+        a_placement.c1_offset = _properties[char_offset]
         # Loop through character lists and grab character render
         #  Add them to the new lists
         player_char_files = []
@@ -225,6 +232,133 @@ def createPlacements(placements_list):
     return return_list
 
 
+def createGraphic(graphic_info, graphic_placements, background, foreground):
+    """
+    Create top 8 graphic image with available information.
+    Take background, paste placement info, apply foreground, add event info
+    :param graphic_info:
+    :param graphic_placements:
+    :param background:
+    :param foreground:
+    :return:
+    """
+    # Loop through the placements and add the images
+    print("--- Creating Top 8 Image ---")
+    show_first = _properties['show_first_image']
+    # # # Create background and foreground images and combine
+    # # Background:
+    # Grab all the character images to prepare them to add to the background
+    # Create a copy of the background
+    g_back = background.copy()
+    # create_thumbnail function is used here, so must set its global properties
+    create_thumbnail._properties = _properties
+    # Loop through placements and add each of the top 8 windows
+    for a_placement in graphic_placements:
+        # Grab all the character images to prepare them to add to the background
+        char_list = a_placement.c1_renders
+        # Call Function to create the combined character images for a single placement
+        char_window = _properties['char_window']
+        char_canvas = (int(background.size[0] * char_window[0]), int(background.size[1] * char_window[1]))
+        c1_image_list = create_thumbnail.createCharacterWindow(char_list, char_canvas, single_bool=False, only_one=True)
+        # Only care about the first image from this function
+        c1_image = c1_image_list[0]
+        # Grab offsets for placing the character windows
+        char_offset1 = a_placement.c1_offset
+        offset1 = (int(background.size[0] * char_offset1[0]), int(background.size[1] * char_offset1[1]))
+        # Add characters to canvas
+        if not _properties['char_glow_bool']:
+            # Paste character models to transparent canvas
+            blank_back = Image.new("RGBA", background.size)
+            blank_back.paste(c1_image, offset1, mask=c1_image)
+            # Make new composite image of background and new characters
+            g_back = Image.alpha_composite(g_back.copy(), blank_back)
+        else:  # apply with transparency glow
+            # Apply the characters to the image
+            g_back.paste(c1_image, offset1, mask=c1_image)
+    # end of placements loop
+    # # Foreground:
+    # Take match information and populate the foreground. Players, Twitter, Event, Date, Set to Watch, Media
+    # Apply this foreground to the background
+    g_fore = foreground.copy()
+    # Apply  Player Text information to the desired locations on the foreground
+    # Grab Font information
+    font_player = ImageFont.truetype(_properties['font_player_location'], size=_properties['font_player_size'])
+    font_player_color = _properties['font_player_color']
+    font_twitter = ImageFont.truetype(_properties['font_twitter_location'], size=_properties['font_twitter_size'])
+    font_twitter_color = _properties['font_twitter_color']
+    font_twitter_back_color = _properties['font_twitter_back_color']
+
+    # Loop through the players and paste the player and twitter information
+    #  These are saved in _properties['font_player#_offset'] and _properties['font_twitter#_offset'] where # is 1-8
+    for a_placement in graphic_placements:
+        # # Player text
+        p_text = a_placement.p1
+        p_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], p_text, font_player)
+        # determine offset by scaling with the foreground
+        p_offset = _properties['font_player{s}_offset'.format(s=a_placement.p)]
+        p_offset = (int(foreground.size[0] * p_offset[0]), int(foreground.size[1] * p_offset[1]))
+        # apply mask to image at location
+        color_image = Image.new('RGBA', p_mask.size, color=font_player_color)
+        if _properties['font_player_align'] == 'right':
+            p_offset = int(p_offset[0] - p_mask.size[0]), p_offset[1]
+            g_fore.paste(color_image, p_offset + p_mask.size, mask=p_mask)
+        elif _properties['font_player_align'] == 'center':
+            g_fore.paste(color_image, create_thumbnail.calculateOffsetFromCenter(p_offset, p_mask.size),
+                             mask=p_mask)
+        else:  # default to left
+            g_fore.paste(color_image, p_offset, mask=p_mask)
+        # #Twitter text
+        t_text = a_placement.tw
+        t_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], t_text, font_twitter)
+        # determine offset by scaling with the foreground
+        t_offset = _properties['font_twitter{s}_offset'.format(s=a_placement.p)]
+        t_offset = (int(foreground.size[0] * t_offset[0]), int(foreground.size[1] * t_offset[1]))
+        # apply background and then mask to image at location
+        color_image = Image.new('RGBA', t_mask.size, color=font_twitter_color)
+        t_back_im = Image.new('RGBA', t_mask.size, color=font_twitter_back_color)
+        if _properties['font_twitter_align'] == 'right':
+            t_offset = int(t_offset[0] - t_mask.size[0]), t_offset[1]
+            g_fore.paste(t_back_im, t_offset, mask=t_back_im)
+            g_fore.paste(color_image, t_offset, mask=t_mask)
+        elif _properties['font_twitter_align'] == 'center':
+            g_fore.paste(t_back_im, create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size),
+                             mask=t_back_im)
+            g_fore.paste(color_image, create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size),
+                             mask=t_mask)
+        else:  # default to left
+            g_fore.paste(t_back_im, t_offset, mask=t_back_im)
+            g_fore.paste(color_image, t_offset, mask=t_mask)
+    # end of player twitter loop
+
+    comb_image = Image.alpha_composite(g_back, g_fore)
+    # Show image
+    if show_first:
+        comb_image.show()
+    return comb_image
+
+
+def saveGraphic(graphic, folder_location, event_name=None):
+    """
+    Saves graphic image to folder location. If event name is populated, then create a folder with the event name
+    :param graphic:
+    :param folder_location:
+    :param event_name:
+    :return:
+    """
+    # Check if event is being used as folder name
+    if event_name is not None:
+        folder_location = os.path.join(folder_location, event_name)
+        event_name = event_name + '_'
+    else:
+        event_name = ''
+    # Create folder if it does not exist
+    if not os.path.exists(folder_location):
+        os.makedirs(folder_location)
+    graphic.save(os.path.join(folder_location, event_name + 'Top8.png'))
+    graphic.close()
+    return
+
+
 def main(argv):
     event = 'Quarantainment'
     input_file = ''
@@ -263,7 +397,7 @@ def main(argv):
     # 3. Have the script read in the character and add them to the graphic
     event_graphic = createGraphic(event_info, event_placements, back_image, front_image)
     # 4. Save the images
-    saveGraphic(event_graphic, _properties['save_location'])
+    saveGraphic(event_graphic, _properties['save_location'], event_info['event name:'])
 
 
 if __name__ == "__main__":

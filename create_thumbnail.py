@@ -416,7 +416,7 @@ def fitToWindowResize(char_image, x_limit, y_limit):
     return char_image
 
 
-def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False, border_bool=True):
+def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False, border_bool=True, only_one=False):
     """
     Function to create images of the characters in a single image.
     Returns a list of images with the character models.
@@ -424,11 +424,13 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     Single bool is to decide if there is only one character in the image.
     Border bool is used when there wishes to be padding around the character placement.
         This will pad with respect to win_size
+    Only One bool is used to stop when one image is created, without going through all permutations
     :param char_list:
     :param win_size:
     :param right_bool:
     :param single_bool:
     :param border_bool:
+    :param only_one:
     :return:
     """
     # Create Canvas
@@ -498,7 +500,6 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     if num_chars == 1 or single_bool:  # 2.1 One character
         resized_list = [resized_char1]
         # acquire resized characters from scaling
-        # TODO: explain this section, maybe adjust globals??
         if single_bool:
             resized_list = resizeCharacterList(resized_char1, 1)
         # apply characters to canvas, add to canvas list
@@ -512,6 +513,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             # Paste character
             a_canvas.paste(a_char, a_offset, mask=a_char)
             canvas_list.append(a_canvas)
+            if only_one:
+                return canvas_list
     elif num_chars == 2:  # 2.2 Two characters
         # acquire resized characters from scaling for multiple characters
         resized_list = resizeCharacterList(resized_char1, 2)
@@ -541,6 +544,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                 canvas_list.append(a_canvas)
                 # Canvas1 [Char1, Char2]
                 # Canvas2 [Char2, Char1]
+                if only_one:
+                    return canvas_list
         # end of loop
     elif num_chars >= 3:  # 2.3 Three characters (or more, only take first three)
         # acquire resized characters from scaling for multiple characters
@@ -586,6 +591,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     # Canvas4 [Char2, Char3, Char1]
                     # Canvas5 [Char3, Char1, Char2]
                     # Canvas6 [Char3, Char2, Char1]
+                    if only_one:
+                        return canvas_list
         # end of loop
 
     # Return canvas list
@@ -718,7 +725,7 @@ def createRoundImages(match_list, background, foreground):
 
 def saveImages(match_list, folder_location, event_bool=False):
     """
-    Saves images to folder location. If event name is true, then create a folder with the event name
+    Saves images to folder location. If event bool is true, then create a folder with the event name
     :param match_list:
     :param folder_location:
     :param event_bool:
