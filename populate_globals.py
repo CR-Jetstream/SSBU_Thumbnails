@@ -344,7 +344,7 @@ def setGlobalsC2C(number):
 
 def setGlobalsCatman(number):
     """
-    Set necessary globals for Students x Treehouse event {number} for create_thumbnail.py
+    Set necessary globals for Catman event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
     :param number:
     :return:
@@ -356,5 +356,57 @@ def setGlobalsCatman(number):
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Catman {s} names.txt'.format(s=number))
     # Foreground overlay locations
     properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Catman.png')
+    # Return with modifications
+    return properties
+
+
+def setGlobalsQuarantainment_Top8():
+    """
+    Set necessary globals for Quarantainment Top 8 Graphic for create_top8_graphic.py
+    properties dictionary is fed in, modified, then returned
+    :return:
+    """
+    # Load in default
+    properties = set_default_properties()
+    # Character renders folder location
+    properties['render_type'] = "Body render"
+    properties['render_type2'] = "Diamond render"
+    # Event match file information location
+    properties['top8_info'] = os.path.join('..', 'Vod Names', '_top8_test.txt')
+    # Background and Foreground overlay locations
+    properties['background_file'] = os.path.join('Top8_Graphics', 'Jetstream_Top8_Background.png')
+    properties['foreground_file'] = os.path.join('Top8_Graphics', 'Jetstream_Top8_Foreground.png')
+    # Canvas flag
+    properties['char_glow_bool'] = True
+    # Center-point shift for canvas for characters
+    properties['resize_1'] = 1.0
+    properties['resize_2'] = 0.75
+    # Placements for windows
+    properties['char_window'] = (0.33, 0.25)  # canvas for characters
+    properties['char_offset1'] = (0.00, 0.00)  # Offset for 1
+    properties['char_offset2'] = (0.00, 0.25)  # Offset for 2
+    properties['char_offset3'] = (0.00, 0.50)  # Offset for 3
+    properties['char_offset4'] = (0.00, 0.75)  # Offset for 4
+    properties['char_offset5'] = (0.33, 0.00)  # Offset for 5
+    properties['char_offset6'] = (0.33, 0.25)  # Offset for 6
+    properties['char_offset7'] = (0.33, 0.50)  # Offset for 7
+    properties['char_offset8'] = (0.33, 0.75)  # Offset for 8
+    # Return with modifications
+    return properties
+
+
+def setGlobalsSxT_Top8():
+    """
+    Set necessary globals for Students x Treehouse Top 8 Graphic for create_top8_graphic.py
+    properties dictionary is fed in, modified, then returned
+    :return:
+    """
+    # Set to Quaratainment settings and then adjust
+    properties = setGlobalsQuarantainment_Top8()
+    #
+    # Event match file information location
+    properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
+    # Foreground overlay locations
+    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_SxT.png')
     # Return with modifications
     return properties
