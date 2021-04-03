@@ -389,14 +389,14 @@ def setGlobalsQuarantainment_Top8():
     properties['char_offset2'] = (0.0, 0.255)  # Offset for 2
     properties['char_offset3'] = (0.0, 0.505)  # Offset for 3
     properties['char_offset4'] = (0.0, 0.755)  # Offset for 4
-    properties['char_offset5'] = (0.3325, 0.005)  # Offset for 5
-    properties['char_offset6'] = (0.3325, 0.255)  # Offset for 6
-    properties['char_offset7'] = (0.3325, 0.505)  # Offset for 7
-    properties['char_offset8'] = (0.3325, 0.755)  # Offset for 8
+    properties['char_offset5'] = (0.336, 0.005)  # Offset for 5
+    properties['char_offset6'] = (0.336, 0.255)  # Offset for 6
+    properties['char_offset7'] = (0.336, 0.505)  # Offset for 7
+    properties['char_offset8'] = (0.336, 0.755)  # Offset for 8
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (+0.30, +0.00)  # Universal character shift
     properties['center_shift_2_1'] = (+0.00, +0.00)  # Two character shift
-    properties['center_shift_2_2'] = (-0.37, +0.10)
+    properties['center_shift_2_2'] = (-0.38, +0.155)
     properties['center_shift_3_1'] = (-0.00, +0.00)  # Three character shift
     properties['center_shift_3_2'] = (+0.25, -0.037)
     properties['center_shift_3_3'] = (-0.20, -0.148)
@@ -429,14 +429,34 @@ def setGlobalsQuarantainment_Top8():
     properties['font_twitter7_offset'] = (0.6575, 0.73)  # Offset for 7
     properties['font_twitter8_offset'] = (0.6575, 0.98)  # Offset for 8
     # Event Info settings
-    properties['font_event_location'] = os.path.join("Fonts", "tt2004m.ttf")
-
-    # Additional Font information for event info
-    properties['font_event_location'] = os.path.join("Fonts", "tt2004m.ttf")
-    properties['font_event_size'] = 45
-    properties['font_data_location'] = os.path.join("Fonts", "tt2004m.ttf")
-    properties['font_date_size'] = 45
-
+    properties['font_event_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
+    properties['font_event_align'] = 'center'
+    properties['font_event_name_offset'] = (0.834, 0.285)
+    properties['font_event_name_color'] = '#F5F5F5'  # (5, 5, 5)
+    properties['font_event_name_size'] = 43
+    properties['font_event_date_offset'] = (0.90, 0.40)
+    properties['font_event_date_color'] = '#050505'  # (5, 5, 5)
+    properties['font_event_date_size'] = 40
+    properties['font_event_entrants_offset'] = (0.90, 0.455)
+    properties['font_event_entrants_color'] = '#050505'  # (5, 5, 5)
+    properties['font_event_entrants_size'] = 40
+    # Media Info settings
+    properties['font_media_location'] = os.path.join("Fonts", "arial.ttf")
+    properties['font_media_color'] = '#050505'  # (5, 5, 5)
+    properties['font_media_align'] = 'center'
+    properties['font_media_size'] = 32
+    properties['font_media_twitter_offset'] = (0.5, 0.5)
+    properties['font_media_youtube_offset'] = (0.5, 0.5)
+    properties['font_media_twitch_offset'] = (0.5, 0.5)
+    properties['font_media_bracket_offset'] = (0.845, 0.975)
+    # Set to Watch Info settings
+    properties['font_stw_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
+    properties['font_stw_color'] = '#050505'  # (5, 5, 5)
+    properties['font_stw_align'] = 'center'
+    properties['font_stw_size'] = 40
+    properties['font_stw_twolines'] = True
+    properties['font_stw_offset1'] = (0.8345, 0.645)
+    properties['font_stw_offset2'] = (0.8345, 0.705)
 
     # Return with modifications
     return properties
