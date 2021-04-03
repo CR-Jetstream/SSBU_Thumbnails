@@ -417,7 +417,7 @@ def setGlobalsQuarantainment_Top8():
     # Twitter Font settings
     properties['font_twitter_location'] = os.path.join("Fonts", "arial.ttf")
     properties['font_twitter_color'] = '#FFFFFF'  # (255, 255, 255)
-    properties['font_twitter_back_color'] = '#00000025'  # (0, 0, 0, 25)
+    properties['font_twitter_back_color'] = '#00000090'  # (0, 0, 0, 25)
     properties['font_twitter_align'] = 'right'
     properties['font_twitter_size'] = 32
     properties['font_twitter1_offset'] = (0.32, 0.23)  # Offset for 1
@@ -428,7 +428,8 @@ def setGlobalsQuarantainment_Top8():
     properties['font_twitter6_offset'] = (0.6575, 0.48)  # Offset for 6
     properties['font_twitter7_offset'] = (0.6575, 0.73)  # Offset for 7
     properties['font_twitter8_offset'] = (0.6575, 0.98)  # Offset for 8
-
+    # Event Info settings
+    properties['font_event_location'] = os.path.join("Fonts", "tt2004m.ttf")
 
     # Additional Font information for event info
     properties['font_event_location'] = os.path.join("Fonts", "tt2004m.ttf")

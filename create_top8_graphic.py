@@ -276,18 +276,18 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
             # Apply the characters to the image
             g_back.paste(c1_image, offset1, mask=c1_image)
     # end of placements loop
+
     # # Foreground:
     # Take match information and populate the foreground. Players, Twitter, Event, Date, Set to Watch, Media
     # Apply this foreground to the background
     g_fore = foreground.copy()
-    # Apply  Player Text information to the desired locations on the foreground
+    # Apply Player Text information to the desired locations on the foreground
     # Grab Font information
     font_player = ImageFont.truetype(_properties['font_player_location'], size=_properties['font_player_size'])
     font_player_color = _properties['font_player_color']
     font_twitter = ImageFont.truetype(_properties['font_twitter_location'], size=_properties['font_twitter_size'])
     font_twitter_color = _properties['font_twitter_color']
     font_twitter_back_color = _properties['font_twitter_back_color']
-
     # Loop through the players and paste the player and twitter information
     #  These are saved in _properties['font_player#_offset'] and _properties['font_twitter#_offset'] where # is 1-8
     for a_placement in graphic_placements:
@@ -298,18 +298,18 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
         p_offset = _properties['font_player{s}_offset'.format(s=a_placement.p)]
         p_offset = (int(foreground.size[0] * p_offset[0]), int(foreground.size[1] * p_offset[1]))
         # apply mask to image at location
-        color_image = Image.new('RGBA', p_mask.size, color=font_player_color)
+        p_im = Image.new('RGBA', p_mask.size, color=font_player_color)
         p_offset = create_thumbnail.calculateOffsetFromCenter(p_offset, p_mask.size)
         if _properties['font_player_align'] == 'right':
             # shift by a quarter of mask width to line up right justified
             p_offset = int(p_offset[0] - (p_mask.size[0] / 4)), p_offset[1]
-            g_fore.paste(color_image, p_offset, mask=p_mask)
+            g_fore.paste(p_im, p_offset, mask=p_mask)
         elif _properties['font_player_align'] == 'center':
-            g_fore.paste(color_image, p_offset, mask=p_mask)
+            g_fore.paste(p_im, p_offset, mask=p_mask)
         else:  # default to left
             # shift by a quarter of mask width to line up left justified
             p_offset = int(p_offset[0] + (p_mask.size[0] / 4)), p_offset[1]
-            g_fore.paste(color_image, p_offset, mask=p_mask)
+            g_fore.paste(p_im, p_offset, mask=p_mask)
         # #Twitter text
         t_text = a_placement.tw
         t_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], t_text, font_twitter)
@@ -317,24 +317,33 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
         t_offset = _properties['font_twitter{s}_offset'.format(s=a_placement.p)]
         t_offset = (int(foreground.size[0] * t_offset[0]), int(foreground.size[1] * t_offset[1]))
         # apply background and then mask to image at location
-        color_image = Image.new('RGBA', t_mask.size, color=font_twitter_color)
-        t_back_im = Image.new('RGBA', t_mask.size, color=font_twitter_back_color)
-        t_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size)
+        t_im = Image.new('RGBA', t_mask.size, color=font_twitter_color)
+        t_text_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size)
+        # twitter text background image
+        #  pad text by 2 spaces, and grab max height possible from the text
+        x_text, _ = font_twitter.getsize('  ' + t_text + '  ')
+        _, y_text = font_twitter.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]@")
+        t_back_im = Image.new('RGBA', (x_text, y_text), color=font_twitter_back_color)
+        t_back_im = t_back_im.rotate(_properties['text_angle'])
+        t_back_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_back_im.size)
+        # Shift based offsets on alignment
         if _properties['font_twitter_align'] == 'right':
             # shift by a quarter of mask width to line up right justified
-            t_offset = int(t_offset[0] - t_mask.size[0] / 4), t_offset[1]
-            #g_fore.paste(t_back_im, t_offset, mask=t_back_im)
-            g_fore.paste(color_image, t_offset, mask=t_mask)
+            t_back_offset = int(t_back_offset[0] - t_mask.size[0] / 4), t_back_offset[1]
+            t_text_offset = int(t_text_offset[0] - t_mask.size[0] / 4), t_text_offset[1]
         elif _properties['font_twitter_align'] == 'center':
-            #g_fore.paste(t_back_im, create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_back_im)
-            g_fore.paste(color_image, t_offset, mask=t_mask)
+            pass  # do nothing
         else:  # default to left
             # shift by a quarter of mask width to line up Left justified
-            t_offset = int(t_offset[0] + t_mask.size[0] / 4), t_offset[1]
-            #g_fore.paste(t_back_im, t_offset, mask=t_back_im)
-            g_fore.paste(color_image, t_offset, mask=t_mask)
+            t_back_offset = int(t_back_offset[0] + t_mask.size[0] / 4), t_back_offset[1]
+            t_text_offset = int(t_text_offset[0] + t_mask.size[0] / 4), t_text_offset[1]
+        # Paste onto foreground
+        g_fore.paste(t_back_im, t_back_offset, mask=t_back_im)
+        g_fore.paste(t_im, t_text_offset, mask=t_mask)
     # end of player twitter loop
 
+
+    # All contents are added to Background and Foreground. Merge them
     comb_image = Image.alpha_composite(g_back, g_fore)
     # Show image
     if show_first:
