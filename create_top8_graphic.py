@@ -299,13 +299,16 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
         p_offset = (int(foreground.size[0] * p_offset[0]), int(foreground.size[1] * p_offset[1]))
         # apply mask to image at location
         color_image = Image.new('RGBA', p_mask.size, color=font_player_color)
+        p_offset = create_thumbnail.calculateOffsetFromCenter(p_offset, p_mask.size)
         if _properties['font_player_align'] == 'right':
-            p_offset = int(p_offset[0] - p_mask.size[0]), p_offset[1]
-            g_fore.paste(color_image, p_offset + p_mask.size, mask=p_mask)
+            # shift by a quarter of mask width to line up right justified
+            p_offset = int(p_offset[0] - (p_mask.size[0] / 4)), p_offset[1]
+            g_fore.paste(color_image, p_offset, mask=p_mask)
         elif _properties['font_player_align'] == 'center':
-            g_fore.paste(color_image, create_thumbnail.calculateOffsetFromCenter(p_offset, p_mask.size),
-                             mask=p_mask)
+            g_fore.paste(color_image, p_offset, mask=p_mask)
         else:  # default to left
+            # shift by a quarter of mask width to line up left justified
+            p_offset = int(p_offset[0] + (p_mask.size[0] / 4)), p_offset[1]
             g_fore.paste(color_image, p_offset, mask=p_mask)
         # #Twitter text
         t_text = a_placement.tw
@@ -316,17 +319,19 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
         # apply background and then mask to image at location
         color_image = Image.new('RGBA', t_mask.size, color=font_twitter_color)
         t_back_im = Image.new('RGBA', t_mask.size, color=font_twitter_back_color)
+        t_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size)
         if _properties['font_twitter_align'] == 'right':
-            t_offset = int(t_offset[0] - t_mask.size[0]), t_offset[1]
-            g_fore.paste(t_back_im, t_offset, mask=t_back_im)
+            # shift by a quarter of mask width to line up right justified
+            t_offset = int(t_offset[0] - t_mask.size[0] / 4), t_offset[1]
+            #g_fore.paste(t_back_im, t_offset, mask=t_back_im)
             g_fore.paste(color_image, t_offset, mask=t_mask)
         elif _properties['font_twitter_align'] == 'center':
-            g_fore.paste(t_back_im, create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size),
-                             mask=t_back_im)
-            g_fore.paste(color_image, create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size),
-                             mask=t_mask)
+            #g_fore.paste(t_back_im, create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size), mask=t_back_im)
+            g_fore.paste(color_image, t_offset, mask=t_mask)
         else:  # default to left
-            g_fore.paste(t_back_im, t_offset, mask=t_back_im)
+            # shift by a quarter of mask width to line up Left justified
+            t_offset = int(t_offset[0] + t_mask.size[0] / 4), t_offset[1]
+            #g_fore.paste(t_back_im, t_offset, mask=t_back_im)
             g_fore.paste(color_image, t_offset, mask=t_mask)
     # end of player twitter loop
 
@@ -397,7 +402,7 @@ def main(argv):
     # 3. Have the script read in the character and add them to the graphic
     event_graphic = createGraphic(event_info, event_placements, back_image, front_image)
     # 4. Save the images
-    saveGraphic(event_graphic, _properties['save_location'], event_info['event name:'])
+    # saveGraphic(event_graphic, _properties['save_location'], event_info['event name:'])
 
 
 if __name__ == "__main__":

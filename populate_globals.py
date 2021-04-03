@@ -191,6 +191,7 @@ def setGlobalsQuarantainment(number):
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.04, +0.01)
     properties['char_border'] = (0.00, 0.26)  # border for characters
+    properties['resize'] = 1.0
     properties['resize_1'] = 0.85  # resize for character for multiple renders on image
     properties['resize_2'] = 0.75
     properties['resize_3'] = 0.60
@@ -379,23 +380,24 @@ def setGlobalsQuarantainment_Top8():
     # Canvas flag
     properties['char_glow_bool'] = True
     # Center-point shift for canvas for characters
-    properties['resize_1'] = 1.0
-    properties['resize_2'] = 0.75
+    properties['resize'] = 0.517578125
+    properties['resize_1'] = 0.517578125
+    properties['resize_2'] = 1.00
     # Placements for windows
-    properties['char_window'] = (0.33, 0.25)  # canvas for characters
-    properties['char_offset1'] = (0.00, 0.00)  # Offset for 1
-    properties['char_offset2'] = (0.00, 0.25)  # Offset for 2
-    properties['char_offset3'] = (0.00, 0.50)  # Offset for 3
-    properties['char_offset4'] = (0.00, 0.75)  # Offset for 4
-    properties['char_offset5'] = (0.33, 0.00)  # Offset for 5
-    properties['char_offset6'] = (0.33, 0.25)  # Offset for 6
-    properties['char_offset7'] = (0.33, 0.50)  # Offset for 7
-    properties['char_offset8'] = (0.33, 0.75)  # Offset for 8
+    properties['char_window'] = (0.33, 0.246)  # canvas for characters
+    properties['char_offset1'] = (0.0, 0.005)  # Offset for 1
+    properties['char_offset2'] = (0.0, 0.255)  # Offset for 2
+    properties['char_offset3'] = (0.0, 0.505)  # Offset for 3
+    properties['char_offset4'] = (0.0, 0.755)  # Offset for 4
+    properties['char_offset5'] = (0.3325, 0.005)  # Offset for 5
+    properties['char_offset6'] = (0.3325, 0.255)  # Offset for 6
+    properties['char_offset7'] = (0.3325, 0.505)  # Offset for 7
+    properties['char_offset8'] = (0.3325, 0.755)  # Offset for 8
     # Center-point shift for canvas for characters
-    properties['center_shift_1'] = (-0.00, +0.10)  # Universal character shift
-    properties['center_shift_2_1'] = (-0.20, +0.11)  # Two character shift
-    properties['center_shift_2_2'] = (+0.20, -0.11)
-    properties['center_shift_3_1'] = (-0.15, +0.148)  # Three character shift
+    properties['center_shift_1'] = (+0.30, +0.00)  # Universal character shift
+    properties['center_shift_2_1'] = (+0.00, +0.00)  # Two character shift
+    properties['center_shift_2_2'] = (-0.37, +0.10)
+    properties['center_shift_3_1'] = (-0.00, +0.00)  # Three character shift
     properties['center_shift_3_2'] = (+0.25, -0.037)
     properties['center_shift_3_3'] = (-0.20, -0.148)
     # Player Font settings
@@ -403,29 +405,29 @@ def setGlobalsQuarantainment_Top8():
     properties['font_player_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
     properties['font_player_color'] = '#F5F5F5'  # (245, 245, 245)
     properties['font_player_align'] = 'left'
-    properties['font_player_size'] = 48
-    properties['font_player1_offset'] = (0.05, 0.05)  # Offset for 1
-    properties['font_player2_offset'] = (0.05, 0.30)  # Offset for 2
-    properties['font_player3_offset'] = (0.05, 0.55)  # Offset for 3
-    properties['font_player4_offset'] = (0.05, 0.80)  # Offset for 4
-    properties['font_player5_offset'] = (0.38, 0.05)  # Offset for 5
-    properties['font_player6_offset'] = (0.38, 0.30)  # Offset for 6
-    properties['font_player7_offset'] = (0.38, 0.55)  # Offset for 7
-    properties['font_player8_offset'] = (0.38, 0.80)  # Offset for 8
+    properties['font_player_size'] = 64
+    properties['font_player1_offset'] = (0.015, 0.04)  # Offset for 1
+    properties['font_player2_offset'] = (0.015, 0.29)  # Offset for 2
+    properties['font_player3_offset'] = (0.015, 0.54)  # Offset for 3
+    properties['font_player4_offset'] = (0.015, 0.79)  # Offset for 4
+    properties['font_player5_offset'] = (0.3525, 0.04)  # Offset for 5
+    properties['font_player6_offset'] = (0.3525, 0.29)  # Offset for 6
+    properties['font_player7_offset'] = (0.3525, 0.54)  # Offset for 7
+    properties['font_player8_offset'] = (0.3525, 0.79)  # Offset for 8
     # Twitter Font settings
     properties['font_twitter_location'] = os.path.join("Fonts", "arial.ttf")
-    properties['font_twitter_color'] = '#F5F5F5'  # (245, 245, 245)
+    properties['font_twitter_color'] = '#FFFFFF'  # (255, 255, 255)
     properties['font_twitter_back_color'] = '#00000025'  # (0, 0, 0, 25)
     properties['font_twitter_align'] = 'right'
-    properties['font_twitter_size'] = 24
-    properties['font_twitter1_offset'] = (0.30, 0.20)  # Offset for 1
-    properties['font_twitter2_offset'] = (0.30, 0.45)  # Offset for 2
-    properties['font_twitter3_offset'] = (0.30, 0.70)  # Offset for 3
-    properties['font_twitter4_offset'] = (0.30, 0.95)  # Offset for 4
-    properties['font_twitter5_offset'] = (0.63, 0.20)  # Offset for 5
-    properties['font_twitter6_offset'] = (0.63, 0.45)  # Offset for 6
-    properties['font_twitter7_offset'] = (0.63, 0.70)  # Offset for 7
-    properties['font_twitter8_offset'] = (0.63, 0.95)  # Offset for 8
+    properties['font_twitter_size'] = 32
+    properties['font_twitter1_offset'] = (0.32, 0.23)  # Offset for 1
+    properties['font_twitter2_offset'] = (0.32, 0.48)  # Offset for 2
+    properties['font_twitter3_offset'] = (0.32, 0.73)  # Offset for 3
+    properties['font_twitter4_offset'] = (0.32, 0.98)  # Offset for 4
+    properties['font_twitter5_offset'] = (0.6575, 0.23)  # Offset for 5
+    properties['font_twitter6_offset'] = (0.6575, 0.48)  # Offset for 6
+    properties['font_twitter7_offset'] = (0.6575, 0.73)  # Offset for 7
+    properties['font_twitter8_offset'] = (0.6575, 0.98)  # Offset for 8
 
 
     # Additional Font information for event info

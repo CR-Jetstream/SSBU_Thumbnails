@@ -500,8 +500,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     if num_chars == 1 or single_bool:  # 2.1 One character
         resized_list = [resized_char1]
         # acquire resized characters from scaling
-        if single_bool:
-            resized_list = resizeCharacterList(resized_char1, 1)
+        resized_list = resizeCharacterList(resized_char1, 1)
         # apply characters to canvas, add to canvas list
         for a_char in resized_list:
             # set a_char equal to the only element in the list
