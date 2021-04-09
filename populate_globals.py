@@ -215,6 +215,9 @@ def setGlobalsSxT(number):
     properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
     # Foreground overlay locations
     properties['foreground_file'] = os.path.join('Overlays', 'Foreground_SxT.png')
+    # font size change
+    properties['font_event_size'] = 44
+    properties['font_round_size'] = 44
     # Return with modifications
     return properties
 
