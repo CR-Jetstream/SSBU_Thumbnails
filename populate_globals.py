@@ -450,9 +450,9 @@ def setGlobalsQuarantainment_Top8():
     properties['font_media_color'] = '#050505'  # (5, 5, 5)
     properties['font_media_align'] = 'center'
     properties['font_media_size'] = 32
-    properties['font_media_twitter_offset'] = (0.85, 0.785)
-    properties['font_media_youtube_offset'] = (0.85, 0.855)
-    properties['font_media_twitch_offset'] = (0.85, 0.915)
+    properties['font_media_twitter_offset'] = (0.855, 0.79)
+    properties['font_media_youtube_offset'] = (0.855, 0.855)
+    properties['font_media_twitch_offset'] = (0.855, 0.915)
     properties['font_media_bracket_link_offset'] = (0.85, 0.975)
     # Set to Watch Info settings
     properties['font_stw_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
