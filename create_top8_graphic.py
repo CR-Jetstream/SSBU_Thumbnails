@@ -232,6 +232,42 @@ def createPlacements(placements_list):
     return return_list
 
 
+def pasteInfoOnGraphic(image_in, info_text, info_font, info_type1, info_type2):
+    """
+    Paste text onto image. Uses info_font, typ1 and type2 to grab correct globals from _properties dict
+    type1 and type2  handles for different cases such as generalized of specific font sizes and colors
+    :param image_in:
+    :param info_text:
+    :param info_font:
+    :param info_type1:
+    :param info_type2:
+    :return:
+    """
+    # Grab font info
+    font_event = ImageFont.truetype(info_font, size=_properties['font_{e}_size'.format(e=info_type1)])
+    # Event Name
+    text_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], info_text, font_event)
+    # determine offset by scaling with the foreground
+    text_offset = _properties['font_{e}_offset'.format(e=info_type2)]
+    text_offset = (int(image_in.size[0] * text_offset[0]), int(image_in.size[1] * text_offset[1]))
+    # create mask
+    font_event_color = _properties['font_{e}_color'.format(e=info_type1)]
+    e_im = Image.new('RGBA', text_mask.size, color=font_event_color)
+    text_offset = create_thumbnail.calculateOffsetFromCenter(text_offset, text_mask.size)
+    # Shift based offsets on alignment
+    if _properties['font_{e}_align'.format(e=info_type1)] == 'right':
+        # shift by a quarter of mask width to line up right justified
+        text_offset = int(text_offset[0] - (text_mask.size[0] / 4)), text_offset[1]
+    elif _properties['font_{e}_align'.format(e=info_type1)] == 'center':
+        pass
+    else:  # default to left
+        # shift by a quarter of mask width to line up left justified
+        text_offset = int(text_offset[0] + (text_mask.size[0] / 4)), text_offset[1]
+    # Paste to Foreground
+    image_in.paste(e_im, text_offset, mask=text_mask)
+    return image_in
+
+
 def createGraphic(graphic_info, graphic_placements, background, foreground):
     """
     Create top 8 graphic image with available information.
@@ -323,7 +359,7 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
         # twitter text background image
         #  pad text by 2 spaces, and grab max height possible from the text
         x_text, _ = font_twitter.getsize('  ' + t_text + '  ')
-        _, y_text = font_twitter.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]@")
+        _, y_text = font_twitter.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]@_")
         t_back_im = Image.new('RGBA', (x_text, y_text), color=font_twitter_back_color)
         t_back_im = t_back_im.rotate(_properties['text_angle'])
         t_back_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_back_im.size)
@@ -345,115 +381,42 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
     # Apply Additional information
     add_info = graphic_info.keys()
     # Event information
-    if 'event name:' in add_info or 'event date:' in add_info or 'entrants:' in add_info:
-        if 'event name:' in add_info:
-            # Grab font info
-            font_event = ImageFont.truetype(_properties['font_event_location'], size=_properties['font_event_name_size'])
-            # Event Name
-            e_text = graphic_info['event name:']
-            e_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], e_text, font_event)
-            # determine offset by scaling with the foreground
-            e_offset = _properties['font_event_name_offset']
-            e_offset = (int(foreground.size[0] * e_offset[0]), int(foreground.size[1] * e_offset[1]))
-            # create mask
-            font_event_color = _properties['font_event_name_color']
-            e_im = Image.new('RGBA', e_mask.size, color=font_event_color)
-            e_offset = create_thumbnail.calculateOffsetFromCenter(e_offset, e_mask.size)
-            # Align
-            # TODO:
-            # Paste to Foreground
-            g_fore.paste(e_im, e_offset, mask=e_mask)
-        if 'event date:' in add_info:
-            # Grab font info
-            font_event = ImageFont.truetype(_properties['font_event_location'], size=_properties['font_event_date_size'])
-            # Event Date
-            e_text = graphic_info['event date:']
-            e_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], e_text, font_event)
-            # determine offset by scaling with the foreground
-            e_offset = _properties['font_event_date_offset']
-            e_offset = (int(foreground.size[0] * e_offset[0]), int(foreground.size[1] * e_offset[1]))
-            # create mask
-            font_event_color = _properties['font_event_date_color']
-            e_im = Image.new('RGBA', e_mask.size, color=font_event_color)
-            e_offset = create_thumbnail.calculateOffsetFromCenter(e_offset, e_mask.size)
-            # Align
-            # TODO:
-            # Paste to Foreground
-            g_fore.paste(e_im, e_offset, mask=e_mask)
-        if 'event entrants:' in add_info:
-            # Grab font info
-            font_event = ImageFont.truetype(_properties['font_event_location'], size=_properties['font_event_entrants_size'])
-            # Entrants
-            e_text = graphic_info['event entrants:']
-            e_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], e_text, font_event)
-            # determine offset by scaling with the foreground
-            e_offset = _properties['font_event_entrants_offset']
-            e_offset = (int(foreground.size[0] * e_offset[0]), int(foreground.size[1] * e_offset[1]))
-            # create mask
-            font_event_color = _properties['font_event_entrants_color']
-            e_im = Image.new('RGBA', e_mask.size, color=font_event_color)
-            e_offset = create_thumbnail.calculateOffsetFromCenter(e_offset, e_mask.size)
-            # Align
-            # TODO:
-            # Paste to Foreground
-            g_fore.paste(e_im, e_offset, mask=e_mask)
+    for e_info in ['event name:', 'event date:', 'event entrants:']:
+        if e_info not in add_info:
+            continue
+        e_text = graphic_info[e_info]
+        e_global = e_info.strip(':').replace(' ', '_')
+        e_font = _properties['font_event_location']
+        # Paste info on foreground
+        g_fore = pasteInfoOnGraphic(g_fore, e_text, e_font, e_global, e_global)
     # Media Information
-    if 'twitter:' in add_info or 'youtube:' in add_info or 'twitch:' in add_info or 'bracket link:' in add_info:
+    for m_info in ['twitter:', 'youtube:', 'twitch:', 'bracket link:']:
+        if m_info not in add_info:
+            continue
         # Grab font info
-        font_media = ImageFont.truetype(_properties['font_media_location'], size=_properties['font_media_size'])
-        if 'twitter:' in add_info:
-            pass
-        if 'youtube:' in add_info:
-            pass
-        if 'twitch:' in add_info:
-            pass
-        if 'bracket link:' in add_info:
-            # Bracket link
-            e_text = graphic_info['bracket link:']
-            e_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], e_text, font_media)
-            # determine offset by scaling with the foreground
-            e_offset = _properties['font_media_bracket_offset']
-            e_offset = (int(foreground.size[0] * e_offset[0]), int(foreground.size[1] * e_offset[1]))
-            # create mask
-            font_event_color = _properties['font_media_color']
-            e_im = Image.new('RGBA', e_mask.size, color=font_event_color)
-            e_offset = create_thumbnail.calculateOffsetFromCenter(e_offset, e_mask.size)
-            # Align
-            # TODO:
-            # Paste to Foreground
-            g_fore.paste(e_im, e_offset, mask=e_mask)
+        m_text = graphic_info[m_info]
+        m1_global = 'media'
+        m2_global = m1_global + '_' + m_info.strip(':').replace(' ', '_')
+        m_font = _properties['font_media_location']
+        # Paste info on foreground
+        g_fore = pasteInfoOnGraphic(g_fore, m_text, m_font, m1_global, m2_global)
     # Set to Watch
     if 'set to watch:' in add_info:
         # Grab font information
-        font_stw = ImageFont.truetype(_properties['font_stw_location'], size=_properties['font_stw_size'])
-        # Set to watch
-        #  has structure "set to watch:" : [set, player1, player2]
+        stw_font = _properties['font_stw_location']
+        # Set to watch has structure "set to watch:" : [set, player1, player2]
         stw_list = graphic_info['set to watch:']
         set_match_text = stw_list[0]
         set_player_text = stw_list[1] + ' Vs ' + stw_list[2]
-        # TODO: add case for single line
-        # if _properties['font_stw_twolines'] is False:
-        #     set_match_text = set_match_text + ' - ' + set_player_text
-        #     set_player_text = ''
-        # Make both masks
-        set_match_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], set_match_text, font_stw)
-        set_player_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], set_player_text, font_stw)
-        # determine offset by scaling with the foreground
-        s1_offset = _properties['font_stw_offset1']
-        s1_offset = (int(foreground.size[0] * s1_offset[0]), int(foreground.size[1] * s1_offset[1]))
-        s2_offset = _properties['font_stw_offset2']
-        s2_offset = (int(foreground.size[0] * s2_offset[0]), int(foreground.size[1] * s2_offset[1]))
-        # create masks
-        font_event_color = _properties['font_stw_color']
-        s1_im = Image.new('RGBA', set_match_mask.size, color=font_event_color)
-        s1_offset = create_thumbnail.calculateOffsetFromCenter(s1_offset, set_match_mask.size)
-        s2_im = Image.new('RGBA', set_player_mask.size, color=font_event_color)
-        s2_offset = create_thumbnail.calculateOffsetFromCenter(s2_offset, set_player_mask.size)
-        # Align
-        # TODO:
-        # Paste to Foreground
-        g_fore.paste(s1_im, s1_offset, mask=set_match_mask)
-        g_fore.paste(s2_im, s2_offset, mask=set_player_mask)
+        # Single line case
+        if _properties['font_stw_twolines'] is False:
+            set_match_text = set_match_text + ' - ' + set_player_text
+        stw_global = 'stw'
+        # Add line 1
+        g_fore = pasteInfoOnGraphic(g_fore, set_match_text, stw_font, stw_global, "stw_line1")
+        if _properties['font_stw_twolines'] is True:
+            # Add line 2
+            g_fore = pasteInfoOnGraphic(g_fore, set_player_text, stw_font, stw_global, "stw_line2")
     # End of information cases
 
     # All contents are added to Background and Foreground. Merge them

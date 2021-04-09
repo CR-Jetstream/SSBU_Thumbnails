@@ -433,33 +433,35 @@ def setGlobalsQuarantainment_Top8():
     properties['font_twitter8_offset'] = (0.6575, 0.98)  # Offset for 8
     # Event Info settings
     properties['font_event_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
-    properties['font_event_align'] = 'center'
     properties['font_event_name_offset'] = (0.834, 0.285)
     properties['font_event_name_color'] = '#F5F5F5'  # (5, 5, 5)
     properties['font_event_name_size'] = 43
+    properties['font_event_name_align'] = 'center'
     properties['font_event_date_offset'] = (0.90, 0.40)
     properties['font_event_date_color'] = '#050505'  # (5, 5, 5)
     properties['font_event_date_size'] = 40
+    properties['font_event_date_align'] = 'center'
     properties['font_event_entrants_offset'] = (0.90, 0.455)
     properties['font_event_entrants_color'] = '#050505'  # (5, 5, 5)
     properties['font_event_entrants_size'] = 40
+    properties['font_event_entrants_align'] = 'center'
     # Media Info settings
     properties['font_media_location'] = os.path.join("Fonts", "arial.ttf")
     properties['font_media_color'] = '#050505'  # (5, 5, 5)
     properties['font_media_align'] = 'center'
     properties['font_media_size'] = 32
-    properties['font_media_twitter_offset'] = (0.5, 0.5)
-    properties['font_media_youtube_offset'] = (0.5, 0.5)
-    properties['font_media_twitch_offset'] = (0.5, 0.5)
-    properties['font_media_bracket_offset'] = (0.845, 0.975)
+    properties['font_media_twitter_offset'] = (0.85, 0.785)
+    properties['font_media_youtube_offset'] = (0.85, 0.855)
+    properties['font_media_twitch_offset'] = (0.85, 0.915)
+    properties['font_media_bracket_link_offset'] = (0.85, 0.975)
     # Set to Watch Info settings
     properties['font_stw_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
     properties['font_stw_color'] = '#050505'  # (5, 5, 5)
     properties['font_stw_align'] = 'center'
     properties['font_stw_size'] = 40
     properties['font_stw_twolines'] = True
-    properties['font_stw_offset1'] = (0.8345, 0.645)
-    properties['font_stw_offset2'] = (0.8345, 0.705)
+    properties['font_stw_line1_offset'] = (0.8345, 0.645)
+    properties['font_stw_line2_offset'] = (0.8345, 0.705)
 
     # Return with modifications
     return properties
