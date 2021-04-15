@@ -191,6 +191,8 @@ _character_mapping = {
     "Zero Suit Samus": "zero_suit_samus"
 }
 
+# TODO: Add stock icons conversion between names
+
 
 def create_char_filename(char_name, char_file):
     """
@@ -330,6 +332,7 @@ def organize_from_renders_zip(char_name, new_folder_location):
                 dest_folder = os.path.join(new_folder_location, "Diamond render")
                 return_mapping.append((source_path, a_file, dest_folder, dest_file))
             elif a_file.startswith("chara_6_"):  # Char 6 case
+                continue # Skipping
                 dest_folder = os.path.join(new_folder_location, "Face render")
                 return_mapping.append((source_path, a_file, dest_folder, dest_file))
             # end of chara case

@@ -1,3 +1,7 @@
+:: Script to grab all the character  renders from the Smash Bros Ultimate website
+:: https://www.smashbros.com/en_US/fighter/index.html
+:: This script saves all characters and alts in the Full_Render folder adjacent to the script
+
 @echo off
 
 for %%x in (
