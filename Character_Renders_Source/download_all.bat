@@ -89,7 +89,7 @@ zero_suit_samus
 ) do (
 echo Character is %%x
 	for %%y in (main main2 main3 main4 main5 main6 main7 main8) do (
-	powershell -Command "Invoke-WebRequest https://www.smashbros.com/assets_v2/img/fighter/%%x/%%y.png -OutFile Full_Render/%%x_%%y.png"
+	powershell -Command "Invoke-WebRequest https://www.smashbros.com/assets_v2/img/fighter/%%x/%%y.png -OutFile Input_Folder/Full_Render/%%x_%%y.png"
 	)
 )
 pause
