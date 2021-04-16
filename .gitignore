@@ -1,7 +1,12 @@
 .idea
+__pycache__
+venv
 Character_Renders_Source/Input_Folder/Super Smash Bros Ultimate
 Fonts_Backup/*
 Youtube_Thumbnails/*
 Youtube_Videos/*
 *.txt
 *.zip
+build
+dist
+*.spec
