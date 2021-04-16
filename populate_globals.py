@@ -107,7 +107,7 @@ def set_default_properties():
     # Dictionary for global properties
     properties = dict()
     # Character renders folder location
-    properties['char_renders'] = "Character_Renders"
+    properties['char_renders'] = os.path.join("Resources", "Character_Renders")
     properties['render_type'] = "Body render"
     properties['render_type2'] = None
     properties['render_type3'] = None
@@ -144,7 +144,7 @@ def set_default_properties():
     properties['event_round_single_text'] = False  # Flag to determine if the event and round text is combined
     properties['event_round_text_split'] = ' '  # Text for between event and round when a single element
     # Font settings
-    properties['font_location'] = os.path.join("Fonts", "tt2004m.ttf")
+    properties['font_location'] = os.path.join("Resources", "Fonts", "tt2004m.ttf")
     properties['font_player1_size'] = 45
     properties['font_player2_size'] = 45
     properties['font_event_size'] = 45
@@ -254,8 +254,8 @@ def setGlobalsFro(number):
     properties['text_round'] = (0.50, 0.075)
     properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
-    #properties['font_location'] = os.path.join("Fonts", "LostLeonestReguler-MVVMn.otf")
-    properties['font_location'] = os.path.join("Fonts", "Molot.otf")
+    #properties['font_location'] = os.path.join("Resources", "Fonts", "LostLeonestReguler-MVVMn.otf")
+    properties['font_location'] = os.path.join("Resources", "Fonts", "Molot.otf")
     properties['font_player1_size'] = 65  #42
     properties['font_player2_size'] = 65  #42
     properties['font_event_size'] = 45  #37
@@ -305,7 +305,7 @@ def setGlobalsAWG(number):
     properties['text_round'] = (0.50, 0.10)
     properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
-    properties['font_location'] = os.path.join("Fonts", "ConnectionIi-2wj8.otf")
+    properties['font_location'] = os.path.join("Resources", "Fonts", "ConnectionIi-2wj8.otf")
     properties['font_player1_size'] = 42
     properties['font_player2_size'] = 42
     properties['font_event_size'] = 42
@@ -405,7 +405,7 @@ def setGlobalsQuarantainment_Top8():
     properties['center_shift_3_3'] = (-0.20, -0.148)
     # Player Font settings
     properties['text_angle'] = 0
-    properties['font_player_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
+    properties['font_player_location'] = os.path.join("Resources", "Fonts", "BungeeInline-Regular.ttf")
     properties['font_player_color'] = '#F5F5F5'  # (245, 245, 245)
     properties['font_player_align'] = 'left'
     properties['font_player_size'] = 64
@@ -418,7 +418,7 @@ def setGlobalsQuarantainment_Top8():
     properties['font_player7_offset'] = (0.3525, 0.54)  # Offset for 7
     properties['font_player8_offset'] = (0.3525, 0.79)  # Offset for 8
     # Twitter Font settings
-    properties['font_twitter_location'] = os.path.join("Fonts", "arial.ttf")
+    properties['font_twitter_location'] = os.path.join("Resources", "Fonts", "arial.ttf")
     properties['font_twitter_color'] = '#FFFFFF'  # (255, 255, 255)
     properties['font_twitter_back_color'] = '#00000090'  # (0, 0, 0, 25)
     properties['font_twitter_align'] = 'right'
@@ -432,7 +432,7 @@ def setGlobalsQuarantainment_Top8():
     properties['font_twitter7_offset'] = (0.6575, 0.73)  # Offset for 7
     properties['font_twitter8_offset'] = (0.6575, 0.98)  # Offset for 8
     # Event Info settings
-    properties['font_event_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
+    properties['font_event_location'] = os.path.join("Resources", "Fonts", "BungeeInline-Regular.ttf")
     properties['font_event_name_offset'] = (0.834, 0.285)
     properties['font_event_name_color'] = '#F5F5F5'  # (5, 5, 5)
     properties['font_event_name_size'] = 43
@@ -446,7 +446,7 @@ def setGlobalsQuarantainment_Top8():
     properties['font_event_entrants_size'] = 40
     properties['font_event_entrants_align'] = 'center'
     # Media Info settings
-    properties['font_media_location'] = os.path.join("Fonts", "arial.ttf")
+    properties['font_media_location'] = os.path.join("Resources", "Fonts", "arial.ttf")
     properties['font_media_color'] = '#050505'  # (5, 5, 5)
     properties['font_media_align'] = 'center'
     properties['font_media_size'] = 32
@@ -455,7 +455,7 @@ def setGlobalsQuarantainment_Top8():
     properties['font_media_twitch_offset'] = (0.855, 0.915)
     properties['font_media_bracket_link_offset'] = (0.85, 0.975)
     # Set to Watch Info settings
-    properties['font_stw_location'] = os.path.join("Fonts", "BungeeInline-Regular.ttf")
+    properties['font_stw_location'] = os.path.join("Resources", "Fonts", "BungeeInline-Regular.ttf")
     properties['font_stw_color'] = '#050505'  # (5, 5, 5)
     properties['font_stw_align'] = 'center'
     properties['font_stw_size'] = 40
