@@ -1,0 +1,4 @@
+echo off 
+call .\venv\Scripts\activate.bat
+pyinstaller create_top8_graphic.py --onefile --name top8_generator
+pause
