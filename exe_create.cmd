@@ -8,8 +8,12 @@ if not exist dist\Resources (
 ) else (
 	echo Resources folder already exists
 )
-:: Copy cmd scripts
-call exe_cmd_copy.cmd
+:: Create cmd scripts
+call exe_cmd_create.cmd
+:: Copy Vod names folder
+Xcopy /E /I Vod_Names dist\Vod_Names
+:: Create Youtube_Thumbnails folder
+mkdir dist\Youtube_Thumbnails
 :: Create zip file
 echo Compressing, this will take a minute
 call exe_compress.cmd
