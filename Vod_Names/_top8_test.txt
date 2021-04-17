@@ -1,0 +1,28 @@
+# Top 8 Graphic example
+# All information is tab deliminated
+
+#Graphic Information
+Event name:	Quarantainment 57
+Event date:	04/14/2021
+Event entrants:	76 Entrants
+
+#Set to Watch information
+# info, match, player1, player2
+Set to Watch:	Losers Semis	DarkPuma	Rondor
+
+#Archive information
+Twitter:	@CR_Jetstream
+YouTube:	Matches Archived - CR_Jetsream
+Twitch:	twitch.tv/cr_jetstream
+Bracket Link:	smash.gg/quarantainment-57-1
+
+# Placements
+# place, name, twitter, characters
+1:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+2:	Bonilla	@Bonillaic	ROB
+3:	DarkPuma	@darkpum4	Hero
+4:	Rondor	@Rondoore	Falco
+5:	Epic kalito	@KalitoKat	King DDD
+6:	HensonLedo	@HensonLedo	Ganondorf
+7:	Bloomy	@bloomylol	PKM Trainer
+8:	ECruz	@ECruzs12	Dark Pit

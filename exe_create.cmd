@@ -8,6 +8,10 @@ if not exist dist\Resources (
 ) else (
 	echo Resources folder already exists
 )
+:: Copy cmd scripts
+call exe_cmd_copy.cmd
 :: Create zip file
 echo Compressing, this will take a minute
 call exe_compress.cmd
+:: Remove all folders except for zip output
+::call exe_cleanup.comd

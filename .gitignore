@@ -4,7 +4,6 @@ venv
 Resources/Character_Renders_Source/Input_Folder
 Resources/Character_Renders_Source/Output_Folder
 Youtube_Thumbnails/*
-Youtube_Videos/*
 *.log
 *.zip
 build

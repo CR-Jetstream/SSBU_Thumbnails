@@ -112,12 +112,12 @@ def set_default_properties():
     properties['render_type2'] = None
     properties['render_type3'] = None
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'Sample test names.txt')
+    properties['event_info'] = os.path.join('Vod_Names', 'Sample test names.txt')
     # Background and Foreground overlay locations
-    properties['background_file'] = os.path.join('Overlays', 'Background Sample.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground Sample.png')
+    properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background Sample.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground Sample.png')
     # Output save location
-    properties['save_location'] = os.path.join('..', 'Youtube_Thumbnails')
+    properties['save_location'] = os.path.join('Youtube_Thumbnails')
     # Canvas variables for character window with respect to whole canvas
     properties['char_glow_bool'] = False
     properties['char_window'] = (0.5, 1)  # canvas for characters
@@ -182,10 +182,10 @@ def setGlobalsQuarantainment(number):
     # Character renders folder location
     properties['render_type'] = "Full render"
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'Quarantainment {s} names.txt'.format(s=number))
+    properties['event_info'] = os.path.join('Vod_Names', 'Quarantainment {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
-    properties['background_file'] = os.path.join('Overlays', 'Background_Q.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Q.png')
+    properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_Q.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_Q.png')
     # Canvas flag
     properties['char_glow_bool'] = True
     # Center-point shift for canvas for characters
@@ -212,9 +212,9 @@ def setGlobalsSxT(number):
     properties = setGlobalsQuarantainment(number)
     #
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
+    properties['event_info'] = os.path.join('Vod_Names', 'Students x Treehouse {s} names.txt'.format(s=number))
     # Foreground overlay locations
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_SxT.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_SxT.png')
     # font size change
     properties['font_event_size'] = 44
     properties['font_round_size'] = 44
@@ -234,12 +234,12 @@ def setGlobalsFro(number):
     # Character renders folder location
     properties['render_type'] = "Full render"
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'Fro Fridays {s} names.txt'.format(s=number))
+    properties['event_info'] = os.path.join('Vod_Names', 'Fro Fridays {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
-    #properties['background_file'] = os.path.join('Overlays', 'Background_Fro.png')
-    properties['background_file'] = os.path.join('Overlays', 'Background_Fro2.png')
-    #properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Fro.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Fro2.png')
+    #properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_Fro.png')
+    properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_Fro2.png')
+    #properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_Fro.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_Fro2.png')
     # Single character flag on overlay
     properties['one_char_flag'] = True
     # Scaler Variables for characters in window
@@ -284,10 +284,10 @@ def setGlobalsAWG(number):
     # Character renders folder location
     properties['render_type'] = "Full render"
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'AWG {s} names.txt'.format(s=number))
+    properties['event_info'] = os.path.join('Vod_Names', 'AWG {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
-    properties['background_file'] = os.path.join('Overlays', 'Background_AWG.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_AWG_spring.png')
+    properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_AWG.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_AWG_spring.png')
     # Character border settings
     properties['char_border'] = (0.00, 0.35)  # border for characters
     properties['char_offset1'] = (0, -0.00)  # offset for left player window placement on canvas
@@ -335,10 +335,10 @@ def setGlobalsC2C(number):
     properties = setGlobalsQuarantainment(number)
     #
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'C2C Finale {s} names.txt'.format(s=number))
+    properties['event_info'] = os.path.join('Vod_Names', 'C2C Finale {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
-    properties['background_file'] = os.path.join('Overlays', 'Background_C2C.png')
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_C2C.png')
+    properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_C2C.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_C2C.png')
     # Single character flag on overlay
     properties['one_char_flag'] = True
     properties['resize_1'] = 1.0
@@ -357,9 +357,9 @@ def setGlobalsCatman(number):
     properties = setGlobalsQuarantainment(number)
     #
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'Catman {s} names.txt'.format(s=number))
+    properties['event_info'] = os.path.join('Vod_Names', 'Catman {s} names.txt'.format(s=number))
     # Foreground overlay locations
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_Catman.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_Catman.png')
     # Return with modifications
     return properties
 
@@ -376,7 +376,7 @@ def setGlobalsQuarantainment_Top8():
     properties['render_type'] = "Body render"
     properties['render_type2'] = "Diamond render"
     # Event match file information location
-    properties['top8_info'] = os.path.join('..', 'Vod Names', '_top8_test.txt')
+    properties['top8_info'] = os.path.join('Vod_Names', '_top8_test.txt')
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join('Top8_Graphics', 'Jetstream_Top8_Background.png')
     properties['foreground_file'] = os.path.join('Top8_Graphics', 'Jetstream_Top8_Foreground.png')
@@ -477,8 +477,8 @@ def setGlobalsSxT_Top8():
     properties = setGlobalsQuarantainment_Top8()
     #
     # Event match file information location
-    properties['event_info'] = os.path.join('..', 'Vod Names', 'Students x Treehouse {s} names.txt'.format(s=number))
+    properties['top8_info'] = os.path.join('Vod_Names', '_top8_test.txt')
     # Foreground overlay locations
-    properties['foreground_file'] = os.path.join('Overlays', 'Foreground_SxT.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_SxT.png')
     # Return with modifications
     return properties
