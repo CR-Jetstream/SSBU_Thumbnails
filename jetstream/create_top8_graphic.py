@@ -471,9 +471,11 @@ def main(argv):
     _properties = setGlobalsTop8(event)
     # Read Player Database and Character Database
     global _character_database
-    _character_database = populate_globals.readCharDatabase('Character_Database.csv', )
+    character_database_location = os.path.join('Resources', 'Character_Database.csv')
+    _character_database = populate_globals.readCharDatabase(character_database_location)
     global _player_database
-    _player_database = populate_globals.readPlayerDatabase('Player_Database.csv', char_database=_character_database)
+    player_database_location = os.path.join('Resources', 'Player_Database.csv')
+    _player_database = populate_globals.readPlayerDatabase(player_database_location, char_database=_character_database)
     # 1. Read in the input file to get event info and player placements
     event_info, event_placements = readGrpahicLines(_properties['top8_info'])
     # Update placements and grab character renders

@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 57
-Event date:	04/14/2021
-Event entrants:	76 Entrants
+Event name:	Quarantainment 58
+Event date:	04/21/2021
+Event entrants:	47 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Losers Semis	DarkPuma	Rondor
+Set to Watch:	Winners Semis	Bonilla	Petrikov
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-57-1
+Bracket Link:	smash.gg/quarantainment-58
 
 # Placements
 # place, name, twitter, characters
-1:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+1:	Nalga	@TavodkS	Incineroar	DK
 2:	Bonilla	@Bonillaic	ROB
-3:	DarkPuma	@darkpum4	Hero
-4:	Rondor	@Rondoore	Falco
-5:	Epic kalito	@KalitoKat	King DDD
-6:	HensonLedo	@HensonLedo	Ganondorf
-7:	Bloomy	@bloomylol	PKM Trainer
-8:	ECruz	@ECruzs12	Dark Pit
+3:	Petrikov	@PetrikovDiddy	Diddy	Palutena
+4:	Cobra	@TalkedCobra	Pyra
+5:	Requiem	@	Dark Samus
+6:	Nazura	@shrutikmk	Inkling 3
+7:	Noodles	@thatpuffmain	Steve
+8:	PatchSlaw7	@PatchSlaw7	Little Mac

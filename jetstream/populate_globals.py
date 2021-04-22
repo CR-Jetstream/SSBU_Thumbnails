@@ -378,8 +378,8 @@ def setGlobalsQuarantainment_Top8():
     # Event match file information location
     properties['top8_info'] = os.path.join('Vod_Names', '_top8_test.txt')
     # Background and Foreground overlay locations
-    properties['background_file'] = os.path.join('Top8_Graphics', 'Jetstream_Top8_Background.png')
-    properties['foreground_file'] = os.path.join('Top8_Graphics', 'Jetstream_Top8_Foreground.png')
+    properties['background_file'] = os.path.join("Resources", 'Top8_Graphics', 'Jetstream_Top8_Background.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Top8_Graphics', 'Jetstream_Top8_Foreground.png')
     # Canvas flag
     properties['char_glow_bool'] = True
     # Center-point shift for canvas for characters
