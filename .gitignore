@@ -1,9 +1,9 @@
 .idea
 __pycache__
 venv
-Resources/Character_Renders_Source/Input_Folder
-Resources/Character_Renders_Source/Output_Folder
-Youtube_Thumbnails/*
+jetstream/Resources/Character_Renders_Source/Input_Folder
+jetstream/Resources/Character_Renders_Source/Output_Folder
+jetstream/Youtube_Thumbnails/*
 *.log
 *.zip
 build
