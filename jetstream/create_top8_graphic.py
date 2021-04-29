@@ -18,6 +18,7 @@ import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import populate_globals
 import create_thumbnail
+from helper import *
 
 import sys
 import getopt
@@ -246,14 +247,14 @@ def pasteInfoOnGraphic(image_in, info_text, info_font, info_type1, info_type2):
     # Grab font info
     font_event = ImageFont.truetype(info_font, size=_properties['font_{e}_size'.format(e=info_type1)])
     # Event Name
-    text_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], info_text, font_event)
+    text_mask = create_rotated_text(_properties['text_angle'], info_text, font_event)
     # determine offset by scaling with the foreground
     text_offset = _properties['font_{e}_offset'.format(e=info_type2)]
     text_offset = (int(image_in.size[0] * text_offset[0]), int(image_in.size[1] * text_offset[1]))
     # create mask
     font_event_color = _properties['font_{e}_color'.format(e=info_type1)]
     e_im = Image.new('RGBA', text_mask.size, color=font_event_color)
-    text_offset = create_thumbnail.calculateOffsetFromCenter(text_offset, text_mask.size)
+    text_offset = calculateOffsetFromCenter(text_offset, text_mask.size)
     # Shift based offsets on alignment
     if _properties['font_{e}_align'.format(e=info_type1)] == 'right':
         # shift by a quarter of mask width to line up right justified
@@ -329,51 +330,49 @@ def createGraphic(graphic_info, graphic_placements, background, foreground):
     for a_placement in graphic_placements:
         # # Player text
         p_text = a_placement.p1
-        p_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], p_text, font_player)
+        p_mask = create_rotated_text(_properties['text_angle'], p_text, font_player)
         # determine offset by scaling with the foreground
         p_offset = _properties['font_player{s}_offset'.format(s=a_placement.p)]
         p_offset = (int(foreground.size[0] * p_offset[0]), int(foreground.size[1] * p_offset[1]))
         # create mask
         p_im = Image.new('RGBA', p_mask.size, color=font_player_color)
-        p_offset = create_thumbnail.calculateOffsetFromCenter(p_offset, p_mask.size)
+        p_offset = calculateOffsetFromCenter(p_offset, p_mask.size)
         # Shift based offsets on alignment
         if _properties['font_player_align'] == 'right':
             # shift by a quarter of mask width to line up right justified
-            p_offset = int(p_offset[0] - (p_mask.size[0] / 4)), p_offset[1]
+            p_offset = int(p_offset[0] - (p_mask.size[0] / 2)), p_offset[1]
         elif _properties['font_player_align'] == 'center':
             pass
         else:  # default to left
             # shift by a quarter of mask width to line up left justified
-            p_offset = int(p_offset[0] + (p_mask.size[0] / 4)), p_offset[1]
+            p_offset = int(p_offset[0] + (p_mask.size[0] / 2)), p_offset[1]
         # Paste to Foreground
         g_fore.paste(p_im, p_offset, mask=p_mask)
         # #Twitter text
         t_text = a_placement.tw
-        t_mask = create_thumbnail.create_rotated_text(_properties['text_angle'], t_text, font_twitter)
+        t_mask = create_rotated_text(_properties['text_angle'], t_text, font_twitter)
         # determine offset by scaling with the foreground
         t_offset = _properties['font_twitter{s}_offset'.format(s=a_placement.p)]
         t_offset = (int(foreground.size[0] * t_offset[0]), int(foreground.size[1] * t_offset[1]))
         # create mask
         t_im = Image.new('RGBA', t_mask.size, color=font_twitter_color)
-        t_text_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_mask.size)
+        t_text_offset = calculateOffsetFromCenter(t_offset, t_mask.size)
         # twitter text background image
         #  pad text by 2 spaces, and grab max height possible from the text
-        x_text, _ = font_twitter.getsize('  ' + t_text + '  ')
-        _, y_text = font_twitter.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]@_")
-        t_back_im = Image.new('RGBA', (x_text, y_text), color=font_twitter_back_color)
-        t_back_im = t_back_im.rotate(_properties['text_angle'])
-        t_back_offset = create_thumbnail.calculateOffsetFromCenter(t_offset, t_back_im.size)
+        t_back_im = create_rotated_text_back(_properties['text_angle'], " " + t_text + " ", font_twitter,
+                                             font_twitter_back_color)
+        t_back_offset = calculateOffsetFromCenter(t_offset, t_back_im.size)
         # Shift based offsets on alignment
         if _properties['font_twitter_align'] == 'right':
-            # shift by a quarter of mask width to line up right justified
-            t_back_offset = int(t_back_offset[0] - t_mask.size[0] / 4), t_back_offset[1]
-            t_text_offset = int(t_text_offset[0] - t_mask.size[0] / 4), t_text_offset[1]
+            # shift by a half of mask width to line up right justified
+            t_back_offset = int(t_back_offset[0] - t_mask.size[0] / 2), t_back_offset[1]
+            t_text_offset = int(t_text_offset[0] - t_mask.size[0] / 2), t_text_offset[1]
         elif _properties['font_twitter_align'] == 'center':
             pass  # do nothing
         else:  # default to left
-            # shift by a quarter of mask width to line up Left justified
-            t_back_offset = int(t_back_offset[0] + t_mask.size[0] / 4), t_back_offset[1]
-            t_text_offset = int(t_text_offset[0] + t_mask.size[0] / 4), t_text_offset[1]
+            # shift by a half of mask width to line up Left justified
+            t_back_offset = int(t_back_offset[0] + t_mask.size[0] / 2), t_back_offset[1]
+            t_text_offset = int(t_text_offset[0] + t_mask.size[0] / 2), t_text_offset[1]
         # Paste onto foreground
         g_fore.paste(t_back_im, t_back_offset, mask=t_back_im)
         g_fore.paste(t_im, t_text_offset, mask=t_mask)

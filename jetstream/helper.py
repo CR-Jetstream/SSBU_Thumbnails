@@ -5,6 +5,7 @@ Contains simple functions that are commonly used
 
 """
 from PIL import Image, ImageDraw
+from math import sin, cos, radians
 
 def common_start(sa, sb):
     """
@@ -33,7 +34,7 @@ def create_rotated_text(angle, text, font):
     """
     # get the size of the text
     x_text, _ = font.getsize(text)
-    _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]")
+    _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]@_")
     # want the tallest possible word
 
     # build a transparency mask large enough to hold the text
@@ -54,10 +55,36 @@ def create_rotated_text(angle, text, font):
         # rotate an an enlarged mask to minimize jaggies
         bigger_mask = mask.resize((max_dim * 8, max_dim * 8), resample=Image.BICUBIC)
         rotated_mask = bigger_mask.rotate(angle).resize(mask_size, resample=Image.LANCZOS)
-    # TODO: Trim mask to fit text space
+    # Trim mask to fit text space
+    # determine the length of the space of interest
+    x_rotate = abs(int(x_text * cos(radians(angle)) + y_text * sin(radians(angle))))
+    y_rotate = abs(int(y_text * cos(radians(angle)) + x_text * sin(radians(angle))))
+    x_center, y_center = calculateCenter(rotated_mask.size)
+    # crop from center of mask (half of rotated distance)
+    box = (x_center - x_rotate/2, y_center - y_rotate/2, x_center + x_rotate/2, y_center + y_rotate/2)
+    crop_rotated_mask = rotated_mask.crop(box)
     # return text transparency mask
-    return rotated_mask
+    return crop_rotated_mask
 
+
+def create_rotated_text_back(angle, text, font, color):
+    """
+    Creates background for angled text and returns an image with desired color
+    :param angle:
+    :param text:
+    :param font:
+    :param color:
+    :return:
+    """
+    # get the size of the text
+    x_text, _ = font.getsize(text)
+    _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]@_")
+    # want the tallest possible word
+
+    # Create a new image with the size of the text
+    back_image = Image.new('RGBA', (x_text, y_text), color=color)
+    back_image = back_image.rotate(angle)
+    return back_image
 
 def hex_to_rgb(hex_input):
     """

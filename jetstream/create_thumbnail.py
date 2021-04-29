@@ -329,29 +329,17 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # enf of loop
     #  Each offset for each character depends on the number of characters
     #  Create permutations for which character in front
-    # Grab center shifts from properties
-    center_shift_1 = _properties['center_shift_1']
-    center_shift_2_1 = _properties['center_shift_2_1']
-    center_shift_2_2 = _properties['center_shift_2_2']
-    center_shift_3_1 = _properties['center_shift_3_1']
-    center_shift_3_2 = _properties['center_shift_3_2']
-    center_shift_3_3 = _properties['center_shift_3_3']
     # Calculate center and offsets
     x_center, y_center = calculateCenter(win_size)
     # Flip sign if on the right of the canvas instead of the left
     x_sign = 1
     if right_bool:
         x_sign = -1
+    # Grab center shifts from properties
+    center_shift_1 = _properties['center_shift_1']
     # This is the center-point offset of the character render
     offset_shift_1 = (x_sign * int(win_size[0] * center_shift_1[0]), int(win_size[1] * center_shift_1[1]))
-    # This is the center-point offsets for 2 characters
-    offset_shift_2_1 = (int(win_size[0] * center_shift_2_1[0]), int(win_size[1] * center_shift_2_1[1]))
-    offset_shift_2_2 = (int(win_size[0] * center_shift_2_2[0]), int(win_size[1] * center_shift_2_2[1]))
-    # This is the center-point offset for 3 character
-    offset_shift_3_1 = (int(win_size[0] * center_shift_3_1[0]), int(win_size[1] * center_shift_3_1[1]))
-    offset_shift_3_2 = (int(win_size[0] * center_shift_3_2[0]), int(win_size[1] * center_shift_3_2[1]))
-    offset_shift_3_3 = (int(win_size[0] * center_shift_3_3[0]), int(win_size[1] * center_shift_3_3[1]))
-    # Calculate for each character offsets based on character count
+    # Handle each character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
         # acquire resized characters from scaling
@@ -371,6 +359,12 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             if only_one:
                 return canvas_list
     elif num_chars == 2:  # 2.2 Two characters
+        # Grab center shifts from properties
+        center_shift_2_1 = _properties['center_shift_2_1']
+        center_shift_2_2 = _properties['center_shift_2_2']
+        # This is the center-point offsets for 2 characters
+        offset_shift_2_1 = (int(win_size[0] * center_shift_2_1[0]), int(win_size[1] * center_shift_2_1[1]))
+        offset_shift_2_2 = (int(win_size[0] * center_shift_2_2[0]), int(win_size[1] * center_shift_2_2[1]))
         # acquire resized characters from scaling for multiple characters
         resize_param_list = [_properties['resize_1'], _properties['resize_2']]
         resized_list_renders1 = resizeCharacterList(char_list_renders1, resize_param_list)
@@ -404,6 +398,14 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     return canvas_list
         # end of loop
     elif num_chars >= 3:  # 2.3 Three characters (or more, only take first three)
+        # Grab center shifts from properties
+        center_shift_3_1 = _properties['center_shift_3_1']
+        center_shift_3_2 = _properties['center_shift_3_2']
+        center_shift_3_3 = _properties['center_shift_3_3']
+        # This is the center-point offset for 3 character
+        offset_shift_3_1 = (int(win_size[0] * center_shift_3_1[0]), int(win_size[1] * center_shift_3_1[1]))
+        offset_shift_3_2 = (int(win_size[0] * center_shift_3_2[0]), int(win_size[1] * center_shift_3_2[1]))
+        offset_shift_3_3 = (int(win_size[0] * center_shift_3_3[0]), int(win_size[1] * center_shift_3_3[1]))
         # acquire resized characters from scaling for multiple characters
         resize_param_list = [_properties['resize_1'], _properties['resize_2'], ]
         resized_list_renders1 = resizeCharacterList(char_list_renders1, resize_param_list)

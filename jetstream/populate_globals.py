@@ -125,16 +125,16 @@ def set_default_properties():
     properties['char_offset1'] = (0, 0.00)  # offset for left player window placement on canvas
     properties['char_offset2'] = (0.5, 0.00)  # offset for right player window placement on canvas
     # Scaler Variables for characters in window
-    properties['resize_1'] = 1.6  # resize for character for multiple renders on image
+    properties['resize_1'] = 1.58  # resize for character for multiple renders on image
     properties['resize_2'] = 1.00
     properties['resize_3'] = 1.00
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.00, +0.10)  # Universal character shift
-    properties['center_shift_2_1'] = (-0.20, +0.11)  # Two character shift
-    properties['center_shift_2_2'] = (+0.20, -0.11)
-    properties['center_shift_3_1'] = (-0.15, +0.148)  # Three character shift
-    properties['center_shift_3_2'] = (+0.25, -0.037)
-    properties['center_shift_3_3'] = (-0.20, -0.148)
+    properties['center_shift_2_1'] = (-0.00, +0.00)  # Two character shift
+    properties['center_shift_2_2'] = (-0.00, +0.00)
+    properties['center_shift_3_1'] = (-0.00, +0.00)  # Three character shift
+    properties['center_shift_3_2'] = (-0.00, +0.00)
+    properties['center_shift_3_3'] = (-0.00, +0.00)
     # Center-point for text on canvas with respect to whole canvas
     properties['text_player1'] = (0.25, 0.076)
     properties['text_player2'] = (0.75, 0.076)
@@ -190,6 +190,11 @@ def setGlobalsQuarantainment(number):
     properties['char_glow_bool'] = True
     # Center-point shift for canvas for characters
     properties['center_shift_1'] = (-0.04, +0.01)
+    properties['center_shift_2_1'] = (-0.20, +0.11)  # Two character shift
+    properties['center_shift_2_2'] = (+0.20, -0.11)
+    properties['center_shift_3_1'] = (-0.15, +0.148)  # Three character shift
+    properties['center_shift_3_2'] = (+0.25, -0.037)
+    properties['center_shift_3_3'] = (-0.20, -0.148)
     properties['char_border'] = (0.00, 0.26)  # border for characters
     properties['resize'] = 1.0
     properties['resize_1'] = 0.85  # resize for character for multiple renders on image
