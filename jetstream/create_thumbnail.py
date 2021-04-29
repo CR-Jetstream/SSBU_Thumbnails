@@ -17,6 +17,7 @@ import os
 
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import populate_globals
+from helper import *
 
 import sys
 import getopt
@@ -41,71 +42,6 @@ class Match:
         self.c2 = _char2
         self.c2_renders = []
         self.Images = []
-
-
-def common_start(sa, sb):
-    """
-    returns the longest common substring from the beginning of sa and sb
-    :param sa:
-    :param sb:
-    :return:
-    """
-
-    def _iter():
-        for a, b in zip(sa, sb):
-            if a == b:
-                yield a
-            else:
-                return
-
-    return ''.join(_iter())
-
-
-def create_rotated_text(angle, text, font):
-    """
-    Creates angled text and returns a mask of the text
-    :param angle:
-    :param text:
-    :param font:
-    :return:
-    """
-    # get the size of the text
-    x_text, _ = font.getsize(text)
-    _, y_text = font.getsize("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz[]")
-    # want the tallest possible word
-
-    # build a transparency mask large enough to hold the text
-    max_dim = 2 * max(x_text, y_text)
-
-    # build a transparency mask large enough to hold the text
-    mask_size = (max_dim, max_dim)
-    mask = Image.new('L', mask_size, 0)
-
-    # add text to mask at center of box
-    draw = ImageDraw.Draw(mask)
-    draw.text((max_dim / 2 - x_text / 2, max_dim / 2 - y_text / 2), text, 255, font=font)
-
-    if angle % 90 == 0:
-        # rotate by multiple of 90 deg is easier
-        rotated_mask = mask.rotate(angle)
-    else:
-        # rotate an an enlarged mask to minimize jaggies
-        bigger_mask = mask.resize((max_dim * 8, max_dim * 8), resample=Image.BICUBIC)
-        rotated_mask = bigger_mask.rotate(angle).resize(mask_size, resample=Image.LANCZOS)
-
-    # return text transparency mask
-    return rotated_mask
-
-
-def hex_to_rgb(hex_input):
-    """
-    converts a single hex input into RGB tuple
-    :param hex_input:
-    :return:
-    """
-    hex_input = hex_input.lstrip('#')
-    hlen = len(hex_input)
-    return tuple(int(hex_input[i:i + hlen // 3], 16) for i in range(0, hlen, hlen // 3))
 
 
 def setGlobals(weekly, number, property_settings=None):
@@ -334,88 +270,6 @@ def createMatches(match_lines, log_file=None):
     return return_list
 
 
-def calculateCenter(xy_image):
-    """
-    Function to calculate the center location of a xy size
-    Returns an integer value
-    :param xy_image:
-    :return:
-    """
-    x_image, y_image = xy_image
-    return int(x_image / 2), int(y_image / 2)
-
-
-def calculateOffsetFromCenter(xy_center, xy_image):
-    """
-    Function to calculate the offset needed to fit image at the center of a window
-    :param xy_center:
-    :param xy_image:
-    :return:
-    """
-    x_center, y_center = xy_center
-    x_image, y_image = xy_image
-    x_off = int(x_center - (x_image / 2))
-    y_off = int(y_center - (y_image / 2))
-    return x_off, y_off
-
-
-def resizeCharacterList(char_list, num_resizes):
-    """
-    Function to resize the characters in char list for
-    Returns a list of images with each resize as an element in the list.
-    The order is the same as the char_list
-    Num resizes identifies the number of resizes present
-    This function will only go up to 3 character resizes
-    :param char_list:
-    :param num_resizes:
-    :return:
-    """
-    return_list = []
-    # Loop through the characters
-    for a_char in char_list:
-        return_list.append([])
-        # Resize are global variables that scale the renders
-        for a_resize in [_properties['resize_1'], _properties['resize_2'], _properties['resize_3']]:
-            x_resize, y_resize = a_char.size
-            x_resize = int(x_resize * a_resize)
-            y_resize = int(y_resize * a_resize)
-            new_char = a_char.resize((x_resize, y_resize))
-            return_list[-1].append(new_char)
-            # break if number of characters in list is equal to num_resizes
-            if len(return_list[-1]) == num_resizes:
-                break
-    # end of loop
-    return return_list
-
-
-def fitToWindowResize(char_image, x_limit, y_limit):
-    """
-    Function to resize a character image to maximize its fit to the window
-    This resizes and keeps the aspect ration such that the width or the height is equal to the limit
-    :param char_image:
-    :param x_limit:
-    :param y_limit:
-    :return:
-    """
-    x_char, y_char = char_image.size
-    # Identify ratio for scaling
-    xy_ratio = x_limit / y_limit
-    if y_char * xy_ratio > x_char:
-        # character image is taller than it is wide
-        scaler_ratio = y_limit / y_char
-        y_resize = y_limit  # = ratio*input_y
-        x_resize = scaler_ratio * x_char
-    else:
-        # character image is wider than it is tall
-        scaler_ratio = x_limit / x_char
-        x_resize = x_limit  # = ratio*input_x
-        y_resize = scaler_ratio * y_char
-    # Resize the character image. No need to worry about offsets
-    xy_resize = (int(x_resize), int(y_resize))
-    char_image = char_image.resize(xy_resize)
-    return char_image
-
-
 def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=False, border_bool=True, only_one=False):
     """
     Function to create images of the characters in a single image.
@@ -436,9 +290,9 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Create Canvas
     canvas = Image.new('RGBA', win_size, (255, 0, 0, 0))
     canvas_list = []
-    resized_char1 = []
-    resized_char2 = []
-    resized_char3 = []
+    char_list_renders1 = []
+    char_list_renders2 = []
+    char_list_renders3 = []
 
     # 1. Resize all the images to fit in this canvas
     # Check border bool to apply a border for canvas
@@ -450,7 +304,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         x_max_height = int(win_size[0] * (1 - char_border[0]))
         y_max_height = int(win_size[1] * (1 - char_border[1]))
     # Loop through render types and save the images to resized_char lists
-    resized_char_list = [resized_char1, resized_char2, resized_char3]
+    resized_char_list = [char_list_renders1, char_list_renders2, char_list_renders3]
     render_list = [_properties['render_type'], _properties['render_type2'], _properties['render_type3']]
     for a_render, a_resize in zip(render_list, resized_char_list):
         # Check for None case for render
@@ -469,6 +323,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
             # Add resized character to list
             a_resize.append(a_char_image)
         # end of char loop
+    # Note: If render_type2(3) is None, then char_list_renders2(3) will remain be empty
+
     # 2. Now take the characters and apply them to the canvas
     # enf of loop
     #  Each offset for each character depends on the number of characters
@@ -498,11 +354,11 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
     # Calculate for each character offsets based on character count
     num_chars = len(char_list)
     if num_chars == 1 or single_bool:  # 2.1 One character
-        resized_list = [resized_char1]
         # acquire resized characters from scaling
-        resized_list = resizeCharacterList(resized_char1, 1)
+        resize_param_list = [_properties['resize_1']]
+        resized_list_renders1 = resizeCharacterList(char_list_renders1, resize_param_list)
         # apply characters to canvas, add to canvas list
-        for a_char in resized_list:
+        for a_char in resized_list_renders1:
             # set a_char equal to the only element in the list
             a_char = a_char[0]
             a_canvas = canvas.copy()
@@ -516,15 +372,18 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                 return canvas_list
     elif num_chars == 2:  # 2.2 Two characters
         # acquire resized characters from scaling for multiple characters
-        resized_list = resizeCharacterList(resized_char1, 2)
-        resized_list2 = resizeCharacterList(resized_char2, 2)
-        # check if list 2 is empty
-        if resized_char2 == []:
-            resized_list2 = resized_list
+        resize_param_list = [_properties['resize_1'], _properties['resize_2']]
+        resized_list_renders1 = resizeCharacterList(char_list_renders1, resize_param_list)
+        resized_list_renders2 = resizeCharacterList(char_list_renders2, resize_param_list)
+        # If renders2 is empty, then copy renders1 to renders2 for character images
+        if resized_list_renders2 == []:
+            resized_list_renders2 = resized_list_renders1
         # Calculate center for resized images
         a_center = x_center + offset_shift_1[0] + offset_shift_2_1[0], y_center + offset_shift_1[1] + offset_shift_2_1[1]
         b_center = x_center + offset_shift_1[0] + offset_shift_2_2[0], y_center + offset_shift_1[1] + offset_shift_2_2[1]
         # two character, two permutations on order of characters
+        #  Canvas1 [Char1, Char2]
+        #  Canvas2 [Char2, Char1]
         for a_ind in range(0, 2):
             for b_ind in range(0, 2):
                 # skip if indices are equal
@@ -532,8 +391,8 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     continue
                 a_canvas = canvas.copy()
                 # grab sizes of appropriate characters
-                a_char = resized_list[a_ind][0]  # This is the first character on the canvas
-                b_char = resized_list2[b_ind][1]  # second character on the canvas
+                a_char = resized_list_renders1[a_ind][0]  # This is the first character on the canvas
+                b_char = resized_list_renders2[b_ind][1]  # second character on the canvas
                 # grab offsets
                 a_char_offset = calculateOffsetFromCenter(a_center, a_char.size)
                 b_char_offset = calculateOffsetFromCenter(b_center, b_char.size)
@@ -541,21 +400,21 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                 a_canvas.paste(b_char, b_char_offset, mask=b_char)  # order matters for pasting
                 a_canvas.paste(a_char, a_char_offset, mask=a_char)
                 canvas_list.append(a_canvas)
-                # Canvas1 [Char1, Char2]
-                # Canvas2 [Char2, Char1]
                 if only_one:
                     return canvas_list
         # end of loop
     elif num_chars >= 3:  # 2.3 Three characters (or more, only take first three)
         # acquire resized characters from scaling for multiple characters
-        resized_list = resizeCharacterList(resized_char1, 3)
-        resized_list2 = resizeCharacterList(resized_char2, 3)
-        resized_list3 = resizeCharacterList(resized_char3, 3)
-        # check if list 2 and 3 are empty
-        if resized_list2 == []:
-            resized_list2 = resized_list
-        if resized_char3 == []:
-            resized_list3 = resized_list2
+        resize_param_list = [_properties['resize_1'], _properties['resize_2'], ]
+        resized_list_renders1 = resizeCharacterList(char_list_renders1, resize_param_list)
+        resized_list_renders2 = resizeCharacterList(char_list_renders2, resize_param_list)
+        resized_list_renders3 = resizeCharacterList(char_list_renders3, resize_param_list)
+        # If renders2 is empty, then copy renders1 to renders2 for character images
+        if resized_list_renders2 == []:
+            resized_list_renders2 = resized_list_renders1
+        # If renders3 is empty, then copy renders2 to renders3 for character images
+        if resized_list_renders3 == []:
+            resized_list_renders3 = resized_list_renders2
         # Calculate center for resized images
         a_center = x_center + offset_shift_1[0] + offset_shift_3_1[0], y_center + offset_shift_1[1] + offset_shift_3_1[
             1]
@@ -564,6 +423,12 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         c_center = x_center + offset_shift_1[0] + offset_shift_3_3[0], y_center + offset_shift_1[1] + offset_shift_3_3[
             1]
         # three character, six permutations on order of characters
+        #  Canvas1 [Char1, Char2, Char3]
+        #  Canvas2 [Char1, Char3, Char2]
+        #  Canvas3 [Char2, Char1, Char3]
+        #  Canvas4 [Char2, Char3, Char1]
+        #  Canvas5 [Char3, Char1, Char2]
+        #  Canvas6 [Char3, Char2, Char1]
         for a_ind in range(0, 3):
             for b_ind in range(0, 3):
                 for c_ind in range(0, 3):
@@ -572,9 +437,9 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                         continue
                     a_canvas = canvas.copy()
                     # grab sizes of appropriate characters
-                    a_char = resized_list[a_ind][0]  # This is the first character on the canvas
-                    b_char = resized_list2[b_ind][1]  # second character on the canvas
-                    c_char = resized_list3[c_ind][2]  # third character on the canvas
+                    a_char = resized_list_renders1[a_ind][0]  # This is the first character on the canvas
+                    b_char = resized_list_renders2[b_ind][1]  # second character on the canvas
+                    c_char = resized_list_renders3[c_ind][2]  # third character on the canvas
                     # grab offsets
                     a_char_offset = calculateOffsetFromCenter(a_center, a_char.size)
                     b_char_offset = calculateOffsetFromCenter(b_center, b_char.size)
@@ -584,12 +449,6 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
                     a_canvas.paste(b_char, b_char_offset, mask=b_char)
                     a_canvas.paste(a_char, a_char_offset, mask=a_char)
                     canvas_list.append(a_canvas)
-                    # Canvas1 [Char1, Char2, Char3]
-                    # Canvas2 [Char1, Char3, Char2]
-                    # Canvas3 [Char2, Char1, Char3]
-                    # Canvas4 [Char2, Char3, Char1]
-                    # Canvas5 [Char3, Char1, Char2]
-                    # Canvas6 [Char3, Char2, Char1]
                     if only_one:
                         return canvas_list
         # end of loop
