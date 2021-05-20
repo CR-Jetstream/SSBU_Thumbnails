@@ -66,6 +66,8 @@ def setGlobals(weekly, number, property_settings=None):
         global_properties = populate_globals.setGlobalsC2C(number)
     elif weekly == 'Catman':
         global_properties = populate_globals.setGlobalsCatman(number)
+    elif weekly == 'IzAw Sub':
+        global_properties = populate_globals.setGlobalsIzAw(number)
     else:
         global_properties = populate_globals.set_default_properties()
     # return properties
@@ -407,7 +409,7 @@ def createCharacterWindow(char_list, win_size, right_bool=False, single_bool=Fal
         offset_shift_3_2 = (int(win_size[0] * center_shift_3_2[0]), int(win_size[1] * center_shift_3_2[1]))
         offset_shift_3_3 = (int(win_size[0] * center_shift_3_3[0]), int(win_size[1] * center_shift_3_3[1]))
         # acquire resized characters from scaling for multiple characters
-        resize_param_list = [_properties['resize_1'], _properties['resize_2'], ]
+        resize_param_list = [_properties['resize_1'], _properties['resize_2'], _properties['resize_3']]
         resized_list_renders1 = resizeCharacterList(char_list_renders1, resize_param_list)
         resized_list_renders2 = resizeCharacterList(char_list_renders2, resize_param_list)
         resized_list_renders3 = resizeCharacterList(char_list_renders3, resize_param_list)

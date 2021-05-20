@@ -369,6 +369,24 @@ def setGlobalsCatman(number):
     return properties
 
 
+def setGlobalsIzAw(number):
+    """
+    Set necessary globals for IzAw Sub event {number} for create_thumbnail.py
+    properties dictionary is fed in, modified, then returned
+    :param number:
+    :return:
+    """
+    # Set to Quaratainment settings and then adjust
+    properties = setGlobalsQuarantainment(number)
+    #
+    # Event match file information location
+    properties['event_info'] = os.path.join('Vod_Names', 'IzAw Sub {s} names.txt'.format(s=number))
+    # Foreground overlay locations
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_IzAwSub.png')
+    # Return with modifications
+    return properties
+
+
 def setGlobalsQuarantainment_Top8():
     """
     Set necessary globals for Quarantainment Top 8 Graphic for create_top8_graphic.py

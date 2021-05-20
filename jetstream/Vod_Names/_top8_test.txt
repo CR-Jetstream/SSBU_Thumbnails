@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 58
-Event date:	04/21/2021
-Event entrants:	47 Entrants
+Event name:	Quarantainment 61
+Event date:	05/12/2021
+Event entrants:	64 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Winners Semis	Bonilla	Petrikov
+Set to Watch:	Grand Finals II	OG-Mustaine	ditto
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-58
+Bracket Link:	smash.gg/quarantainment-61
 
 # Placements
 # place, name, twitter, characters
-1:	Nalga	@TavodkS	Incineroar	DK
-2:	Bonilla	@Bonillaic	ROB
-3:	Petrikov	@PetrikovDiddy	Diddy	Palutena
-4:	Cobra	@TalkedCobra	Pyra
-5:	Requiem	@	Dark Samus
-6:	Nazura	@shrutikmk	Inkling 3
-7:	Noodles	@thatpuffmain	Steve
-8:	PatchSlaw7	@PatchSlaw7	Little Mac
+1:	ditto	@dittoOnTheNet	Min Min 3
+2:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+3:	Many	@ManyManit4s	Steve
+4:	Rain	@Ra1nMx	Greninja
+5:	Sato	@DumbassSato	Little Mac	Richter
+6:	Sho	@esesoysho	Min Min
+7:	ToPaz	@	Kirby
+8:	Bloomy	@bloomylol	PKM Trainer
