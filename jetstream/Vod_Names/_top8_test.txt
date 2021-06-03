@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 61
-Event date:	05/12/2021
-Event entrants:	64 Entrants
+Event name:	Quarantainment 64
+Event date:	06/02/2021
+Event entrants:	49 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Grand Finals II	OG-Mustaine	ditto
+Set to Watch:	Losers Semis	Anarchy	F-Air Play
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-61
+Bracket Link:	smash.gg/quarantainment-64
 
 # Placements
 # place, name, twitter, characters
-1:	ditto	@dittoOnTheNet	Min Min 3
-2:	OG-Mustaine	@OG_Mustaine_SSB	Terry
-3:	Many	@ManyManit4s	Steve
-4:	Rain	@Ra1nMx	Greninja
-5:	Sato	@DumbassSato	Little Mac	Richter
-6:	Sho	@esesoysho	Min Min
-7:	ToPaz	@	Kirby
-8:	Bloomy	@bloomylol	PKM Trainer
+1:	Many	@ManyManit4s	Steve
+2:	Genialo	@Genialo_3000	ROB	Ganon
+3:	Sho	@esesoysho	Min Min
+4:	nazura	@sknazura	Inkling
+5:	Rozden	@RozdenArt	Ganon
+6:	AxF	@azelfk	Terry
+7:	Rain	@Ra1nMx	Greninja
+8:	Raza	@RazaSSB	Ness
