@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 64
-Event date:	06/02/2021
-Event entrants:	49 Entrants
+Event name:	Quarantainment 66
+Event date:	06/16/2021
+Event entrants:	50 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Losers Semis	Anarchy	F-Air Play
+Set to Watch:	Losers Semis	Mustaine	Bmm404040
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-64
+Bracket Link:	smash.gg/quarantainment-66
 
 # Placements
 # place, name, twitter, characters
-1:	Many	@ManyManit4s	Steve
-2:	Genialo	@Genialo_3000	ROB	Ganon
-3:	Sho	@esesoysho	Min Min
-4:	nazura	@sknazura	Inkling
-5:	Rozden	@RozdenArt	Ganon
-6:	AxF	@azelfk	Terry
-7:	Rain	@Ra1nMx	Greninja
-8:	Raza	@RazaSSB	Ness
+1:	Cobra	@TalkedCobra	Mario	Pyra
+2:	Bmm404040	@Bmm404040	Robin	Pichu
+3:	Pineda	@Hecsy6	Palutena	Cloud
+4:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+5:	vizio	@lordvizio	Link	Zelda
+6:	Ferolyo	@Ferolyo_SSBU	Steve
+7:	Maikchido	@maikchido	Game & Watch
+8:	Anarchy	@Anarchy302	Greninja
