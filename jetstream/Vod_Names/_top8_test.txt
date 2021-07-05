@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 66
-Event date:	06/16/2021
-Event entrants:	50 Entrants
+Event name:	Quarantainment 68
+Event date:	06/30/2021
+Event entrants:	32 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Losers Semis	Mustaine	Bmm404040
+Set to Watch:	Losers Finals	Apolotion	R U OK!!!
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-66
+Bracket Link:	smash.gg/quarantainment-68
 
 # Placements
 # place, name, twitter, characters
-1:	Cobra	@TalkedCobra	Mario	Pyra
-2:	Bmm404040	@Bmm404040	Robin	Pichu
-3:	Pineda	@Hecsy6	Palutena	Cloud
-4:	OG-Mustaine	@OG_Mustaine_SSB	Terry
-5:	vizio	@lordvizio	Link	Zelda
-6:	Ferolyo	@Ferolyo_SSBU	Steve
-7:	Maikchido	@maikchido	Game & Watch
-8:	Anarchy	@Anarchy302	Greninja
+1:	Anarchy	@Anarchy302	Greninja	Wolf
+2:	R U OKAY!!!	@	Mii Gunner	Terry
+3:	Apolotion	@apolotion	Greninja
+4:	SaberLink	@	Byleth
+5:	Caffeine	@	Snake
+6:	T-sizzle	@Tsizzlenator	Toon Link
+7:	Devire	@kumaDom_ssb	Palutena
+8:	B.W. Styles	@BWStyles_SSB	Megaman
