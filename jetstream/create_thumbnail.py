@@ -69,7 +69,8 @@ def setGlobals(weekly, number, property_settings=None):
     elif weekly == 'IzAw Sub':
         global_properties = populate_globals.setGlobalsIzAw(number)
     else:
-        global_properties = populate_globals.set_default_properties()
+        event_info_txt = "{s1} {s2} names.txt".format(s1=weekly, s2=number)
+        global_properties = populate_globals.set_default_properties(event_info_txt)
     # return properties
     return global_properties
 

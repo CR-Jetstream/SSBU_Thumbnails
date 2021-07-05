@@ -98,7 +98,7 @@ def readPlayerDatabase(filename, deliminator=',', char_database=None):
     return play_database
 
 
-def set_default_properties():
+def set_default_properties(event_info = None):
     """
     Function to set default properties for globals needed for create_thumbnail.py
     :return:
@@ -112,7 +112,10 @@ def set_default_properties():
     properties['render_type2'] = None
     properties['render_type3'] = None
     # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'Sample test names.txt')
+    if event_info is None:
+        properties['event_info'] = os.path.join('Vod_Names', 'Sample test names.txt')
+    else:
+        properties['event_info'] = os.path.join('Vod_Names', event_info)
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background Sample.png')
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground Sample.png')

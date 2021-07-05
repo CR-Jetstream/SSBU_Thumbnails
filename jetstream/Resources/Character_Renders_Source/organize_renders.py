@@ -48,6 +48,7 @@ _character_list = [
     "Isabelle",
     "Jigglypuff",
     "Joker",
+    "Kazuya Mishima",
     "Ken",
     "King Dedede",
     "King K Rool",
@@ -134,6 +135,7 @@ _character_mapping = {
     "Incineroar": "incineroar",
     "Inkling": "inkling",
     "Isabelle": "isabelle",
+    "Kazuya Mishima": "demon",
     "Jigglypuff": "jigglypuff",
     "Joker": "joker",
     "Ken": "ken",
@@ -302,7 +304,7 @@ def organize_from_renders_zip(char_name, new_folder_location):
     #  mapping has structure (source_filename, new_filename)
     return_mapping = []
     # Lookup character folder
-    source_path = os.path.join("Character_Renders_Backup", "Super Smash Bros Ultimate", "Fighter Portraits")
+    source_path = os.path.join("Input_Folder", "Super Smash Bros Ultimate", "Fighter Portraits")
     if char_name not in os.listdir(source_path):
         return return_mapping
     # Character folder exists
@@ -383,7 +385,7 @@ def save_char_files(file_mapping):
 
 if __name__ == "__main__":
     # Loop through character list
-    save_location = os.path.join("Character_Renders")
+    save_location = os.path.join("Output_Folder")
     for a_char in _character_list:
         char_file_mapping = organize_from_renders_zip(a_char, save_location)
         if save_char_files(char_file_mapping):
