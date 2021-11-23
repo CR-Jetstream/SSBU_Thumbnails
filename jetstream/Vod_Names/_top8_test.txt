@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 68
-Event date:	06/30/2021
-Event entrants:	32 Entrants
+Event name:	Quarantainment 81
+Event date:	11/09/2021
+Event entrants:	48 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Losers Finals	Apolotion	R U OK!!!
+Set to Watch:	Grand Finals	Peru	GxREN
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-68
+Bracket Link:	smash.gg/quarantainment-81
 
 # Placements
 # place, name, twitter, characters
-1:	Anarchy	@Anarchy302	Greninja	Wolf
-2:	R U OKAY!!!	@	Mii Gunner	Terry
-3:	Apolotion	@apolotion	Greninja
+1:	Peru	@Moe_LG	Greninja
+2:	GxREN	@Hecsy6	Palutena	Diddy
+3:	Vixel	@Vixel358	Robin
 4:	SaberLink	@	Byleth
-5:	Caffeine	@	Snake
-6:	T-sizzle	@Tsizzlenator	Toon Link
-7:	Devire	@kumaDom_ssb	Palutena
-8:	B.W. Styles	@BWStyles_SSB	Megaman
+5:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+6:	Marshall	@marshall_mx	Snake	Hero
+7:	Anarchy	@Anarchy302	Greninja
+8:	Morris	@Gem_SSB	ROB 7
