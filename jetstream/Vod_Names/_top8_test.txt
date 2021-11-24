@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 81
-Event date:	11/09/2021
-Event entrants:	48 Entrants
+Event name:	Quarantainment 82
+Event date:	11/23/2021
+Event entrants:	40 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Grand Finals	Peru	GxREN
+Set to Watch:	Winners Semis	Cobra	JaZaR
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-81
+Bracket Link:	smash.gg/quarantainment-82
 
 # Placements
 # place, name, twitter, characters
-1:	Peru	@Moe_LG	Greninja
-2:	GxREN	@Hecsy6	Palutena	Diddy
-3:	Vixel	@Vixel358	Robin
-4:	SaberLink	@	Byleth
-5:	OG-Mustaine	@OG_Mustaine_SSB	Terry
-6:	Marshall	@marshall_mx	Snake	Hero
-7:	Anarchy	@Anarchy302	Greninja
-8:	Morris	@Gem_SSB	ROB 7
+1:	JaZaR	@STJazar	Lucas	Dr Mario
+2:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+3:	Sho	@esesoysho	Min Min
+4:	Ividal	@ividal1	Yoshi
+5:	Cobra	@TalkedCobra	Mario	Pyra
+6:	GxREN	@Hecsy6	Palutena	Mii Gunner
+7:	Reborn	@	Duck Hunt
+8:	Troco	@TrocoWasTaken	Steve
