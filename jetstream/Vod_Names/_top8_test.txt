@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 82
-Event date:	11/23/2021
-Event entrants:	40 Entrants
+Event name:	Quarantainment 85
+Event date:	01/04/2021
+Event entrants:	80 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Winners Semis	Cobra	JaZaR
+Set to Watch:	Winners Semis	JaZaR	rm8
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-82
+Bracket Link:	smash.gg/quarantainment-85
 
 # Placements
 # place, name, twitter, characters
-1:	JaZaR	@STJazar	Lucas	Dr Mario
+1:	JaZaR	@STJazar	Dr Mario	Lucas
 2:	OG-Mustaine	@OG_Mustaine_SSB	Terry
-3:	Sho	@esesoysho	Min Min
-4:	Ividal	@ividal1	Yoshi
-5:	Cobra	@TalkedCobra	Mario	Pyra
-6:	GxREN	@Hecsy6	Palutena	Mii Gunner
-7:	Reborn	@	Duck Hunt
-8:	Troco	@TrocoWasTaken	Steve
+3:	Ogre	@Ogre_Ogre_	Mario
+4:	Morris	@MorrisGrindset	ROB	Banjo
+5:	rm8	@Rm8Ssbu	Ike
+6:	K.p	@kp_ssb	Samus
+7:	Paradox	@Purple__Paradox	Megaman
+8:	Munchy	@Munchy_ssb	Joker
