@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 87
-Event date:	02/01/2022
-Event entrants:	96 Entrants
+Event name:	Quarantainment 88
+Event date:	02/16/2022
+Event entrants:	52 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Winners R4	Nalga	Whisky
+Set to Watch:	Winners Semis	Cortex	JaZaR
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-87
+Bracket Link:	smash.gg/quarantainment-88
 
 # Placements
 # place, name, twitter, characters
-1:	Cobra	@TalkedCobra	Mario	Pyra
-2:	Peru	@Moe_LG	Duck Hunt	Greninja
-3:	Atomic	@AtomicCoookie	ROB
-4:	Whisky	@WhiskyDNA	Robin	Sora
-5:	Morris	@MorrisGrindset	ROB
-6:	Pineda	@Hecsy6	Palutena	Mii Gunner
-7:	NessNEO	@NessNEO666	Min Min
-8:	Nalga	@TavodkS	DK	Incineroar
+1:	Many	@ManyManit4s	Stev
+2:	JaZaR	@STJazar	Dr Mario	Lucas
+3:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+4:	Ogre	@Ogre_Ogre_	ROB	Mario
+5:	Toiler	@	Steve
+6:	Cortex	@flargglesnaff	Pac Man
+7:	Coyote	@WoCo_Coyote	K Rool 3
+8:	BadBoyRay	@Ray_TheBadBoy	Sora
