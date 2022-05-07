@@ -2,27 +2,27 @@
 # All information is tab deliminated
 
 #Graphic Information
-Event name:	Quarantainment 88
-Event date:	02/16/2022
-Event entrants:	52 Entrants
+Event name:	Quarantainment 90
+Event date:	03/16/2022
+Event entrants:	29 Entrants
 
 #Set to Watch information
 # info, match, player1, player2
-Set to Watch:	Winners Semis	Cortex	JaZaR
+Set to Watch:	Losers Finals	Cortex	Ace$
 
 #Archive information
 Twitter:	@CR_Jetstream
 YouTube:	Matches Archived - CR_Jetsream
 Twitch:	twitch.tv/cr_jetstream
-Bracket Link:	smash.gg/quarantainment-88
+Bracket Link:	smash.gg/quarantainment-90
 
 # Placements
 # place, name, twitter, characters
-1:	Many	@ManyManit4s	Stev
-2:	JaZaR	@STJazar	Dr Mario	Lucas
-3:	OG-Mustaine	@OG_Mustaine_SSB	Terry
-4:	Ogre	@Ogre_Ogre_	ROB	Mario
-5:	Toiler	@	Steve
-6:	Cortex	@flargglesnaff	Pac Man
-7:	Coyote	@WoCo_Coyote	K Rool 3
-8:	BadBoyRay	@Ray_TheBadBoy	Sora
+1:	OG-Mustaine	@OG_Mustaine_SSB	Terry
+2:	Cortex	@flargglesnaff	Pac Man	Bowser Jr
+3:	Ace$	@	Ness
+4:	RULES	@	Pyra
+5:	S1rlo	@S1rlo_	Pyra
+6:	Seels	@wifiseels	Sora
+7:	Taskbot	@Taskbot_SSBU	Wolf
+8:	SudoSSB	@SudoSSB	Falco 8	Cloud
