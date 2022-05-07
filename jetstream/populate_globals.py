@@ -111,12 +111,16 @@ def set_default_properties(event_info=None):
     properties['render_type'] = "Body render"
     properties['render_type2'] = None
     properties['render_type3'] = None
+    # Event name
+    properties['event_name'] = event_info
+    # Event shorthand name for what text is on the graphic
+    properties['event_short_name'] = event_info
     # Event match file information location
     if event_info is None:
-        properties['event_info'] = os.path.join('Vod_Names', 'Sample test names.txt')
+        properties['event_file'] = os.path.join('Vod_Names', 'Sample test names.txt')
     else:
         # Expecting to find file "{event_name} names.txt"
-        properties['event_info'] = os.path.join('Vod_Names', '{s} names.txt'.format(s=event_info))
+        properties['event_file'] = os.path.join('Vod_Names', '{s} names.txt'.format(s=event_info))
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background Sample.png')
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground Sample.png')
@@ -259,7 +263,7 @@ def setGlobalsFro(weekly_event):
     properties['text_round'] = (0.50, 0.075)
     properties['text_angle'] = 0  # degree of rotation counter-clockwise
     # Font settings
-    #properties['font_location'] = os.path.join("Resources", "Fonts", "LostLeonestReguler-MVVMn.otf")
+    # properties['font_location'] = os.path.join("Resources", "Fonts", "LostLeonestReguler-MVVMn.otf")
     properties['font_location'] = os.path.join("Resources", "Fonts", "Molot.otf")
     properties['font_player1_size'] = 65  #42
     properties['font_player2_size'] = 65  #42
@@ -376,6 +380,50 @@ def setGlobalsIzAw(weekly_event):
 
     # Foreground overlay locations
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_IzAwSub.png')
+    # Return with modifications
+    return properties
+
+
+def setGlobalsJustTechIt(weekly_event):
+    """
+    Set necessary globals for Catman event {number} for create_thumbnail.py
+    properties dictionary is fed in, modified, then returned
+    :param weekly_event:
+    :return:
+    """
+    # Set to Quaratainment settings and then adjust
+    properties = set_default_properties(weekly_event)
+
+    # Event shorthand name for what text is on the graphic
+    properties['event_short_name'] = properties['event_name'].replace("AWG", "")+"!"  # Just Tech It #!
+    # Character renders folder location
+    properties['render_type'] = "Full render"
+    # Background and Foreground overlay locations
+    properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_JustTechIt.png')
+    properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_JustTechIt.png')
+    # Center-point shift for canvas for characters
+    properties['center_shift_1'] = (-0.00, +0.05)
+    # Single character flag on overlay
+    properties['one_char_flag'] = True
+    properties['resize_1'] = 0.92
+    # Canvas flag
+    properties['char_glow_bool'] = False
+    # Center-point for text on canvas with respect to whole canvas
+    properties['text_player1'] = (0.24, 0.065)  # (0.25, 0.076)
+    properties['text_player2'] = (0.76, 0.065)  # (0.75, 0.076)
+    properties['text_event'] = (0.795, 0.919)  # (0.25, 0.924)
+    properties['text_round'] = (0.205, 0.919)  # (0.75, 0.924)
+    properties['text_angle'] = 0  # degree of rotation counter-clockwise
+    # Font settings
+    properties['font_location'] = os.path.join("Resources", "Fonts", "Teko-Light.ttf")
+    properties['font_player1_size'] = 178  #42
+    properties['font_player2_size'] = 178  #42
+    properties['font_event_size'] = 164  #37
+    properties['font_round_size'] = 164  #37
+    properties['font_color1'] = '#C90000'  # (201, 0, 0)
+    properties['font_color2'] = '#C90000'  # (201, 0, 0)
+    properties['font_color3'] = '#C90000'  # (201, 0, 0)
+    properties['font_color4'] = '#C90000'  # (201, 0, 0)
     # Return with modifications
     return properties
 

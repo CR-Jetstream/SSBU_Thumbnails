@@ -59,13 +59,15 @@ def setGlobals(weekly_event, property_settings=None):
         global_properties = populate_globals.setGlobalsSxT(weekly_event)
     elif weekly_event.startswith('Fro Fridays'):
         global_properties = populate_globals.setGlobalsFro(weekly_event)
+    elif weekly_event.startswith('AWG Just Tech It'):
+        global_properties = populate_globals.setGlobalsJustTechIt(weekly_event)
     elif weekly_event.startswith('AWG'):
         global_properties = populate_globals.setGlobalsAWG(weekly_event)
     elif weekly_event.startswith('C2C Finale'):
         global_properties = populate_globals.setGlobalsC2C(weekly_event)
     elif weekly_event.startswith('Catman'):
         global_properties = populate_globals.setGlobalsCatman(weekly_event)
-    elif weekly_event.startswith('IzAw Sub'):
+    elif weekly_event.startswith('IzAw Sub') or weekly_event.startswith('Big Forhead Plays'):
         global_properties = populate_globals.setGlobalsIzAw(weekly_event)
     else:
         global_properties = populate_globals.set_default_properties(weekly_event)
@@ -105,13 +107,14 @@ def readMatchLines(filename, event_name=None):
     return return_lines
 
 
-def createMatches(match_lines, event_name=None, log_file=None):
+def createMatches(match_lines, log_file=None, event_name=None, event_short_name=None):
     """
     Take in list of line information, create a list of matches
     Writes out information to log file if present
-    :param match_lines:
-    :param event_name:
-    :param log_file:
+    :param match_lines: Lines to parse for the graphics
+    :param log_file: Name of file to output missing information when parsing (optional)
+    :param event_name: Name of the event to search for in the lines (optional)
+    :param event_short_name: Shorthand name of the event to be placed on the graphic (Optional)
     :return:
     """
     # Read each line and grab information
@@ -125,6 +128,9 @@ def createMatches(match_lines, event_name=None, log_file=None):
         for a_line in match_lines:
             # set event to starting substring
             event_name = common_start(a_line, event_name).strip()
+    # If no shorthand name present, then set the name to the event name by default
+    if event_short_name is None:
+        event_short_name = event_name
 
     # Read in Match Lines to grab initial match information
     #  {event_name} - {player_1} ({char_A, char_B, char_C}) Vs. {player_2} ({char_X, char_Y, char_Z}) - SSBU
@@ -162,7 +168,7 @@ def createMatches(match_lines, event_name=None, log_file=None):
         player2_chars = player2_chars.split(')')[0]  # trim off ')'
         player2_chars = [x.strip() for x in player2_chars.split(',')]  # create a list for characters (strip whitespace)
         # Have all the information, create a match
-        a_match = Match(a_title, event_name, a_round, player1_name, player1_chars, player2_name, player2_chars)
+        a_match = Match(a_title, event_short_name, a_round, player1_name, player1_chars, player2_name, player2_chars)
         match_list.append(a_match)
     # end of match creation
 
@@ -592,17 +598,17 @@ def createRoundImages(match_list, background, foreground):
     return match_list
 
 
-def saveImages(match_list, folder_location, event_bool=False):
+def saveImages(match_list, folder_location, event_folder=None):
     """
     Saves images to folder location. If event bool is true, then create a folder with the event name
     :param match_list:
     :param folder_location:
-    :param event_bool:
+    :param event_folder:
     :return:
     """
-    # Check if event is being used as folder name
-    if event_bool is True:
-        event_name = match_list[0].e
+    # Check if event folder name exists
+    if event_folder is not None:
+        event_name = event_folder
         folder_location = os.path.join(folder_location, event_name)
     # Create folder if it does not exist
     if not os.path.exists(folder_location):
@@ -662,15 +668,14 @@ def main(argv):
     player_database_location = os.path.join('Resources', 'Player_Database.csv')
     _player_database = populate_globals.readPlayerDatabase(player_database_location, char_database=_character_database)
     # 1. Read in the names file to get event, round, names, characters information
-    print("Reading event information from \"{s}\"".format(s=_properties['event_info']))
-    event_match_lines = readMatchLines(_properties['event_info'])
-    # create list of matches
-    event_match_list = createMatches(event_match_lines, event_title, output_file)
+    print("Reading event information from \"{s}\"".format(s=_properties['event_file']))
+    event_match_lines = readMatchLines(_properties['event_file'])
+    # Create list of matches
+    event_match_list = createMatches(event_match_lines, output_file,
+                                     _properties['event_name'], _properties['event_short_name'])
     # 2. Have a blank graphic ready to populate the information
     back_image = Image.open(_properties['background_file'])
-    # back_image = Image.open('Overlays\\Background_U32.png')
     # back_image.show()
-    # front_image = Image.open('Overlays\\Foreground_U32.png')
     front_image = Image.open(_properties['foreground_file'])
     # front_image = Image.open('Overlays\\Foreground_Roth.png')
     # front_image = Image.open('Overlays\\Foreground_SxT.png')
@@ -678,7 +683,7 @@ def main(argv):
     # 3. Have the script read in the character and add them to the graphic
     event_match_list = createRoundImages(event_match_list, back_image, front_image)
     # 4. Save the images
-    saveImages(event_match_list, _properties['save_location'], event_bool=True)
+    saveImages(event_match_list, _properties['save_location'], event_folder=_properties['event_name'])
 
 
 if __name__ == "__main__":
