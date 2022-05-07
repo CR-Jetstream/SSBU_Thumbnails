@@ -98,7 +98,7 @@ def readPlayerDatabase(filename, deliminator=',', char_database=None):
     return play_database
 
 
-def set_default_properties(event_info = None):
+def set_default_properties(event_info=None):
     """
     Function to set default properties for globals needed for create_thumbnail.py
     :return:
@@ -115,7 +115,8 @@ def set_default_properties(event_info = None):
     if event_info is None:
         properties['event_info'] = os.path.join('Vod_Names', 'Sample test names.txt')
     else:
-        properties['event_info'] = os.path.join('Vod_Names', event_info)
+        # Expecting to find file "{event_name} names.txt"
+        properties['event_info'] = os.path.join('Vod_Names', '{s} names.txt'.format(s=event_info))
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background Sample.png')
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground Sample.png')
@@ -173,19 +174,18 @@ def set_default_properties(event_info = None):
     return properties
 
 
-def setGlobalsQuarantainment(number):
+def setGlobalsQuarantainment(weekly_event):
     """
     Set necessary globals for Quarantainment event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param number:
+    :param weekly_event:
     :return:
     """
     # Load in default
-    properties = set_default_properties()
+    properties = set_default_properties(weekly_event)
+
     # Character renders folder location
     properties['render_type'] = "Full render"
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'Quarantainment {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_Q.png')
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_Q.png')
@@ -209,18 +209,16 @@ def setGlobalsQuarantainment(number):
     return properties
 
 
-def setGlobalsSxT(number):
+def setGlobalsSxT(weekly_event):
     """
     Set necessary globals for Students x Treehouse event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param number:
+    :param weekly_event:
     :return:
     """
     # Set to Quaratainment settings and then adjust
-    properties = setGlobalsQuarantainment(number)
-    #
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'Students x Treehouse {s} names.txt'.format(s=number))
+    properties = setGlobalsQuarantainment(weekly_event)
+
     # Foreground overlay locations
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_SxT.png')
     # font size change
@@ -230,19 +228,18 @@ def setGlobalsSxT(number):
     return properties
 
 
-def setGlobalsFro(number):
+def setGlobalsFro(weekly_event):
     """
     Set all globals for Fro Friday event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param number:
+    :param weekly_event:
     :return:
     """
     # Load in default
-    properties = set_default_properties()
+    properties = set_default_properties(weekly_event)
+
     # Character renders folder location
     properties['render_type'] = "Full render"
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'Fro Fridays {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     #properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_Fro.png')
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_Fro2.png')
@@ -280,19 +277,18 @@ def setGlobalsFro(number):
     return properties
 
 
-def setGlobalsAWG(number):
+def setGlobalsAWG(weekly_event):
     """
     Set all globals for AWG event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param number:
+    :param weekly_event:
     :return:
     """
     # Load in default
-    properties = set_default_properties()
+    properties = set_default_properties(weekly_event)
+
     # Character renders folder location
     properties['render_type'] = "Full render"
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'AWG {s} names.txt'.format(s=number))
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_AWG.png')
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_AWG_spring.png')
@@ -332,7 +328,7 @@ def setGlobalsAWG(number):
     return properties
 
 
-def setGlobalsC2C(number):
+def setGlobalsC2C(weekly_event):
     """
     Set necessary globals for Students x Treehouse event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
@@ -340,10 +336,8 @@ def setGlobalsC2C(number):
     :return:
     """
     # Set to Quaratainment settings and then adjust
-    properties = setGlobalsQuarantainment(number)
-    #
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'C2C Finale {s} names.txt'.format(s=number))
+    properties = setGlobalsQuarantainment(weekly_event)
+
     # Background and Foreground overlay locations
     properties['background_file'] = os.path.join("Resources", 'Overlays', 'Background_C2C.png')
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_C2C.png')
@@ -354,36 +348,32 @@ def setGlobalsC2C(number):
     return properties
 
 
-def setGlobalsCatman(number):
+def setGlobalsCatman(weekly_event):
     """
     Set necessary globals for Catman event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param number:
+    :param weekly_event:
     :return:
     """
     # Set to Quaratainment settings and then adjust
-    properties = setGlobalsQuarantainment(number)
-    #
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'Catman {s} names.txt'.format(s=number))
+    properties = setGlobalsQuarantainment(weekly_event)
+
     # Foreground overlay locations
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_Catman.png')
     # Return with modifications
     return properties
 
 
-def setGlobalsIzAw(number):
+def setGlobalsIzAw(weekly_event):
     """
     Set necessary globals for IzAw Sub event {number} for create_thumbnail.py
     properties dictionary is fed in, modified, then returned
-    :param number:
+    :param weekly_event:
     :return:
     """
     # Set to Quaratainment settings and then adjust
-    properties = setGlobalsQuarantainment(number)
-    #
-    # Event match file information location
-    properties['event_info'] = os.path.join('Vod_Names', 'IzAw Sub {s} names.txt'.format(s=number))
+    properties = setGlobalsQuarantainment(weekly_event)
+
     # Foreground overlay locations
     properties['foreground_file'] = os.path.join("Resources", 'Overlays', 'Foreground_IzAwSub.png')
     # Return with modifications

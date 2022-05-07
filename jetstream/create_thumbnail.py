@@ -44,42 +44,41 @@ class Match:
         self.Images = []
 
 
-def setGlobals(weekly, number, property_settings=None):
+def setGlobals(weekly_event, property_settings=None):
     """
     Set all globals based off the type of event. Weekly is the series, Number is the event number.
     These globals are set to then create the associated thumbnails
-    :param weekly:
-    :param number:
+    :param weekly_event:
     :param property_settings:
     :return:
     """
     # Set globals based off of type of weekly
-    if weekly == 'Quarantainment':
-        global_properties = populate_globals.setGlobalsQuarantainment(number)
-    elif weekly == 'Students x Treehouse':
-        global_properties = populate_globals.setGlobalsSxT(number)
-    elif weekly == 'Fro Fridays':
-        global_properties = populate_globals.setGlobalsFro(number)
-    elif weekly == 'AWG':
-        global_properties = populate_globals.setGlobalsAWG(number)
-    elif weekly == 'C2C Finale':
-        global_properties = populate_globals.setGlobalsC2C(number)
-    elif weekly == 'Catman':
-        global_properties = populate_globals.setGlobalsCatman(number)
-    elif weekly == 'IzAw Sub':
-        global_properties = populate_globals.setGlobalsIzAw(number)
+    if weekly_event.startswith('Quarantainment'):
+        global_properties = populate_globals.setGlobalsQuarantainment(weekly_event)
+    elif weekly_event.startswith('Students x Treehouse'):
+        global_properties = populate_globals.setGlobalsSxT(weekly_event)
+    elif weekly_event.startswith('Fro Fridays'):
+        global_properties = populate_globals.setGlobalsFro(weekly_event)
+    elif weekly_event.startswith('AWG'):
+        global_properties = populate_globals.setGlobalsAWG(weekly_event)
+    elif weekly_event.startswith('C2C Finale'):
+        global_properties = populate_globals.setGlobalsC2C(weekly_event)
+    elif weekly_event.startswith('Catman'):
+        global_properties = populate_globals.setGlobalsCatman(weekly_event)
+    elif weekly_event.startswith('IzAw Sub'):
+        global_properties = populate_globals.setGlobalsIzAw(weekly_event)
     else:
-        event_info_txt = "{s1} {s2} names.txt".format(s1=weekly, s2=number)
-        global_properties = populate_globals.set_default_properties(event_info_txt)
+        global_properties = populate_globals.set_default_properties(weekly_event)
     # return properties
     return global_properties
 
 
-def readMatchLines(filename):
+def readMatchLines(filename, event_name=None):
     """
     Open file and read in line by line
     return a list of lines with match information
-    :param filename:
+    :param filename: File name to read
+    :param event_name: name of the event (optional)
     :return:
     """
     # Open File
@@ -88,43 +87,50 @@ def readMatchLines(filename):
     # Filter through lines that matter:
     return_lines = []
     for line in file_text:
-        # check for format
-        # {event_1} {round_1} - {player_1} ({char_1}) Vs {player_2} ({char_2}) - SSBU
+        # Check for format:
+        #  {event_name} - {player_1} ({char_A, char_B, char_C}) Vs. {player_2} ({char_X, char_Y, char_Z}) - SSBU
         if line.startswith('#'):
             # Comment case
             continue
         elif ' - ' in line and '(' in line and ')' in line and '- SSBU' in line:
             if 'Vs' in line or 'vs' in line:  # 'vs' is flexible
-                return_lines.append(line)
+                # Add line if it starts with event name (if event name not given, add by default)
+                if event_name is None:
+                    return_lines.append(line)
+                elif line.startswith(event_name):
+                    return_lines.append(line)
     # end loop
     if len(return_lines) == 0:
         raise NameError("Filename " + filename + " was not properly read in")
     return return_lines
 
 
-def createMatches(match_lines, log_file=None):
+def createMatches(match_lines, event_name=None, log_file=None):
     """
     Take in list of line information, create a list of matches
     Writes out information to log file if present
     :param match_lines:
+    :param event_name:
     :param log_file:
     :return:
     """
     # Read each line and grab information
     return_list = []
-    # Event name is present in every match at the beginning of the line
-    #  Use common_start function to compare lines and get the common beginning substring
-    # Loop through list - event is the same in the whole list
-    event = match_lines[0].strip()
-    for a_line in match_lines:
-        # set event to starting substring
-        event = common_start(a_line, event).strip()
+    # If no event name present, then use common substring to determine the name
+    if event_name is None:
+        # Event name is present in every match at the beginning of the line
+        #  Use common_start function to compare lines and get the common beginning substring
+        # Loop through list - event is the same in the whole list
+        event_name = match_lines[0].strip()
+        for a_line in match_lines:
+            # set event to starting substring
+            event_name = common_start(a_line, event_name).strip()
 
     # Read in Match Lines to grab initial match information
-    #  {event_1} {round_1} - {player_1} ({char_1}) Vs. {player_2} ({char_2}) - SSBU
+    #  {event_name} - {player_1} ({char_A, char_B, char_C}) Vs. {player_2} ({char_X, char_Y, char_Z}) - SSBU
     print("--- Reading Match Lines ---")
     match_list = []
-    r_start = len(event)  # index for reading the round information
+    r_start = len(event_name)  # index for reading the round information
     for a_line in match_lines:
         # grab whole title
         a_title = a_line.strip()
@@ -156,7 +162,7 @@ def createMatches(match_lines, log_file=None):
         player2_chars = player2_chars.split(')')[0]  # trim off ')'
         player2_chars = [x.strip() for x in player2_chars.split(',')]  # create a list for characters (strip whitespace)
         # Have all the information, create a match
-        a_match = Match(a_title, event, a_round, player1_name, player1_chars, player2_name, player2_chars)
+        a_match = Match(a_title, event_name, a_round, player1_name, player1_chars, player2_name, player2_chars)
         match_list.append(a_match)
     # end of match creation
 
@@ -616,40 +622,38 @@ def saveImages(match_list, folder_location, event_bool=False):
 
 
 def main(argv):
-    event = 'Sample'
-    number = 'Test'
+    event_title = 'Sample test'
     property_file = ''
     output_file = ''
     try:
-        opts, args = getopt.getopt(argv, "he:n:p:o:", ["event=", "number=", "property_file=", "output_file="])
+        opts, args = getopt.getopt(argv, "he:p:o:", ["event=", "number=", "property_file=", "output_file="])
     except getopt.GetoptError:
-        print('create_thumbnail.py -e <event>, -n <number>, -p <property_file>, -o <output_file>')
+        print('create_thumbnail.py -e <event>, -p <property_file>, -o <output_file>')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print('create_thumbnail.py -e <event>, -n <number>, -p <property_file>, -o <output_file>')
+            print('create_thumbnail.py -e <event (can have a number)>, -p <property_file>, -o <output_file>')
             sys.exit()
         elif opt in ("-e", "--event"):
-            event = arg
-        elif opt in ("-n", "--number"):
-            number = arg
+            event_title = arg
         elif opt in ("-p", "--property_file"):
             property_file = arg
         elif opt in ("-o", "--output_file"):
             output_file = arg
-    print('Event is', event, number)
+    print('Event is', event_title)
     # print('Property file is ', property_file)
     # End of Command Line Arguments
 
     # 0. Setup information
     # Event
     global _properties
-    _properties = setGlobals(event, number, property_file)
-    # setGlobals('Sample', 'test')
-    # setGlobals('Quarantainment', '43')
-    # setGlobals('Students x Treehouse', '8')
-    # setGlobals('Fro Friday', 'test')
-    # setGlobals('AWG', 'test')
+    _properties = setGlobals(event_title, property_file)
+    # setGlobals('Sample test')
+    # setGlobals('Quarantainment 43')
+    # setGlobals('Students x Treehouse 8')
+    # setGlobals('Fro Friday test')
+    # setGlobals('AWG test')
+    # setGlobals('JustTechIt test')
     # Read Player Database and Character Database
     global _character_database
     character_database_location = os.path.join('Resources', 'Character_Database.csv')
@@ -658,10 +662,10 @@ def main(argv):
     player_database_location = os.path.join('Resources', 'Player_Database.csv')
     _player_database = populate_globals.readPlayerDatabase(player_database_location, char_database=_character_database)
     # 1. Read in the names file to get event, round, names, characters information
+    print("Reading event information from \"{s}\"".format(s=_properties['event_info']))
     event_match_lines = readMatchLines(_properties['event_info'])
-    # match_lines = readMatchLines('..\\Vod Names\\Students x Treehouse 8 names.txt')
     # create list of matches
-    event_match_list = createMatches(event_match_lines, output_file)
+    event_match_list = createMatches(event_match_lines, event_title, output_file)
     # 2. Have a blank graphic ready to populate the information
     back_image = Image.open(_properties['background_file'])
     # back_image = Image.open('Overlays\\Background_U32.png')
